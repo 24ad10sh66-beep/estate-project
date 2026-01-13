@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Properties - Estate Management System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --border: #334155;
+            --border-light: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        /* Light Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --border: #e2e8f0;
+            --border-light: #cbd5e1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        /* Top Navigation */
+        .top-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .nav-brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        
+        .back-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header-icon {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+        }
+        .header-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .header-text p {
+            color: var(--text-muted);
+            margin: 0.25rem 0 0 0;
+        }
+        .add-property-btn {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .add-property-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        .search-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15), 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-2px);
+        }
+        .search-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+        .search-wrapper:focus-within .search-icon {
+            color: var(--accent);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .search-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .search-btn:hover {
+            background: var(--accent-hover);
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .property-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        .property-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.25);
+            border-color: var(--accent);
+        }
+        .property-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .property-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .property-type {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .property-location {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .property-details {
+            padding: 1.5rem;
+        }
+        .property-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .meta-icon {
+            color: var(--text-muted);
+            width: 1rem;
+            text-align: center;
+        }
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+        .property-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-available {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        .status-sold {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        .property-actions {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .action-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .stats-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            border-radius: 1rem 1rem 0 0;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .modal-content {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            background: var(--bg-secondary);
+            border-radius: 0 0 1rem 1rem;
+        }
+        
+        /* Property Details Grid */
+        .property-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-detail-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .property-detail-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .property-description {
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-description h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .property-description p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .property-amenities {
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-amenities h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .amenity-tag {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        
+        /* Analytics Styles */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .analytics-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .analytics-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .analytics-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .chart-placeholder {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-placeholder h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .chart-placeholder h5 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-placeholder p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-form {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .top-nav {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 4rem;
+            }
+            
+            .nav-actions {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+                justify-content: space-between;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .property-meta {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-overlay {
+                padding: 1rem;
+            }
+            
+            .property-detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    <script>
+        // Theme Toggle Functionality (same as admin properties)
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                // Default dark theme
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
+        
+        // Smooth transitions for theme switching
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        
+        // Property Modal Functions
+        function viewProperty(propertyId, title, description, price, area, bedrooms, bathrooms, address, city, state, amenities, createdAt) {
+            // Populate modal with property details
+            const modalContent = document.getElementById('propertyDetails');
+            const modalTitle = document.querySelector('.modal-title');
+            
+            modalTitle.textContent = title;
+            
+            // Format price
+            const formattedPrice = new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(price);
+            
+            // Parse amenities (assume comma-separated)
+            const amenitiesList = amenities ? amenities.split(',').map(a => a.trim()).filter(a => a) : [];
+            
+            // Show loading state
+            modalContent.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
+            
+            // Fetch property images via AJAX
+            fetch(`/backend/api/property-images/${propertyId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const images = data.images || [];
+                    
+                    modalContent.innerHTML = `
+                <div>
+                    ${images.length > 0 ? `
+                        <div class="property-images-gallery" style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">
+                                <i class="fas fa-images"></i> Property Images (${images.length})
+                            </h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                                ${images.map(img => `
+                                    <div style="border-radius: 0.5rem; overflow: hidden; border: 2px solid var(--border-color); cursor: pointer;" onclick="window.open('${img.url}', '_blank')">
+                                        <img src="${img.url}" alt="Property Image" 
+                                             style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                                             onerror="this.src='/media/house1.jpg'">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : '<div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem; text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;"><i class="fas fa-image"></i> No images uploaded yet</div>'}
+                    <div class="property-detail-grid">
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-rupee-sign"></i>
+                                Price
+                            </div>
+                            <div class="property-detail-value">${formattedPrice}</div>
+                        </div>
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-ruler-combined"></i>
+                                Area
+                            </div>
+                            <div class="property-detail-value">${area} sq ft</div>
+                        </div>
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-bed"></i>
+                                Bedrooms
+                            </div>
+                            <div class="property-detail-value">${bedrooms}</div>
+                        </div>
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-bath"></i>
+                                Bathrooms
+                            </div>
+                            <div class="property-detail-value">${bathrooms}</div>
+                        </div>
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </div>
+                            <div class="property-detail-value">${city}, ${state}</div>
+                        </div>
+                        <div class="property-detail-item">
+                            <div class="property-detail-label">
+                                <i class="fas fa-calendar"></i>
+                                Listed On
+                            </div>
+                            <div class="property-detail-value">${createdAt}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-description">
+                        <h4><i class="fas fa-info-circle"></i> Description</h4>
+                        <p>${description || 'No description available.'}</p>
+                    </div>
+                    
+                    <div class="property-description">
+                        <h4><i class="fas fa-map"></i> Full Address</h4>
+                        <p>${address || 'Address not provided'}</p>
+                    </div>
+                    
+                    ${amenitiesList.length > 0 ? `
+                        <div class="property-amenities">
+                            <h4><i class="fas fa-star"></i> Amenities</h4>
+                            <div class="amenities-list">
+                                ${amenitiesList.map(amenity => `<span class="amenity-tag">${amenity}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+                })
+                .catch(error => {
+                    console.error('Error fetching images:', error);
+                    modalContent.innerHTML = `
+                        <div style="padding: 1rem; background: var(--error-red); color: white; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Error loading images
+                        </div>
+                        <div class="property-detail-grid">
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-rupee-sign"></i>
+                                    Price
+                                </div>
+                                <div class="property-detail-value">${formattedPrice}</div>
+                            </div>
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    Area
+                                </div>
+                                <div class="property-detail-value">${area} sq ft</div>
+                            </div>
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-bed"></i>
+                                    Bedrooms
+                                </div>
+                                <div class="property-detail-value">${bedrooms}</div>
+                            </div>
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-bath"></i>
+                                    Bathrooms
+                                </div>
+                                <div class="property-detail-value">${bathrooms}</div>
+                            </div>
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Location
+                                </div>
+                                <div class="property-detail-value">${city}, ${state}</div>
+                            </div>
+                            <div class="property-detail-item">
+                                <div class="property-detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Listed On
+                                </div>
+                                <div class="property-detail-value">${createdAt}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-description">
+                            <h4><i class="fas fa-info-circle"></i> Description</h4>
+                            <p>${description || 'No description available.'}</p>
+                        </div>
+                        
+                        <div class="property-description">
+                            <h4><i class="fas fa-map"></i> Full Address</h4>
+                            <p>${address || 'Address not provided'}</p>
+                        </div>
+                        
+                        ${amenitiesList.length > 0 ? `
+                            <div class="property-amenities">
+                                <h4><i class="fas fa-star"></i> Amenities</h4>
+                                <div class="amenities-list">
+                                    ${amenitiesList.map(amenity => `<span class="amenity-tag">${amenity}</span>`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    `;
+                });
+            
+            // Show modal
+            document.getElementById('propertyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('propertyModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('propertyModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - My Properties</div>
+        </div>
+        
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            
+            
+            
+            <a href="/backend/seller-home/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="header-text">
+                    <h1>My Properties</h1>
+                    <p>Manage your property listings and track performance</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search your properties by title, location, or type..." class="search-input">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <!-- Stats Section -->
+        {% if properties %}
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ properties|length }}</div>
+                    <div class="stat-label">Total Properties</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ properties|length }}</div>
+                    <div class="stat-label">Active Listings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Sold Properties</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Views This Month</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Properties Grid -->
+        {% if properties %}
+        <div class="properties-grid">
+            {% for property in properties %}
+            <div class="property-card">
+                <div class="property-header">
+                    <div class="property-title">
+                        <i class="fas fa-home"></i>
+                        {{ property.title }}
+                        <span class="property-type">{{ property.property_type }}</span>
+                    </div>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ property.city }}, {{ property.state }}
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="property-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-ruler-combined meta-icon"></i>
+                            {{ property.area_sqft }} sq ft
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-bed meta-icon"></i>
+                            {{ property.bedrooms }} Bed
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-bath meta-icon"></i>
+                            {{ property.bathrooms }} Bath
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar meta-icon"></i>
+                            {{ property.created_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                    
+                    <div class="property-price">
+                        ₹{{ property.price|floatformat:0 }}
+                    </div>
+                    
+                    <span class="property-status status-available">
+                        <i class="fas fa-check-circle"></i>
+                        {{ property.status }}
+                    </span>
+                </div>
+                
+                <div class="property-actions">
+                    <a href="#" class="action-btn view-property" 
+                       data-property-id="{{ property.property_id }}"
+                       data-title="{{ property.title }}"
+                       data-description="{{ property.description }}"
+                       data-price="{{ property.price }}"
+                       data-area="{{ property.area_sqft }}"
+                       data-bedrooms="{{ property.bedrooms }}"
+                       data-bathrooms="{{ property.bathrooms }}"
+                       data-address="{{ property.address }}"
+                       data-city="{{ property.city }}"
+                       data-state="{{ property.state }}"
+                       data-amenities="{{ property.amenities }}"
+                       data-created-at="{{ property.created_at|date:'M d, Y' }}">
+                        <i class="fas fa-eye"></i>
+                        View
+                    </a>
+                    <a href="#" class="action-btn edit-property" 
+                       data-property-id="{{ property.property_id }}"
+                       data-title="{{ property.title }}"
+                       data-description="{{ property.description }}"
+                       data-price="{{ property.price }}"
+                       data-area="{{ property.area_sqft }}"
+                       data-bedrooms="{{ property.bedrooms }}"
+                       data-bathrooms="{{ property.bathrooms }}"
+                       data-address="{{ property.address }}"
+                       data-city="{{ property.city }}"
+                       data-state="{{ property.state }}"
+                       data-amenities="{{ property.amenities }}"
+                       data-property-type="{{ property.property_type }}">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </a>
+                    <a href="#" class="action-btn show-analytics" 
+                       data-property-id="{{ property.property_id }}"
+                       data-title="{{ property.title }}">
+                        <i class="fas fa-chart-line"></i>
+                        Analytics
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <h3>No Properties Yet</h3>
+            <p>{% if query %}No properties match your search "{{ query }}".{% else %}You haven't listed any properties yet. Start by adding your first property listing.{% endif %}</p>
+            {% if not query %}
+            <a href="/backend/seller/add-property/" class="add-property-btn">
+                <i class="fas fa-plus"></i>
+                Add Your First Property
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Property Details</h2>
+                <button class="modal-close" onclick="closeModal('propertyModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="propertyDetails">
+                <!-- Property details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('propertyModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Property Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Property</h2>
+                <button class="modal-close" onclick="closeModal('editModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="editForm">
+                <!-- Edit form will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveProperty()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div id="analyticsModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Property Analytics</h2>
+                <button class="modal-close" onclick="closeModal('analyticsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="analyticsContent">
+                <!-- Analytics content will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('analyticsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Close Modal Function
+        function closeModal(modalId) {
+            if (modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            } else {
+                // Close all modals if no specific ID provided
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            document.body.style.overflow = 'auto';
+        }
+
+        // Edit Property Function with Image Management
+        function editProperty(propertyId, title, description, price, area, bedrooms, bathrooms, address, city, state, amenities, propertyType) {
+            const editForm = document.getElementById('editForm');
+            const modalTitle = document.querySelector('#editModal .modal-title');
+            
+            modalTitle.textContent = `Edit: ${title}`;
+            
+            // Initial form HTML without images (we'll load them via AJAX)
+            editForm.innerHTML = `
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-home"></i>
+                            Property Title
+                        </label>
+                        <input type="text" class="form-input" id="edit-title" value="${title}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-building"></i>
+                            Property Type
+                        </label>
+                        <select class="form-input" id="edit-type">
+                            <option value="Apartment" ${propertyType === 'Apartment' ? 'selected' : ''}>Apartment</option>
+                            <option value="House" ${propertyType === 'House' ? 'selected' : ''}>House</option>
+                            <option value="Villa" ${propertyType === 'Villa' ? 'selected' : ''}>Villa</option>
+                            <option value="Plot" ${propertyType === 'Plot' ? 'selected' : ''}>Plot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-rupee-sign"></i>
+                            Price (₹)
+                        </label>
+                        <input type="number" class="form-input" id="edit-price" value="${price}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-ruler-combined"></i>
+                            Area (sq ft)
+                        </label>
+                        <input type="number" class="form-input" id="edit-area" value="${area}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-bed"></i>
+                            Bedrooms
+                        </label>
+                        <input type="number" class="form-input" id="edit-bedrooms" value="${bedrooms}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-bath"></i>
+                            Bathrooms
+                        </label>
+                        <input type="number" class="form-input" id="edit-bathrooms" value="${bathrooms}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            City
+                        </label>
+                        <input type="text" class="form-input" id="edit-city" value="${city}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map"></i>
+                            State
+                        </label>
+                        <input type="text" class="form-input" id="edit-state" value="${state}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-map"></i>
+                        Full Address
+                    </label>
+                    <textarea class="form-input form-textarea" id="edit-address" required>${address}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-info-circle"></i>
+                        Description
+                    </label>
+                    <textarea class="form-input form-textarea" id="edit-description">${description}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-star"></i>
+                        Amenities (comma-separated)
+                    </label>
+                    <input type="text" class="form-input" id="edit-amenities" value="${amenities}" placeholder="Swimming Pool, Gym, Parking">
+                </div>
+                
+                <!-- Image Management Section -->
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label class="form-label">
+                        <i class="fas fa-images"></i>
+                        Property Images
+                    </label>
+                    
+                    <!-- Existing Images Display -->
+                    <div id="existing-images-container" style="margin-bottom: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem;">
+                            <i class="fas fa-spinner fa-spin"></i> Loading images...
+                        </div>
+                    </div>
+                    
+                    <!-- Upload New Images Section -->
+                    <div style="border: 2px dashed var(--border); border-radius: 0.75rem; padding: 1.5rem; background: var(--bg-secondary);">
+                        <div style="text-align: center; margin-bottom: 1rem;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem;"></i>
+                            <p style="color: var(--text-secondary); margin: 0; font-size: 0.875rem;">
+                                Upload new images (JPG, PNG, WebP - Max 5MB each)
+                            </p>
+                        </div>
+                        <input type="file" id="image-upload-input" accept="image/jpeg,image/jpg,image/png,image/webp" multiple style="display: none;">
+                        <button type="button" class="btn-primary" onclick="document.getElementById('image-upload-input').click()" style="width: 100%; margin-bottom: 1rem;">
+                            <i class="fas fa-plus"></i>
+                            Select Images to Upload
+                        </button>
+                        
+                        <!-- Image Preview Container -->
+                        <div id="image-preview-container" style="display: none; margin-top: 1rem;">
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                <strong>Ready to Upload:</strong>
+                            </p>
+                            <div id="image-preview-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                                <!-- Preview thumbnails will appear here -->
+                            </div>
+                            <button type="button" class="btn-primary" onclick="uploadSelectedImages()" id="upload-btn" style="width: 100%;">
+                                <i class="fas fa-upload"></i>
+                                Upload <span id="upload-count">0</span> Image(s)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="edit-property-id" value="${propertyId}">
+            `;
+            
+            // Load existing images
+            loadPropertyImages(propertyId);
+            
+            // Setup image upload preview
+            setupImageUploadPreview();
+            
+            document.getElementById('editModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Load existing property images
+        function loadPropertyImages(propertyId) {
+            const container = document.getElementById('existing-images-container');
+            
+            fetch(`/backend/api/property-images/${propertyId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.images.length > 0) {
+                        const imagesHtml = data.images.map(img => `
+                            <div class="image-item" id="image-${img.id}" style="position: relative; border: 2px solid var(--border); border-radius: 0.5rem; overflow: hidden; transition: all 0.3s;">
+                                <img src="${img.url}" alt="Property Image" 
+                                     style="width: 100%; height: 120px; object-fit: cover; display: block;"
+                                     onerror="this.src='/media/house1.jpg'">
+                                <button type="button" class="delete-image-btn" onclick="confirmDeleteImage(${img.id}, '${img.url}')" 
+                                        style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 2rem; height: 2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                        
+                        container.innerHTML = `
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                                <strong>Current Images (${data.images.length}):</strong>
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
+                                ${imagesHtml}
+                            </div>
+                        `;
+                        
+                        // Add hover effect to delete buttons
+                        document.querySelectorAll('.delete-image-btn').forEach(btn => {
+                            btn.addEventListener('mouseenter', function() {
+                                this.style.transform = 'scale(1.1)';
+                                this.style.background = 'rgba(239, 68, 68, 1)';
+                            });
+                            btn.addEventListener('mouseleave', function() {
+                                this.style.transform = 'scale(1)';
+                                this.style.background = 'rgba(239, 68, 68, 0.9)';
+                            });
+                        });
+                    } else {
+                        container.innerHTML = `
+                            <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem; text-align: center; color: var(--text-secondary);">
+                                <i class="fas fa-image" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                No images uploaded yet
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading images:', error);
+                    container.innerHTML = `
+                        <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); color: var(--error); border-radius: 0.5rem; text-align: center;">
+                            <i class="fas fa-exclamation-triangle"></i> Error loading images
+                        </div>
+                    `;
+                });
+        }
+        
+        // Setup image upload preview
+        let selectedFiles = [];
+        
+        function setupImageUploadPreview() {
+            const fileInput = document.getElementById('image-upload-input');
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewGrid = document.getElementById('image-preview-grid');
+            const uploadCount = document.getElementById('upload-count');
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                
+                if (files.length === 0) return;
+                
+                // Validate files
+                const validFiles = [];
+                const errors = [];
+                
+                files.forEach((file, idx) => {
+                    // Check file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        errors.push(`${file.name} exceeds 5MB size limit`);
+                        return;
+                    }
+                    
+                    // Check file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        errors.push(`${file.name} is not a valid image format`);
+                        return;
+                    }
+                    
+                    validFiles.push(file);
+                });
+                
+                // Show errors if any
+                if (errors.length > 0) {
+                    showErrorNotification(errors.join('<br>'));
+                }
+                
+                // Store valid files
+                selectedFiles = validFiles;
+                
+                if (validFiles.length > 0) {
+                    // Show preview
+                    previewContainer.style.display = 'block';
+                    uploadCount.textContent = validFiles.length;
+                    
+                    // Generate previews
+                    previewGrid.innerHTML = '';
+                    validFiles.forEach((file, idx) => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.style.cssText = 'position: relative; border: 2px solid var(--accent); border-radius: 0.375rem; overflow: hidden;';
+                            previewDiv.innerHTML = `
+                                <img src="${e.target.result}" style="width: 100%; height: 80px; object-fit: cover; display: block;">
+                                <div style="position: absolute; top: 0; right: 0; background: rgba(249, 115, 22, 0.9); color: white; padding: 0.125rem 0.375rem; font-size: 0.625rem; font-weight: 600;">
+                                    NEW
+                                </div>
+                            `;
+                            previewGrid.appendChild(previewDiv);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+        }
+        
+        // Upload selected images
+        function uploadSelectedImages() {
+            if (selectedFiles.length === 0) {
+                showErrorNotification('No images selected');
+                return;
+            }
+            
+            const propertyId = document.getElementById('edit-property-id').value;
+            const formData = new FormData();
+            
+            selectedFiles.forEach(file => {
+                formData.append('images', file);
+            });
+            
+            // Show loading state
+            const uploadBtn = document.getElementById('upload-btn');
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            uploadBtn.disabled = true;
+            
+            // Make upload request
+            fetch(`/backend/api/property-images/upload/${propertyId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessNotification(`Successfully uploaded ${data.uploaded_count} image(s)!`);
+                    
+                    // Reload images
+                    loadPropertyImages(propertyId);
+                    
+                    // Reset upload section
+                    selectedFiles = [];
+                    document.getElementById('image-upload-input').value = '';
+                    document.getElementById('image-preview-container').style.display = 'none';
+                    document.getElementById('image-preview-grid').innerHTML = '';
+                    
+                    if (data.errors && data.errors.length > 0) {
+                        showErrorNotification('Some images failed: ' + data.errors.join(', '));
+                    }
+                } else {
+                    throw new Error(data.error || 'Upload failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorNotification('Failed to upload images: ' + error.message);
+            })
+            .finally(() => {
+                uploadBtn.innerHTML = originalText;
+                uploadBtn.disabled = false;
+            });
+        }
+        
+        // Confirm delete image (show confirmation modal)
+        let imageToDelete = null;
+        
+        function confirmDeleteImage(imageId, imageUrl) {
+            imageToDelete = { id: imageId, url: imageUrl };
+            
+            // Create confirmation modal dynamically
+            const confirmHtml = `
+                <div id="delete-image-confirm-modal" class="modal-overlay active">
+                    <div class="modal" style="max-width: 450px;">
+                        <div class="modal-header" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);">
+                            <h2 class="modal-title" style="color: var(--error);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Delete Image?
+                            </h2>
+                            <button class="modal-close" onclick="closeDeleteConfirmModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-content">
+                            <div style="text-align: center; margin-bottom: 1rem;">
+                                <img src="${imageUrl}" style="max-width: 100%; max-height: 200px; border-radius: 0.5rem; border: 2px solid var(--border);" onerror="this.src='/media/house1.jpg'">
+                            </div>
+                            <p style="color: var(--text-secondary); text-align: center;">
+                                Are you sure you want to permanently delete this image?
+                            </p>
+                            <p style="color: var(--error); text-align: center; font-size: 0.875rem;">
+                                ⚠️ This action cannot be undone. The image will be removed from the server.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-secondary" onclick="closeDeleteConfirmModal()">
+                                Cancel
+                            </button>
+                            <button class="btn-primary" onclick="executeDeleteImage()" style="background: var(--error);">
+                                <i class="fas fa-trash-alt"></i>
+                                Delete Permanently
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add to body
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = confirmHtml;
+            document.body.appendChild(tempDiv.firstElementChild);
+        }
+        
+        function closeDeleteConfirmModal() {
+            const modal = document.getElementById('delete-image-confirm-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
+            }
+            imageToDelete = null;
+        }
+        
+        function executeDeleteImage() {
+            if (!imageToDelete) return;
+            
+            const imageId = imageToDelete.id;
+            
+            // Show loading
+            const deleteBtn = document.querySelector('#delete-image-confirm-modal .btn-primary');
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+            deleteBtn.disabled = true;
+            
+            // Make delete request
+            fetch(`/backend/api/property-images/delete/${imageId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessNotification('Image deleted successfully!');
+                    
+                    // Remove image from UI with animation
+                    const imageElement = document.getElementById(`image-${imageId}`);
+                    if (imageElement) {
+                        imageElement.style.opacity = '0';
+                        imageElement.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            imageElement.remove();
+                            
+                            // Check if no images left
+                            const container = document.getElementById('existing-images-container');
+                            if (container.querySelectorAll('.image-item').length === 0) {
+                                container.innerHTML = `
+                                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem; text-align: center; color: var(--text-secondary);">
+                                        <i class="fas fa-image" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                        No images uploaded yet
+                                    </div>
+                                `;
+                            }
+                        }, 300);
+                    }
+                    
+                    closeDeleteConfirmModal();
+                } else {
+                    throw new Error(data.error || 'Delete failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorNotification('Failed to delete image: ' + error.message);
+                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete Permanently';
+                deleteBtn.disabled = false;
+            });
+        }
+
+        // Save Property Function with Real AJAX
+        function saveProperty() {
+            const propertyId = document.getElementById('edit-property-id').value;
+            const formData = {
+                title: document.getElementById('edit-title').value,
+                property_type: document.getElementById('edit-type').value,
+                price: document.getElementById('edit-price').value,
+                area_sqft: document.getElementById('edit-area').value,
+                bedrooms: document.getElementById('edit-bedrooms').value,
+                bathrooms: document.getElementById('edit-bathrooms').value,
+                city: document.getElementById('edit-city').value,
+                state: document.getElementById('edit-state').value,
+                address: document.getElementById('edit-address').value,
+                description: document.getElementById('edit-description').value,
+                amenities: document.getElementById('edit-amenities').value
+            };
+            
+            // Get CSRF token
+            const csrfToken = getCsrfToken();
+            
+            // Show loading state
+            const saveButton = document.querySelector('#editModal .btn-primary');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Saving...';
+            saveButton.disabled = true;
+            
+            // Make AJAX call to backend
+            fetch(`/backend/seller/property/update/${propertyId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showSuccessNotification('Property updated successfully!');
+                    
+                    // Update the property card in the UI
+                    updatePropertyCard(propertyId, data.property);
+                    
+                    // Close modal
+                    closeModal('editModal');
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorNotification('Failed to update property: ' + error.message);
+            })
+            .finally(() => {
+                // Reset button state
+                saveButton.textContent = originalText;
+                saveButton.disabled = false;
+            });
+        }
+        
+        // Helper function to get CSRF token
+        function getCsrfToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return value;
+                }
+            }
+            // Fallback: get from meta tag if exists
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            return csrfMeta ? csrfMeta.getAttribute('content') : '';
+        }
+        
+        // Update property card in the UI after successful save
+        function updatePropertyCard(propertyId, propertyData) {
+            const propertyCard = document.querySelector(`[data-property-id="${propertyId}"]`).closest('.property-card');
+            if (propertyCard) {
+                // Update title
+                const titleElement = propertyCard.querySelector('.property-title');
+                if (titleElement) {
+                    titleElement.innerHTML = `<i class="fas fa-home"></i> ${propertyData.title}`;
+                }
+                
+                // Update price
+                const priceElement = propertyCard.querySelector('.property-price');
+                if (priceElement) {
+                    priceElement.textContent = `₹${parseInt(propertyData.price).toLocaleString('en-IN')}`;
+                }
+                
+                // Update location
+                const locationElement = propertyCard.querySelector('.property-location');
+                if (locationElement) {
+                    locationElement.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${propertyData.location}`;
+                }
+            }
+        }
+        
+        // Success notification
+        function showSuccessNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 2000;
+                font-weight: 500;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Error notification
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--error);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 2000;
+                font-weight: 500;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        // Analytics Function
+        function showAnalytics(propertyId, title) {
+            const analyticsContent = document.getElementById('analyticsContent');
+            const modalTitle = document.querySelector('#analyticsModal .modal-title');
+            
+            modalTitle.textContent = `Analytics: ${title}`;
+            
+            // Generate some demo analytics data
+            const views = Math.floor(Math.random() * 500) + 50;
+            const inquiries = Math.floor(Math.random() * 20) + 5;
+            const favorites = Math.floor(Math.random() * 15) + 2;
+            const score = Math.floor(Math.random() * 40) + 60;
+            
+            analyticsContent.innerHTML = `
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-value">${views}</div>
+                        <div class="analytics-label">Total Views</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value">${inquiries}</div>
+                        <div class="analytics-label">Inquiries</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value">${favorites}</div>
+                        <div class="analytics-label">Favorites</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value">${score}%</div>
+                        <div class="analytics-label">Performance Score</div>
+                    </div>
+                </div>
+                
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <h4>Views Over Time</h4>
+                    <p>Chart visualization would appear here<br>
+                    <small style="color: var(--text-muted);">Connect to analytics service for real data</small></p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <h5>Visitor Demographics</h5>
+                        <p>Age groups, locations, preferences</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <h5>Best Viewing Times</h5>
+                        <p>Peak hours: 2PM - 6PM<br>Weekend traffic: +45%</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('analyticsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(event.target.id);
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Property Action Event Listeners with Data Attributes
+        document.addEventListener('DOMContentLoaded', function() {
+            // View Property Details
+            document.querySelectorAll('.view-property').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const data = this.dataset;
+                    viewProperty(
+                        data.propertyId, 
+                        data.title, 
+                        data.description, 
+                        data.price, 
+                        data.area, 
+                        data.bedrooms, 
+                        data.bathrooms, 
+                        data.address, 
+                        data.city, 
+                        data.state, 
+                        data.amenities, 
+                        data.createdAt
+                    );
+                });
+            });
+
+            // Edit Property
+            document.querySelectorAll('.edit-property').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const data = this.dataset;
+                    editProperty(
+                        data.propertyId, 
+                        data.title, 
+                        data.description, 
+                        data.price, 
+                        data.area, 
+                        data.bedrooms, 
+                        data.bathrooms, 
+                        data.address, 
+                        data.city, 
+                        data.state, 
+                        data.amenities, 
+                        data.propertyType
+                    );
+                });
+            });
+
+            // Show Analytics
+            document.querySelectorAll('.show-analytics').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const data = this.dataset;
+                    showAnalytics(data.propertyId, data.title);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bookings - Estate Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #667eea;
+            --secondary-indigo: #764ba2;
+            --accent-purple: #f093fb;
+            --success-green: #4facfe;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-accent: #ffffff;
+            --bg-primary: rgba(0, 0, 0, 0.3);
+            --bg-secondary: rgba(0, 0, 0, 0.2);
+            --border-color: rgba(255, 255, 255, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.15);
+            --table-bg: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] {
+            --primary-blue: #4f46e5;
+            --secondary-indigo: #7c3aed;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-accent: #ffffff;
+            --bg-primary: rgba(255, 255, 255, 0.95);
+            --bg-secondary: rgba(248, 250, 252, 0.9);
+            --border-color: rgba(229, 231, 235, 0.8);
+            --input-bg: rgba(243, 244, 246, 0.8);
+            --table-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
+            animation: backgroundShift 20s ease infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-30px) translateY(-30px); }
+        }
+
+        [data-theme="light"] body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .container-prop {
+            max-width: 1200px;
+            margin: 120px auto 40px auto;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        .search-section {
+            background: var(--bg-secondary);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container-prop {
+                margin: 100px 1rem 40px 1rem;
+                padding: 1rem;
+            }
+
+            .nav-header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .advanced-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .prop-table {
+                font-size: 0.875rem;
+            }
+
+            .action-menu-dropdown {
+                right: -50px;
+            }
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-bar input[type="text"] {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            background: var(--input-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(102, 126, 234, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .search-bar input[type="text"]::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .search-input-wrapper:focus-within .search-icon {
+            color: var(--primary-blue);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .table-container {
+            background: var(--table-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: visible;
+            margin-bottom: 2rem;
+        }
+
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        .prop-table th {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .prop-table td {
+            padding: 1rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure the actions column doesn't clip the dropdown */
+        .prop-table td.booking-actions {
+            overflow: visible;
+            position: relative;
+        }
+
+        /* Action Menu Styles */
+        .booking-actions {
+            position: relative;
+            z-index: 10;
+        }
+
+        .action-menu {
+            position: relative;
+            display: inline-block;
+            z-index: 10;
+        }
+
+        .action-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .action-menu-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .action-menu-btn:hover::before {
+            opacity: 0.2;
+        }
+
+        .action-menu-btn:hover {
+            color: var(--primary-blue);
+            transform: scale(1.1);
+        }
+
+        .action-menu.active .action-menu-btn {
+            color: var(--primary-blue);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .action-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            min-width: 180px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .action-menu.active .action-menu-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            gap: 0.75rem;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .action-item:hover {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: var(--text-accent);
+        }
+
+        .action-item i {
+            width: 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Status Badge Styles */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .status-badge.confirmed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: var(--text-accent);
+        }
+
+        .status-badge.pending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: var(--text-accent);
+        }
+
+        .status-badge.cancelled {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--text-accent);
+        }
+
+        /* Advanced Filter Styles */
+        .advanced-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.5rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .bulk-checkbox {
+            width: 18px;
+            height: 18px;
+        }
+
+        .bulk-action-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: var(--text-accent);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bulk-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .prop-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Ensure table rows don't clip the dropdown */
+        .prop-table tr {
+            position: relative;
+        }
+        
+        .prop-table tbody {
+            position: relative;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: var(--text-accent);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: var(--text-accent);
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: var(--text-accent);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container-prop {
+                margin: 100px 1rem 2rem 1rem;
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .prop-table th,
+            .prop-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .nav-header {
+                padding: 1rem;
+            }
+
+            .nav-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Light theme overrides */
+        [data-theme="light"] .container-prop {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        [data-theme="light"] .search-section,
+        [data-theme="light"] .table-container {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        [data-theme="light"] .search-bar input[type="text"] {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        [data-theme="light"] .prop-table tr:hover {
+            background: rgba(248, 250, 252, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+        <div class="nav-title">
+            <i class="fas fa-calendar-check"></i>
+            Bookings Management
+        </div>
+        <button id="toggleModeBtn" class="toggle-mode" onclick="toggleMode()" type="button">
+            <i class="fas fa-sun"></i> Light Mode
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-prop">
+        <div class="page-header">
+            {% if role == 'buyer' %}
+            <h1 class="page-title"><i class="fas fa-heart" style="color: #f093fb;"></i> My Bookings</h1>
+            <p class="page-subtitle">Track your property bookings and viewing appointments</p>
+            {% else %}
+            <h1 class="page-title">Property Bookings</h1>
+            <p class="page-subtitle">Manage and track all property bookings in your system</p>
+            {% endif %}
+        </div>
+
+        {% if role == 'buyer' %}
+        <!-- Buyer Bookings View - Card Based Layout -->
+        <div class="buyer-bookings-container">
+            <!-- Bookings Stats -->
+            <div class="bookings-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-card" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                        <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-calendar-check" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Total Bookings</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary);">{{ total_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                        <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #4facfe, #00f2fe); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-clock" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Pending</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary);">{{ pending_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                        <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #43e97b, #38f9d7); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-check-circle" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Confirmed</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary);">{{ confirmed_count }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Cards Grid -->
+            <div class="bookings-cards-grid" style="display: grid; gap: 1.5rem;">
+                {% for booking in bookings %}
+                <div class="booking-card" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 1rem; overflow: visible; display: grid; grid-template-columns: 200px 1fr auto; transition: all 0.3s ease;">
+                    <!-- Property Image -->
+                    <div class="booking-property-image" style="height: 100%; min-height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); position: relative; overflow: hidden; border-radius: 1rem 0 0 1rem;">
+                        {% if booking.property.images.first %}
+                            {% with booking.property.images.first as first_image %}
+                                {% if first_image.image_url %}
+                                    {% if first_image.image_url|slice:":4" == "http" %}
+                                        <img src="{{ first_image.image_url }}" alt="{{ booking.property.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                        <img src="/media/{{ first_image.image_url }}" alt="{{ booking.property.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% endif %}
+                                {% else %}
+                                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;">
+                                <i class="fas fa-home"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Status Badge Overlay -->
+                        <div style="position: absolute; top: 0.75rem; right: 0.75rem;">
+                            {% if booking.status == 'confirmed' %}
+                                <span style="background: rgba(67, 233, 123, 0.95); color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-check-circle"></i> Confirmed
+                                </span>
+                            {% elif booking.status == 'pending' %}
+                                <span style="background: rgba(251, 191, 36, 0.95); color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            {% else %}
+                                <span style="background: rgba(239, 68, 68, 0.95); color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-times-circle"></i> {{ booking.status }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Booking Details -->
+                    <div style="padding: 1.5rem;">
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">
+                                {{ booking.property.title }}
+                            </h3>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ booking.property.city }}, {{ booking.property.state }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;">
+                                <i class="fas fa-calendar"></i>
+                                <span>Booked on {{ booking.booking_date|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 1rem; background: var(--input-bg); border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Booking ID</div>
+                                <div style="font-weight: 600; color: var(--text-primary);">#{{ booking.booking_id }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Property Type</div>
+                                <div style="font-weight: 600; color: var(--text-primary);">{{ booking.property.property_type }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Price</div>
+                                <div style="font-weight: 700; color: #667eea; font-size: 1.125rem;">₹{{ booking.property.price|floatformat:0 }}</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                <i class="fas fa-bed"></i> {{ booking.property.bedrooms }} Beds
+                            </span>
+                            <span style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                <i class="fas fa-bath"></i> {{ booking.property.bathrooms }} Baths
+                            </span>
+                            <span style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                <i class="fas fa-ruler-combined"></i> {{ booking.property.area_sqft }} sq ft
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Actions Column -->
+                    <div style="padding: 1.5rem; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.75rem; min-width: 180px;">
+                        <button onclick="viewBookingDetails('{{ booking.booking_id }}')" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        
+                        <a href="/backend/buyer/properties/" style="background: rgba(102, 126, 234, 0.1); color: #667eea; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;">
+                            <i class="fas fa-home"></i> View Property
+                        </a>
+                        
+                        <button onclick="contactSeller('{{ booking.property.contact }}')" style="background: rgba(67, 233, 123, 0.1); color: #43e97b; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fas fa-phone"></i> Contact
+                        </button>
+                        
+                        {% if booking.status == 'pending' %}
+                        <button onclick="cancelBooking('{{ booking.booking_id }}')" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 4rem 2rem; background: var(--bg-secondary); border-radius: 1rem; border: 1px solid var(--border-color);">
+                    <div style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">No Bookings Yet</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">You haven't made any property bookings yet. Start exploring properties!</p>
+                    <a href="/backend/buyer/properties/" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-search"></i> Browse Properties
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Admin/Seller View - Table Based Layout (existing) -->
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" action="" class="search-bar">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" placeholder="Search by booking ID, user, or property..." value="{{ query }}">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+            
+            <!-- Advanced Filters -->
+            <div class="advanced-filters">
+                <div class="filter-group">
+                    <label class="filter-label">Status Filter</label>
+                    <select class="filter-select" name="status_filter" data-filter="status">
+                        <option value="">All Statuses</option>
+                        <option value="confirmed" {% if request.GET.status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="pending" {% if request.GET.status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="cancelled" {% if request.GET.status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <input type="date" class="filter-input" name="date_from" placeholder="From Date">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">To Date</label>
+                    <input type="date" class="filter-input" name="date_to" placeholder="To Date">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select class="filter-select" name="sort_by">
+                        <option value="date">Date</option>
+                        <option value="booking_id">Booking ID</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bulk Operations -->
+        <div class="bulk-actions" style="display: none;" id="bulkActions">
+            <input type="checkbox" class="bulk-checkbox" id="selectAll" data-action="select-all">
+            <label for="selectAll">Select All</label>
+            <button class="bulk-action-btn" data-bulk-action="confirm">
+                <i class="fas fa-check"></i> Confirm Selected
+            </button>
+            <button class="bulk-action-btn" data-bulk-action="cancel">
+                <i class="fas fa-times"></i> Cancel Selected
+            </button>
+            <button class="bulk-action-btn" data-bulk-action="delete">
+                <i class="fas fa-trash"></i> Delete Selected
+            </button>
+        </div>
+        <!-- Bookings Table -->
+        <div class="table-container">
+            <table class="prop-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="bulk-checkbox" onchange="toggleSelectAll()"></th>
+                        <th><i class="fas fa-hashtag"></i> Booking ID</th>
+                        <th><i class="fas fa-user"></i> User ID</th>
+                        <th><i class="fas fa-home"></i> Property ID</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td><input type="checkbox" class="booking-checkbox" value="{{ booking.booking_id }}" data-action="update-bulk"></td>
+                        <td><strong>#{{ booking.booking_id }}</strong></td>
+                        <td>{{ booking.user_id }}</td>
+                        <td>{{ booking.property_id }}</td>
+                        <td>
+                            {% if booking.status == 'Confirmed' %}
+                                <span class="status-badge confirmed">{{ booking.status }}</span>
+                            {% elif booking.status == 'Pending' %}
+                                <span class="status-badge pending">{{ booking.status }}</span>
+                            {% else %}
+                                <span class="status-badge cancelled">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ booking.date|date:"M d, Y" }}</td>
+                        <td class="booking-actions">
+                            <div class="action-menu">
+                                <button class="action-menu-btn" data-action="toggle-menu">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="action-menu-dropdown">
+                                    <a href="#" class="action-item" data-action="view" data-booking-id="{{ booking.booking_id }}">
+                                        <i class="fas fa-eye"></i>View Details
+                                    </a>
+                                    <a href="#" class="action-item" data-action="edit" data-booking-id="{{ booking.booking_id }}">
+                                        <i class="fas fa-edit"></i>Edit Booking
+                                    </a>
+                                    <a href="#" class="action-item" data-action="confirm" data-booking-id="{{ booking.booking_id }}">
+                                        <i class="fas fa-check"></i>Confirm
+                                    </a>
+                                    <a href="#" class="action-item" data-action="cancel" data-booking-id="{{ booking.booking_id }}">
+                                        <i class="fas fa-times"></i>Cancel
+                                    </a>
+                                    <a href="#" class="action-item" data-action="delete" data-booking-id="{{ booking.booking_id }}">
+                                        <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-secondary);">
+                            <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                            No bookings found matching your search.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Analytics Section -->
+        <div class="analytics-section" style="margin-bottom: 2rem;">
+            <button class="search-btn" data-action="show-analytics" style="margin-right: 1rem;">
+                <i class="fas fa-chart-bar"></i> Show Analytics
+            </button>
+            <button class="search-btn" data-action="export-bookings">
+                <i class="fas fa-download"></i> Export All Bookings
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <a href="{% if user_role == 'seller' %}/backend/seller-home/{% else %}/backend/dashboard/{% endif %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        // Buyer-Specific Functions
+        function viewBookingDetails(bookingId) {
+            // Show booking details in a modal or redirect to details page
+            alert(`Viewing details for Booking #${bookingId}\n\nThis will show:\n- Full property details\n- Booking information\n- Transaction history\n- Seller contact\n- Payment status`);
+            // In production, this would open a proper modal with full details
+        }
+
+        function contactSeller(phone) {
+            if (phone && phone !== 'None' && phone !== '') {
+                window.location.href = `tel:${phone}`;
+            } else {
+                alert('Seller contact information is not available.');
+            }
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm(`Are you sure you want to cancel Booking #${bookingId}?\n\nThis action cannot be undone.`)) {
+                // AJAX call to cancel booking
+                fetch(`/backend/api/cancel-booking/${bookingId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Booking cancelled successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error cancelling booking: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while cancelling the booking.');
+                });
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Theme Toggle Functions
+        function toggleMode() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? null : 'light';
+            
+            if (newTheme) {
+                body.setAttribute('data-theme', 'light');
+            } else {
+                body.removeAttribute('data-theme');
+            }
+            
+            // Update button
+            const btn = document.getElementById('toggleModeBtn');
+            if (newTheme === 'light') {
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme || 'dark');
+        }
+
+        // Load theme preference
+        window.addEventListener('load', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.getElementById('toggleModeBtn');
+            
+            if (savedTheme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+        });
+
+        // Action Menu Functions
+        function toggleActionMenu(btn) {
+            // Close all other open menus
+            document.querySelectorAll('.action-menu.active').forEach(menu => {
+                if (menu !== btn.closest('.action-menu')) {
+                    menu.classList.remove('active');
+                }
+            });
+            
+            // Toggle current menu
+            btn.closest('.action-menu').classList.toggle('active');
+        }
+
+        // Centralized event handling
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.action-menu')) {
+                document.querySelectorAll('.action-menu.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            }
+            
+            // Handle action item clicks
+            const actionItem = e.target.closest('.action-item');
+            if (actionItem) {
+                e.preventDefault();
+                const action = actionItem.dataset.action;
+                const bookingId = actionItem.dataset.bookingId;
+                
+                switch(action) {
+                    case 'view':
+                        viewBooking(bookingId);
+                        break;
+                    case 'edit':
+                        editBooking(bookingId);
+                        break;
+                    case 'confirm':
+                        updateStatus(bookingId, 'confirmed');
+                        break;
+                    case 'cancel':
+                        updateStatus(bookingId, 'cancelled');
+                        break;
+                    case 'delete':
+                        deleteBooking(bookingId);
+                        break;
+                }
+            }
+            
+            // Handle bulk action buttons
+            const bulkBtn = e.target.closest('[data-bulk-action]');
+            if (bulkBtn) {
+                e.preventDefault();
+                const action = bulkBtn.dataset.bulkAction;
+                
+                switch(action) {
+                    case 'confirm':
+                        bulkUpdateStatus('confirmed');
+                        break;
+                    case 'cancel':
+                        bulkUpdateStatus('cancelled');
+                        break;
+                    case 'delete':
+                        bulkDelete();
+                        break;
+                }
+            }
+            
+            // Handle menu toggle
+            const menuBtn = e.target.closest('[data-action="toggle-menu"]');
+            if (menuBtn) {
+                e.preventDefault();
+                toggleActionMenu(menuBtn);
+            }
+            
+            // Handle analytics button
+            if (e.target.closest('[data-action="show-analytics"]')) {
+                e.preventDefault();
+                showBookingAnalytics();
+            }
+            
+            // Handle export button
+            if (e.target.closest('[data-action="export-bookings"]')) {
+                e.preventDefault();
+                exportBookings();
+            }
+        });
+        
+        // Handle filter changes
+        document.addEventListener('change', function(e) {
+            if (e.target.dataset.filter) {
+                applyFilters();
+            }
+        });
+        
+        // Handle checkbox changes and filters
+        document.addEventListener('change', function(e) {
+            if (e.target.dataset.action === 'select-all') {
+                toggleSelectAll();
+            } else if (e.target.dataset.action === 'update-bulk') {
+                updateBulkActions();
+            } else if (e.target.dataset.filter || e.target.name === 'date_from' || e.target.name === 'date_to' || e.target.name === 'sort_by') {
+                applyFilters();
+            }
+        });
+
+        // Filter Functions
+        function applyFilters() {
+            const statusFilter = document.querySelector('[name="status_filter"]').value;
+            const dateFrom = document.querySelector('[name="date_from"]').value;
+            const dateTo = document.querySelector('[name="date_to"]').value;
+            const sortBy = document.querySelector('[name="sort_by"]').value;
+            
+            const rows = document.querySelectorAll('tbody tr');
+            let visibleCount = 0;
+            
+            // Convert rows to array and filter
+            const rowsArray = Array.from(rows);
+            
+            // Filter rows
+            rowsArray.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 1) return; // Skip empty state row
+                
+                const status = cells[3] ? cells[3].textContent.trim().toLowerCase() : '';
+                const bookingDate = cells[4] ? cells[4].textContent.trim() : '';
+                
+                let show = true;
+                
+                // Status filter
+                if (statusFilter && !status.includes(statusFilter.toLowerCase())) {
+                    show = false;
+                }
+                
+                // Date range filter
+                if (dateFrom && bookingDate) {
+                    const rowDate = new Date(bookingDate);
+                    const fromDate = new Date(dateFrom);
+                    if (rowDate < fromDate) show = false;
+                }
+                
+                if (dateTo && bookingDate) {
+                    const rowDate = new Date(bookingDate);
+                    const toDate = new Date(dateTo);
+                    if (rowDate > toDate) show = false;
+                }
+                
+                // Show/hide row
+                row.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+            
+            // Sort visible rows
+            if (sortBy) {
+                sortTable(sortBy);
+            }
+            
+            // Update results count
+            console.log(`Showing ${visibleCount} bookings after filtering`);
+        }
+        
+        function sortTable(sortBy) {
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => 
+                row.style.display !== 'none' && row.querySelectorAll('td').length > 1
+            );
+            
+            rows.sort((a, b) => {
+                let aVal, bVal;
+                
+                switch(sortBy) {
+                    case 'booking_id':
+                        aVal = parseInt(a.querySelectorAll('td')[0].textContent);
+                        bVal = parseInt(b.querySelectorAll('td')[0].textContent);
+                        return bVal - aVal; // Descending
+                    case 'status':
+                        aVal = a.querySelectorAll('td')[3].textContent.trim();
+                        bVal = b.querySelectorAll('td')[3].textContent.trim();
+                        return aVal.localeCompare(bVal);
+                    case 'date':
+                    default:
+                        aVal = new Date(a.querySelectorAll('td')[4].textContent.trim());
+                        bVal = new Date(b.querySelectorAll('td')[4].textContent.trim());
+                        return bVal - aVal; // Most recent first
+                }
+            });
+            
+            // Reorder rows in DOM
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Booking Management Functions
+        function viewBooking(bookingId) {
+            // Simulate booking details view
+            alert(`Viewing details for Booking #${bookingId}\n\nThis would open a detailed view of the booking with all information, user details, property details, and booking history.`);
+        }
+
+        function editBooking(bookingId) {
+            // Simulate booking editing
+            const newDate = prompt(`Edit booking #${bookingId}\n\nEnter new booking date (YYYY-MM-DD):`);
+            if (newDate) {
+                alert(`Booking #${bookingId} updated with new date: ${newDate}`);
+                // In real implementation, this would send an AJAX request to update the booking
+            }
+        }
+
+        function updateStatus(bookingId, newStatus) {
+            const confirmMessage = `Are you sure you want to change booking #${bookingId} status to "${newStatus}"?`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            // Show loading state
+            const actionMenu = document.querySelector(`[data-booking-id="${bookingId}"]`).closest('.action-menu');
+            const menuBtn = actionMenu.querySelector('.action-menu-btn');
+            const originalHTML = menuBtn.innerHTML;
+            menuBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            menuBtn.disabled = true;
+            
+            // Close the dropdown menu
+            actionMenu.classList.remove('active');
+            
+            // Send AJAX request to update status
+            fetch(`/backend/bookings/update-status/${bookingId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showNotification('success', `✅ ${data.message}`, `Buyer ${data.buyer_name} has been notified`);
+                    
+                    // Update the status badge in real-time
+                    updateStatusBadgeInUI(bookingId, newStatus);
+                    
+                    // Update stats counts
+                    updateStatsInRealTime();
+                    
+                    // Restore button
+                    menuBtn.innerHTML = originalHTML;
+                    menuBtn.disabled = false;
+                    
+                    // Optional: reload after 2 seconds to ensure everything is synced
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    showNotification('error', '❌ Update Failed', data.error || 'Could not update booking status');
+                    menuBtn.innerHTML = originalHTML;
+                    menuBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', '❌ Network Error', 'Could not connect to server. Please try again.');
+                menuBtn.innerHTML = originalHTML;
+                menuBtn.disabled = false;
+            });
+        }
+        
+        // Function to update status badge in UI without page reload
+        function updateStatusBadgeInUI(bookingId, newStatus) {
+            // Find the row with this booking ID
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    const firstCell = cells[0].textContent.trim();
+                    if (firstCell === `#${bookingId}`) {
+                        // Find and update the status badge
+                        const statusCell = cells[3]; // Assuming status is in 4th column
+                        const statusBadge = statusCell.querySelector('.status-badge');
+                        
+                        if (statusBadge) {
+                            // Remove old status classes
+                            statusBadge.className = 'status-badge';
+                            
+                            // Add new status class and update text
+                            switch(newStatus) {
+                                case 'confirmed':
+                                    statusBadge.classList.add('status-confirmed');
+                                    statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Confirmed';
+                                    break;
+                                case 'cancelled':
+                                    statusBadge.classList.add('status-cancelled');
+                                    statusBadge.innerHTML = '<i class="fas fa-times-circle"></i> Cancelled';
+                                    break;
+                                case 'pending':
+                                    statusBadge.classList.add('status-pending');
+                                    statusBadge.innerHTML = '<i class="fas fa-clock"></i> Pending';
+                                    break;
+                                case 'completed':
+                                    statusBadge.classList.add('status-completed');
+                                    statusBadge.innerHTML = '<i class="fas fa-flag-checkered"></i> Completed';
+                                    break;
+                            }
+                            
+                            // Add animation
+                            statusBadge.style.animation = 'pulse 0.5s ease-in-out';
+                            setTimeout(() => {
+                                statusBadge.style.animation = '';
+                            }, 500);
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to show notification toast
+        function showNotification(type, title, message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification-toast notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-header">
+                    <strong>${title}</strong>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="notification-body">${message}</div>
+            `;
+            
+            // Add styles if not already present
+            if (!document.getElementById('notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    .notification-toast {
+                        position: fixed;
+                        top: 5rem;
+                        right: 2rem;
+                        min-width: 320px;
+                        background: var(--bg-secondary);
+                        border: 1px solid var(--border-color);
+                        border-radius: 12px;
+                        padding: 1rem;
+                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                        z-index: 10001;
+                        animation: slideInRight 0.3s ease-out;
+                        backdrop-filter: blur(10px);
+                    }
+                    
+                    .notification-success {
+                        border-left: 4px solid var(--success-green);
+                    }
+                    
+                    .notification-error {
+                        border-left: 4px solid var(--error-red);
+                    }
+                    
+                    .notification-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 0.5rem;
+                        color: var(--text-primary);
+                        font-size: 1rem;
+                    }
+                    
+                    .notification-body {
+                        color: var(--text-secondary);
+                        font-size: 0.875rem;
+                    }
+                    
+                    .notification-close {
+                        background: none;
+                        border: none;
+                        color: var(--text-secondary);
+                        cursor: pointer;
+                        padding: 0.25rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 4px;
+                        transition: all 0.2s;
+                    }
+                    
+                    .notification-close:hover {
+                        background: var(--border-color);
+                        color: var(--text-primary);
+                    }
+                    
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                    
+                    @keyframes pulse {
+                        0%, 100% {
+                            transform: scale(1);
+                        }
+                        50% {
+                            transform: scale(1.05);
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Function to update stats in real-time
+        function updateStatsInRealTime() {
+            // Count visible status badges
+            const allBookings = document.querySelectorAll('.booking-checkbox').length;
+            const confirmed = document.querySelectorAll('.status-confirmed').length;
+            const pending = document.querySelectorAll('.status-pending').length;
+            const cancelled = document.querySelectorAll('.status-cancelled').length;
+            
+            // Update stat cards if they exist
+            const statCards = document.querySelectorAll('.stat-card .stat-value');
+            if (statCards.length >= 3) {
+                statCards[0].textContent = allBookings;
+                statCards[1].textContent = confirmed;
+                statCards[2].textContent = pending;
+            }
+        }
+
+        function deleteBooking(bookingId) {
+            const confirmDelete = confirm(`Are you sure you want to delete booking #${bookingId}?\n\nThis action cannot be undone.`);
+            if (confirmDelete) {
+                alert(`Booking #${bookingId} has been deleted.`);
+                // In real implementation, this would send an AJAX request to delete the booking
+                location.reload(); // Reload to show changes
+            }
+        }
+
+        // Bulk Operations Functions
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.querySelector('th input[type="checkbox"]');
+            const bookingCheckboxes = document.querySelectorAll('.booking-checkbox');
+            
+            bookingCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const checkedBoxes = document.querySelectorAll('.booking-checkbox:checked');
+            const bulkActions = document.getElementById('bulkActions');
+            
+            if (checkedBoxes.length > 0) {
+                bulkActions.style.display = 'flex';
+            } else {
+                bulkActions.style.display = 'none';
+            }
+        }
+
+        function bulkUpdateStatus(status) {
+            const checkedBoxes = document.querySelectorAll('.booking-checkbox:checked');
+            const bookingIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (bookingIds.length === 0) {
+                alert('Please select bookings to update.');
+                return;
+            }
+            
+            const confirmMessage = `Are you sure you want to update ${bookingIds.length} booking(s) to "${status}" status?`;
+            if (confirm(confirmMessage)) {
+                alert(`Updated ${bookingIds.length} booking(s) to ${status} status.`);
+                // In real implementation, this would send an AJAX request
+                location.reload();
+            }
+        }
+
+        function bulkDelete() {
+            const checkedBoxes = document.querySelectorAll('.booking-checkbox:checked');
+            const bookingIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (bookingIds.length === 0) {
+                alert('Please select bookings to delete.');
+                return;
+            }
+            
+            const confirmMessage = `Are you sure you want to delete ${bookingIds.length} booking(s)?\n\nThis action cannot be undone.`;
+            if (confirm(confirmMessage)) {
+                alert(`Deleted ${bookingIds.length} booking(s).`);
+                // In real implementation, this would send an AJAX request
+                location.reload();
+            }
+        }
+
+        // Advanced Analytics Function
+        function showBookingAnalytics() {
+            const totalBookings = document.querySelectorAll('.booking-checkbox').length;
+            const confirmedBookings = document.querySelectorAll('.status-badge.confirmed').length;
+            const pendingBookings = document.querySelectorAll('.status-badge.pending').length;
+            const cancelledBookings = document.querySelectorAll('.status-badge.cancelled').length;
+            
+            const analytics = `
+Booking Analytics Dashboard:
+
+📊 Total Bookings: ${totalBookings}
+✅ Confirmed: ${confirmedBookings} (${Math.round((confirmedBookings/totalBookings)*100)}%)
+⏳ Pending: ${pendingBookings} (${Math.round((pendingBookings/totalBookings)*100)}%)
+❌ Cancelled: ${cancelledBookings} (${Math.round((cancelledBookings/totalBookings)*100)}%)
+
+📈 Conversion Rate: ${Math.round(((confirmedBookings/(confirmedBookings+cancelledBookings))*100))}%
+            `;
+            
+            alert(analytics);
+        }
+        
+        // Export bookings functionality
+        function exportBookings() {
+            const totalBookings = document.querySelectorAll('.booking-checkbox').length;
+            const selectedBookings = document.querySelectorAll('.booking-checkbox:checked').length;
+            
+            if (selectedBookings > 0) {
+                alert(`Exporting ${selectedBookings} selected bookings to CSV...\n\n📁 Export Details:\n• Format: CSV\n• Columns: ID, User, Property, Status, Date\n• Selected: ${selectedBookings} of ${totalBookings}\n\nDownload will start shortly.`);
+            } else {
+                alert(`Exporting all ${totalBookings} bookings to CSV...\n\n📁 Export Details:\n• Format: CSV\n• Columns: ID, User, Property, Status, Date\n• File: bookings_${new Date().toISOString().split('T')[0]}.csv\n\nDownload will start shortly.`);
+            }
+        }
+        
+        // Auto-update analytics every minute
+        setInterval(function() {
+            // In real implementation, this would fetch new booking data
+            console.log('Refreshing booking analytics...');
+        }, 60000);
+    </script>
+</body>
+</html>

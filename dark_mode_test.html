@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode, body:not(.light-mode) {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #23243a 100%);
+            color: #e8e8e8;
+        }
+        
+        body.light-mode {
+            background: linear-gradient(135deg, #eaf0fa 0%, #c9d6e3 100%);
+            color: #2d3142;
+        }
+        
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .toggle-btn, body:not(.light-mode) .toggle-btn {
+            background: rgba(100,181,246,0.15);
+            color: #64b5f6;
+            border: 1.5px solid rgba(100,181,246,0.3);
+        }
+        
+        body.light-mode .toggle-btn {
+            background: rgba(255,255,255,0.9);
+            color: #4f5d75;
+            border: 1.5px solid rgba(79,93,117,0.2);
+        }
+    </style>
+</head>
+<body>
+    <button id="toggleModeBtn" class="toggle-btn" onclick="toggleMode()">🌞 Light Mode</button>
+    <h1>Profile Dark Mode Test</h1>
+    <p>This simulates the dark mode functionality implemented in the profile page.</p>
+    <p>Default: Dark Mode | Toggle Available: Light Mode</p>
+    
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            const btn = document.getElementById('toggleModeBtn');
+            
+            if(body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                btn.innerHTML = '🌙 Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                btn.innerHTML = '🌞 Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        window.onload = function() {
+            if(localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                const btn = document.getElementById('toggleModeBtn');
+                if(btn) btn.innerHTML = '🌙 Dark Mode';
+            } else {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                const btn = document.getElementById('toggleModeBtn');
+                if(btn) btn.innerHTML = '🌞 Light Mode';
+                if(!localStorage.getItem('theme')) {
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

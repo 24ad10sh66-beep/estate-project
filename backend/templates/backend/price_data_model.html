@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Price Data - Estate Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #667eea;
+            --secondary-indigo: #764ba2;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-accent: #ffffff;
+            --bg-primary: rgba(255, 255, 255, 0.15);
+            --bg-secondary: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        [data-theme="light"] {
+            --primary-blue: #4f46e5;
+            --secondary-indigo: #7c3aed;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-accent: #ffffff;
+            --bg-primary: rgba(255, 255, 255, 0.9);
+            --bg-secondary: rgba(248, 250, 252, 0.8);
+            --border-color: rgba(229, 231, 235, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 70%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+            animation: backgroundShift 30s ease infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+            50% { transform: translateX(-15px) translateY(-15px) rotate(180deg); }
+        }
+
+        [data-theme="light"] body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 120px auto 40px auto;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: relative;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .search-section {
+            background: var(--bg-secondary);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            min-width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 1);
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            pointer-events: none;
+            z-index: 1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .search-input-wrapper:focus-within .search-icon {
+            transform: translateY(-50%) scale(1.1);
+            color: var(--primary-blue);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            border: none;
+            padding: 1rem 1.75rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .table-container {
+            background: var(--table-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Analytics Dashboard Styles */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .analytics-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .analytics-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .analytics-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .change-positive {
+            color: var(--success-green);
+        }
+
+        .change-negative {
+            color: #ef4444;
+        }
+
+        /* Advanced Filter Styles */
+        .advanced-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.5rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* Price Trend Visualization */
+        .price-trend {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .trend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .trend-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .trend-period {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .period-btn {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .period-btn.active, .period-btn:hover {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 100px 1rem 40px 1rem;
+                padding: 1rem;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .advanced-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .trend-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        td {
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .price-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Light theme overrides */
+        [data-theme="light"] .container {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        [data-theme="light"] .search-section,
+        [data-theme="light"] .table-container {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+        <div class="nav-title">
+            <i class="fas fa-chart-line"></i>
+            Price Data Analytics
+        </div>
+        <button class="toggle-mode" onclick="toggleDarkMode()">
+            <i class="fas fa-sun"></i> Light Mode
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Property Price Data</h1>
+            <p class="page-subtitle">Comprehensive pricing analytics and market data insights</p>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="analytics-title">Total Properties</div>
+                </div>
+                <div class="analytics-value">{{ total_properties|default:"0" }}</div>
+                <div class="analytics-change change-positive">
+                    <i class="fas fa-arrow-up"></i>
+                    +12% from last month
+                </div>
+            </div>
+            
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="analytics-title">Average Price</div>
+                </div>
+                <div class="analytics-value">₹{{ avg_price|default:"0"|floatformat:0 }}</div>
+                <div class="analytics-change change-positive">
+                    <i class="fas fa-arrow-up"></i>
+                    +8.5% from last month
+                </div>
+            </div>
+            
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="analytics-title">Price per Sqft</div>
+                </div>
+                <div class="analytics-value">₹{{ price_per_sqft|default:"0"|floatformat:0 }}</div>
+                <div class="analytics-change change-negative">
+                    <i class="fas fa-arrow-down"></i>
+                    -2.1% from last month
+                </div>
+            </div>
+            
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <div class="analytics-title">Market Trend</div>
+                </div>
+                <div class="analytics-value">Bullish</div>
+                <div class="analytics-change change-positive">
+                    <i class="fas fa-arrow-up"></i>
+                    Strong growth expected
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Trend Analysis -->
+        <div class="price-trend">
+            <div class="trend-header">
+                <div class="trend-title">
+                    <i class="fas fa-chart-area"></i>
+                    Price Trend Analysis
+                </div>
+                <div class="trend-period">
+                    <button class="period-btn active" data-period="7d">7D</button>
+                    <button class="period-btn" data-period="1m">1M</button>
+                    <button class="period-btn" data-period="3m">3M</button>
+                    <button class="period-btn" data-period="1y">1Y</button>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>Price trend visualization would be displayed here</p>
+                <p style="font-size: 0.875rem; margin-top: 0.5rem;">Integration with Chart.js or similar library recommended</p>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <form method="get" class="search-bar">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" placeholder="Search by Price ID, Location, or Property Type..." value="{{ query }}">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+            
+            <!-- Advanced Analytics Filters -->
+            <div class="advanced-filters">
+                <div class="filter-group">
+                    <label class="filter-label">Property Type</label>
+                    <select class="filter-select" name="property_type">
+                        <option value="">All Types</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="villa">Villa</option>
+                        <option value="house">House</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Price Range</label>
+                    <select class="filter-select" name="price_range">
+                        <option value="">All Ranges</option>
+                        <option value="0-50">₹0 - ₹50L</option>
+                        <option value="50-100">₹50L - ₹1Cr</option>
+                        <option value="100-200">₹1Cr - ₹2Cr</option>
+                        <option value="200+">₹2Cr+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Area Range (sqft)</label>
+                    <select class="filter-select" name="area_range">
+                        <option value="">All Areas</option>
+                        <option value="0-1000">0 - 1000</option>
+                        <option value="1000-2000">1000 - 2000</option>
+                        <option value="2000-3000">2000 - 3000</option>
+                        <option value="3000+">3000+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <input type="text" class="filter-input" name="location" placeholder="Enter location">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select class="filter-select" name="sort_by">
+                        <option value="price_desc">Price (High to Low)</option>
+                        <option value="price_asc">Price (Low to High)</option>
+                        <option value="area_desc">Area (Large to Small)</option>
+                        <option value="area_asc">Area (Small to Large)</option>
+                        <option value="price_per_sqft">Price per Sqft</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Quick Actions</label>
+                    <button type="button" class="search-btn" data-action="generate-report" style="width: 100%; margin-top: 0.25rem;">
+                        <i class="fas fa-file-pdf"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+        </div>
+            <form method="get" class="search-bar">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" placeholder="Search by Price ID, Location, or Property Type..." value="{{ query }}">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-expand-arrows-alt"></i> Area (sqft)</th>
+                        <th><i class="fas fa-bed"></i> Bedrooms</th>
+                        <th><i class="fas fa-bath"></i> Bathrooms</th>
+                        <th><i class="fas fa-home"></i> Type</th>
+                        <th><i class="fas fa-rupee-sign"></i> Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for price in price_data_model %}
+                    <tr>
+                        <td><strong>#{{ price.data_id }}</strong></td>
+                        <td>{{ price.location }}</td>
+                        <td>{{ price.area_sqft|floatformat:0 }} sqft</td>
+                        <td>{{ price.bedrooms }}</td>
+                        <td>{{ price.bathrooms }}</td>
+                        <td>{{ price.property_type }}</td>
+                        <td class="price-cell">₹{{ price.actual_price|floatformat:0 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-secondary);">
+                            <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                            No price data found matching your search.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="/backend/dashboard/" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        // Theme Toggle Functions
+        function toggleDarkMode() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? null : 'light';
+            
+            if (newTheme) {
+                body.setAttribute('data-theme', 'light');
+            } else {
+                body.removeAttribute('data-theme');
+            }
+            
+            // Update button
+            const btn = document.querySelector('.toggle-mode');
+            if (newTheme === 'light') {
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme || 'dark');
+        }
+
+        // Load theme preference
+        window.addEventListener('load', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.querySelector('.toggle-mode');
+            
+            if (savedTheme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+        });
+
+        // Event delegation for price data interactions
+        document.addEventListener('click', function(e) {
+            // Handle period buttons
+            const periodBtn = e.target.closest('[data-period]');
+            if (periodBtn) {
+                e.preventDefault();
+                updateTrend(periodBtn.dataset.period, periodBtn);
+            }
+            
+            // Handle generate report button
+            if (e.target.closest('[data-action="generate-report"]')) {
+                e.preventDefault();
+                generatePriceReport();
+            }
+        });
+        
+        // Price Trend Analysis Functions
+        function updateTrend(period, buttonElement) {
+            // Update active period button
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            if (buttonElement) buttonElement.classList.add('active');
+            
+            // Simulate trend data update
+            const trendData = {
+                '7d': { change: '+2.3%', direction: 'up', description: '7-day price trend showing steady growth' },
+                '1m': { change: '+8.5%', direction: 'up', description: 'Monthly growth with strong market demand' },
+                '3m': { change: '+12.7%', direction: 'up', description: 'Quarterly performance exceeding expectations' },
+                '1y': { change: '+28.4%', direction: 'up', description: 'Annual growth indicating robust market health' }
+            };
+            
+            const data = trendData[period];
+            alert(`Price Trend Analysis - ${period.toUpperCase()}\n\n📈 Change: ${data.change}\n📊 Direction: ${data.direction}\n📝 Analysis: ${data.description}\n\nIn a real implementation, this would update the chart visualization.`);
+        }
+
+        // Advanced Analytics Functions
+        function generatePriceReport() {
+            const totalProperties = document.querySelectorAll('tbody tr').length - 1; // Exclude empty state
+            
+            if (totalProperties <= 0) {
+                alert('No data available to generate report.');
+                return;
+            }
+            
+            // Calculate analytics
+            let totalValue = 0;
+            let totalArea = 0;
+            const propertyTypes = {};
+            const locations = {};
+            
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) { // Skip empty state row
+                    const location = cells[1].textContent.trim();
+                    const area = parseFloat(cells[2].textContent.replace(' sqft', ''));
+                    const type = cells[5].textContent.trim();
+                    const price = parseFloat(cells[6].textContent.replace('₹', '').replace(/,/g, ''));
+                    
+                    if (!isNaN(price) && !isNaN(area)) {
+                        totalValue += price;
+                        totalArea += area;
+                        
+                        // Count by type
+                        propertyTypes[type] = (propertyTypes[type] || 0) + 1;
+                        
+                        // Count by location
+                        locations[location] = (locations[location] || 0) + 1;
+                    }
+                }
+            });
+            
+            const avgPrice = Math.round(totalValue / totalProperties);
+            const avgArea = Math.round(totalArea / totalProperties);
+            const pricePerSqft = Math.round(avgPrice / avgArea);
+            
+            const topType = Object.keys(propertyTypes).reduce((a, b) => propertyTypes[a] > propertyTypes[b] ? a : b, '');
+            const topLocation = Object.keys(locations).reduce((a, b) => locations[a] > locations[b] ? a : b, '');
+            
+            const report = `
+📊 COMPREHENSIVE PRICE ANALYSIS REPORT
+Generated on: ${new Date().toLocaleString()}
+
+🏠 PORTFOLIO OVERVIEW:
+• Total Properties Analyzed: ${totalProperties}
+• Total Portfolio Value: ₹${totalValue.toLocaleString()}
+• Average Property Value: ₹${avgPrice.toLocaleString()}
+• Average Area: ${avgArea.toLocaleString()} sqft
+• Average Price per Sqft: ₹${pricePerSqft.toLocaleString()}
+
+🎯 MARKET INSIGHTS:
+• Most Popular Property Type: ${topType} (${propertyTypes[topType]} properties)
+• Top Location: ${topLocation} (${locations[topLocation]} properties)
+• Price Range Spread: ₹${Math.min(...Object.keys(propertyTypes).map(t => totalValue/totalProperties)).toFixed(0)} - ₹${Math.max(...Object.keys(propertyTypes).map(t => totalValue/totalProperties)).toFixed(0)}
+
+📈 RECOMMENDATIONS:
+• Market Trend: Bullish (based on current data)
+• Investment Opportunity: High-growth potential in ${topLocation}
+• Price Optimization: Consider ${topType} properties for best ROI
+
+📋 REPORT DETAILS:
+This report would be exported as PDF with detailed charts, graphs, and market analysis in a real implementation.
+            `;
+            
+            alert(report);
+        }
+
+        // Advanced Search and Filter Functions
+        function applyAdvancedFilters() {
+            const form = document.querySelector('.search-section form');
+            const filters = {
+                property_type: document.querySelector('[name="property_type"]').value,
+                price_range: document.querySelector('[name="price_range"]').value,
+                area_range: document.querySelector('[name="area_range"]').value,
+                location: document.querySelector('[name="location"]').value,
+                sort_by: document.querySelector('[name="sort_by"]').value
+            };
+            
+            // In real implementation, this would update the table with filtered results
+            let filterSummary = 'Applied Filters:\n';
+            Object.keys(filters).forEach(key => {
+                if (filters[key]) {
+                    filterSummary += `• ${key.replace('_', ' ')}: ${filters[key]}\n`;
+                }
+            });
+            
+            if (filterSummary === 'Applied Filters:\n') {
+                filterSummary = 'No filters applied - showing all results';
+            }
+            
+            alert(filterSummary);
+        }
+
+        // Market Analysis Functions
+        function analyzeMarketTrends() {
+            const properties = document.querySelectorAll('tbody tr');
+            const analysisData = [];
+            
+            properties.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    analysisData.push({
+                        location: cells[1].textContent.trim(),
+                        area: parseFloat(cells[2].textContent.replace(' sqft', '')),
+                        bedrooms: parseInt(cells[3].textContent),
+                        bathrooms: parseInt(cells[4].textContent),
+                        type: cells[5].textContent.trim(),
+                        price: parseFloat(cells[6].textContent.replace('₹', '').replace(/,/g, ''))
+                    });
+                }
+            });
+            
+            if (analysisData.length === 0) {
+                alert('No data available for market analysis.');
+                return;
+            }
+            
+            // Perform market analysis
+            const locationAnalysis = {};
+            const typeAnalysis = {};
+            
+            analysisData.forEach(prop => {
+                if (!locationAnalysis[prop.location]) {
+                    locationAnalysis[prop.location] = { count: 0, totalPrice: 0, totalArea: 0 };
+                }
+                if (!typeAnalysis[prop.type]) {
+                    typeAnalysis[prop.type] = { count: 0, totalPrice: 0, totalArea: 0 };
+                }
+                
+                locationAnalysis[prop.location].count++;
+                locationAnalysis[prop.location].totalPrice += prop.price;
+                locationAnalysis[prop.location].totalArea += prop.area;
+                
+                typeAnalysis[prop.type].count++;
+                typeAnalysis[prop.type].totalPrice += prop.price;
+                typeAnalysis[prop.type].totalArea += prop.area;
+            });
+            
+            // Find best performing segments
+            const bestLocation = Object.keys(locationAnalysis).reduce((best, current) => {
+                const bestAvg = locationAnalysis[best].totalPrice / locationAnalysis[best].count;
+                const currentAvg = locationAnalysis[current].totalPrice / locationAnalysis[current].count;
+                return currentAvg > bestAvg ? current : best;
+            });
+            
+            const bestType = Object.keys(typeAnalysis).reduce((best, current) => {
+                const bestAvg = typeAnalysis[best].totalPrice / typeAnalysis[best].count;
+                const currentAvg = typeAnalysis[current].totalPrice / typeAnalysis[current].count;
+                return currentAvg > bestAvg ? current : best;
+            });
+            
+            const analysis = `
+🔍 ADVANCED MARKET ANALYSIS
+
+📍 LOCATION PERFORMANCE:
+• Best Performing Location: ${bestLocation}
+• Average Price: ₹${Math.round(locationAnalysis[bestLocation].totalPrice / locationAnalysis[bestLocation].count).toLocaleString()}
+• Properties Available: ${locationAnalysis[bestLocation].count}
+
+🏠 PROPERTY TYPE PERFORMANCE:
+• Best Performing Type: ${bestType}
+• Average Price: ₹${Math.round(typeAnalysis[bestType].totalPrice / typeAnalysis[bestType].count).toLocaleString()}
+• Properties Available: ${typeAnalysis[bestType].count}
+
+💡 MARKET INSIGHTS:
+• High-value locations show consistent premium pricing
+• ${bestType} properties demonstrate strong market demand
+• Price-per-sqft varies significantly by location and type
+• Investment recommendation: Focus on ${bestLocation} area for ${bestType} properties
+
+📊 TREND INDICATORS:
+• Market Sentiment: Positive
+• Growth Potential: High
+• Investment Risk: Moderate
+• Liquidity: Good
+            `;
+            
+            alert(analysis);
+        }
+
+        // Auto-refresh analytics every 5 minutes
+        setInterval(function() {
+            console.log('Refreshing price analytics data...');
+            // In real implementation, this would fetch updated analytics
+        }, 300000);
+        
+        // Add event listeners for filter changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSelects = document.querySelectorAll('.filter-select, .filter-input');
+            filterSelects.forEach(filter => {
+                filter.addEventListener('change', applyAdvancedFilters);
+            });
+        });
+    </script>
+</body>
+</html>

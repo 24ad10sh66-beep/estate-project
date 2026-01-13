@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller Dashboard - Estate Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Seller Theme Colors */
+            --primary-orange: #f97316;
+            --primary-orange-dark: #ea580c;
+            --primary-orange-light: #fb923c;
+            --secondary-yellow: #eab308;
+            --accent-amber: #f59e0b;
+            --success-green: #10b981;
+            --warning-red: #ef4444;
+            
+            /* Neutrals for both themes */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+        
+        /* Dark Theme Variables (Default) */
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4);
+        }
+        
+        /* Light Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+        /* Top Navigation */
+        .top-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .nav-brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        .search-box input {
+            background: var(--gray-50);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2), 0 4px 12px rgba(249, 115, 22, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            pointer-events: none;
+            z-index: 1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .search-box:focus-within i {
+            transform: scale(1.1);
+            color: var(--primary-orange);
+        }
+        
+        [data-theme="light"] .search-box input {
+            background: white;
+            border-color: var(--gray-300);
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-btn:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: var(--primary-orange);
+            color: white;
+            border-radius: 50%;
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+        
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--primary-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .user-avatar:hover {
+            border-color: var(--primary-orange);
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-avatar i {
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-yellow) 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, var(--secondary-yellow) 0%, var(--primary-orange) 100%);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-color: var(--primary-orange);
+        }
+        
+        [data-theme="light"] .theme-toggle:hover {
+            background: var(--gray-700);
+        }
+        
+        .theme-toggle i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle:hover i {
+            transform: rotate(180deg);
+        }
+        /* Dashboard Layout */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Quick Stats for Seller */
+        .seller-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            background: var(--primary-orange);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            font-size: 0.875rem;
+            color: var(--success-green);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Action Cards */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .action-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .action-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: var(--primary-orange);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--primary-orange);
+        }
+        
+        .action-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-content p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        .action-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .action-btn {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-orange-dark);
+        }
+        
+        .action-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        /* Messages Styling */
+        .messages-container {
+            max-width: 1400px;
+            margin: 1rem auto 0;
+            padding: 0 2rem;
+        }
+        
+        .message {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #c3e6cb;
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+            
+            .search-box {
+                min-width: 250px;
+            }
+            
+            .seller-stats {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .actions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 4rem;
+            }
+            
+            .search-box {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+                min-width: 100%;
+                max-width: 100%;
+            }
+            
+            .search-box input {
+                width: 100%;
+                padding: 0.75rem 1rem 0.75rem 2.75rem;
+                font-size: 0.9375rem;
+            }
+            
+            .search-box i {
+                left: 0.875rem;
+                font-size: 1rem;
+            }
+            
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .messages-container {
+                padding: 0 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .seller-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card,
+            .action-card {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-brand {
+                gap: 0.5rem;
+            }
+            
+            .nav-title {
+                font-size: 1rem;
+            }
+            
+            .nav-actions {
+                gap: 0.5rem;
+            }
+            
+            .user-avatar {
+                width: 1.75rem;
+                height: 1.75rem;
+            }
+            
+            .logout-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Panel -->
+    {% include 'backend/notification_component.html' %}
+    
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - Seller</div>
+        </div>
+        
+        <div class="nav-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search properties, bookings..." id="seller-search-input">
+            </div>
+            
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            
+            <button class="notification-btn" id="notificationBtn" onclick="toggleNotificationPanel()">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge" id="notificationBadge"></div>
+            </button>
+            
+            <a href="/backend/profile/" class="user-avatar" title="View Profile">
+                {% if user.profile_photo %}
+                    <img src="{{ user.profile_photo.url }}" alt="Profile Photo">
+                {% else %}
+                    <i class="fas fa-user-cog"></i>
+                {% endif %}
+            </a>
+            
+            <a href="/backend/logout/" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Seller Dashboard</h1>
+            <p class="page-subtitle">Manage your properties and track your business performance</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="seller-stats">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">My Properties</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.my_properties.count }}</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    {{ stats.my_properties.growth }}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Active Bookings</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.active_bookings.count }}</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    {{ stats.active_bookings.info }}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Monthly Revenue</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value">₹{% if stats.monthly_revenue.amount %}{{ stats.monthly_revenue.amount|floatformat:0 }}{% else %}0{% endif %}</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    {{ stats.monthly_revenue.growth }}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Property Views</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.property_views.count }}</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    {{ stats.property_views.growth }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="actions-grid">
+            <a href="/backend/seller/properties/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>My Properties</h3>
+                        <p>View and manage all your property listings</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.my_properties.count }} active listings</span>
+                    <div class="action-btn">
+                        Manage <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/seller/add-property/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Add New Property</h3>
+                        <p>Create a new property listing with photos and details</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">Easy listing process</span>
+                    <div class="action-btn">
+                        Add Property <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/seller/bookings/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Booking Requests</h3>
+                        <p>Review and manage property booking requests</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.active_bookings.count }} pending requests</span>
+                    <div class="action-btn">
+                        Review <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/seller/transactions/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Financial Records</h3>
+                        <p>Track your earnings and transaction history</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">₹{% if stats.monthly_revenue.amount %}{{ stats.monthly_revenue.amount|floatformat:0 }}{% else %}0{% endif %} this month</span>
+                    <div class="action-btn">
+                        View Details <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/property_images/html/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Property Gallery</h3>
+                        <p>Manage photos and media for your properties</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.images_uploaded }} images uploaded</span>
+                    <div class="action-btn">
+                        Browse <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/seller/logs/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Activity History</h3>
+                        <p>Track your recent activities and system events</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">Last activity: {{ stats.last_activity }}</span>
+                    <div class="action-btn">
+                        View Logs <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Estate Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                // Default dark theme
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            // Search functionality
+            const searchInput = document.getElementById('seller-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const searchTerm = this.value.trim();
+                        if (searchTerm) {
+                            // Redirect to seller properties page with search parameter
+                            window.location.href = `/backend/seller/properties/?q=${encodeURIComponent(searchTerm)}`;
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Smooth transitions for theme switching
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        
+        // ===========================
+        // NOTIFICATION SYSTEM
+        // ===========================
+        
+        // Load notifications on page load
+        loadNotifications();
+        // Refresh notifications every 30 seconds
+        setInterval(loadNotifications, 30000);
+        
+        function loadNotifications() {
+            fetch('/backend/api/notifications/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateNotificationBadge(data.unread_count);
+                        window.userNotifications = data.notifications;
+                    }
+                })
+                .catch(error => console.error('Error loading notifications:', error));
+        }
+        
+        function updateNotificationBadge(count) {
+            const badge = document.getElementById('notificationBadge');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function toggleNotificationPanel() {
+            const panel = document.getElementById('notificationPanel');
+            if (!panel) {
+                createNotificationPanel();
+            } else {
+                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+                if (panel.style.display === 'block') displayNotifications();
+            }
+        }
+        
+        function createNotificationPanel() {
+            const panel = document.createElement('div');
+            panel.id = 'notificationPanel';
+            panel.className = 'notification-panel';
+            panel.innerHTML = `
+                <div class="notification-panel-header">
+                    <h3><i class="fas fa-bell"></i> Notifications</h3>
+                    <div class="notification-panel-actions">
+                        <button onclick="markAllAsRead()" class="mark-all-read-btn" title="Mark all as read">
+                            <i class="fas fa-check-double"></i>
+                        </button>
+                        <button onclick="toggleNotificationPanel()" class="close-panel-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="notification-panel-body" id="notificationPanelBody">
+                    <div class="notification-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+            displayNotifications();
+        }
+        
+        function displayNotifications() {
+            const body = document.getElementById('notificationPanelBody');
+            const notifications = window.userNotifications || [];
+            
+            if (notifications.length === 0) {
+                body.innerHTML = `<div class="notification-empty"><i class="fas fa-bell-slash"></i><p>No notifications yet</p></div>`;
+                return;
+            }
+            
+            let html = '';
+            notifications.forEach(notif => {
+                const readClass = notif.is_read ? 'notification-read' : 'notification-unread';
+                const icon = getNotificationIcon(notif.type);
+                html += `
+                    <div class="notification-item ${readClass}" onclick="markNotificationAsRead(${notif.notification_id})">
+                        <div class="notification-icon ${notif.type}"><i class="${icon}"></i></div>
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time"><i class="fas fa-clock"></i> ${notif.time_ago}</div>
+                        </div>
+                        ${!notif.is_read ? '<div class="notification-unread-dot"></div>' : ''}
+                    </div>
+                `;
+            });
+            body.innerHTML = html;
+        }
+        
+        function getNotificationIcon(type) {
+            const icons = {
+                'booking_confirmed': 'fas fa-check-circle',
+                'booking_cancelled': 'fas fa-times-circle',
+                'booking_pending': 'fas fa-clock',
+                'booking_completed': 'fas fa-flag-checkered',
+                'payment_received': 'fas fa-money-check-alt',
+                'property_updated': 'fas fa-home',
+                'default': 'fas fa-info-circle'
+            };
+            return icons[type] || icons['default'];
+        }
+        
+        function markNotificationAsRead(notificationId) {
+            fetch(`/backend/api/notifications/${notificationId}/mark-read/`, {method: 'POST'})
+            .then(response => response.json())
+            .then(data => { if (data.success) { loadNotifications(); displayNotifications(); } })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function markAllAsRead() {
+            fetch('/backend/api/notifications/mark-all-read/', {method: 'POST'})
+            .then(response => response.json())
+            .then(data => { if (data.success) { loadNotifications(); displayNotifications(); alert(`✅ ${data.updated_count} notification(s) marked as read`); } })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('notificationPanel');
+            const btn = document.getElementById('notificationBtn');
+            if (panel && panel.style.display === 'block' && !panel.contains(event.target) && event.target !== btn && !btn.contains(event.target)) {
+                panel.style.display = 'none';
+            }
+        });
+    </script>
+    
+    <style>
+        .notification-panel{position:fixed;top:5rem;right:2rem;width:400px;max-width:calc(100vw - 4rem);max-height:600px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.4);z-index:10000;display:none;overflow:hidden;animation:slideInRight 0.3s ease-out;backdrop-filter:blur(20px)}@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}.notification-panel-header{background:linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-indigo) 100%);color:white;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1)}.notification-panel-header h3{margin:0;font-size:1.125rem;font-weight:600;display:flex;align-items:center;gap:0.5rem}.notification-panel-actions{display:flex;gap:0.5rem}.mark-all-read-btn,.close-panel-btn{background:rgba(255,255,255,0.2);border:none;color:white;width:2rem;height:2rem;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}.mark-all-read-btn:hover,.close-panel-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}.notification-panel-body{max-height:550px;overflow-y:auto;background:var(--bg-primary)}.notification-panel-body::-webkit-scrollbar{width:6px}.notification-panel-body::-webkit-scrollbar-track{background:var(--bg-secondary)}.notification-panel-body::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}.notification-item{padding:1rem 1.5rem;border-bottom:1px solid var(--border-color);cursor:pointer;transition:all 0.2s;display:flex;gap:1rem;position:relative}.notification-item:hover{background:var(--bg-secondary)}.notification-unread{background:rgba(59,130,246,0.05)}.notification-read{opacity:0.7}.notification-icon{width:2.5rem;height:2.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.125rem;color:white}.notification-icon.booking_confirmed{background:linear-gradient(135deg,var(--success-green),#059669)}.notification-icon.booking_cancelled{background:linear-gradient(135deg,var(--error-red),#dc2626)}.notification-icon.booking_pending{background:linear-gradient(135deg,var(--warning-orange),#d97706)}.notification-icon.booking_completed{background:linear-gradient(135deg,var(--accent-purple),#7c3aed)}.notification-icon.payment_received{background:linear-gradient(135deg,var(--success-green),#34d399)}.notification-icon.property_updated{background:linear-gradient(135deg,var(--primary-blue),var(--secondary-indigo))}.notification-content{flex:1}.notification-title{font-weight:600;font-size:0.9375rem;color:var(--text-primary);margin-bottom:0.25rem}.notification-message{font-size:0.875rem;color:var(--text-secondary);line-height:1.4;margin-bottom:0.5rem}.notification-time{font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:0.25rem}.notification-unread-dot{width:8px;height:8px;background:var(--primary-blue);border-radius:50%;position:absolute;top:1rem;right:1rem}.notification-empty,.notification-loading{padding:3rem 2rem;text-align:center;color:var(--text-secondary)}.notification-empty i,.notification-loading i{font-size:3rem;margin-bottom:1rem;opacity:0.3}.notification-empty p{margin:0;font-size:0.9375rem}@media (max-width:768px){.notification-panel{width:calc(100vw - 2rem);right:1rem;top:4.5rem}}
+    </style>
+    
+    <!-- AI Chatbot Widget -->
+    {% include 'backend/chatbot_widget.html' %}
+    
+</body>
+</html>

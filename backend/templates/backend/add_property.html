@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% if user_role == 'admin' %}Add Property - Admin Panel{% else %}Add Property - Estate Management{% endif %}</title>
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		:root {
+			--bg-primary: #0f172a;
+			--bg-secondary: #1e293b;
+			--bg-card: #1e293b;
+			--text-primary: #f1f5f9;
+			--text-secondary: #cbd5e1;
+			--text-muted: #64748b;
+			--accent: #3b82f6;
+			--accent-hover: #2563eb;
+			--border: #334155;
+			--border-light: #475569;
+			--success: #10b981;
+			--error: #ef4444;
+		}
+		body.light-mode {
+			--bg-primary: #f8fafc;
+			--bg-secondary: #ffffff;
+			--bg-card: #ffffff;
+			--text-primary: #1e293b;
+			--text-secondary: #475569;
+			--text-muted: #64748b;
+			--accent: #3b82f6;
+			--accent-hover: #2563eb;
+			--border: #e2e8f0;
+			--border-light: #cbd5e1;
+			--success: #10b981;
+			--error: #ef4444;
+		}
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background: var(--bg-primary);
+			color: var(--text-primary);
+			margin: 0;
+			min-height: 100vh;
+			position: relative;
+			line-height: 1.6;
+		}
+		.toggle-mode {
+			position: fixed;
+			top: 2rem;
+			right: 2rem;
+			background: var(--accent);
+			color: #ffffff;
+			border: none;
+			border-radius: 0.5rem;
+			padding: 0.75rem 1rem;
+			font-size: 0.875rem;
+			font-weight: 600;
+			cursor: pointer;
+			box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+			transition: all 0.2s ease-in-out;
+			z-index: 10;
+		}
+		.toggle-mode:hover {
+			background: var(--accent-hover);
+			transform: translateY(-1px);
+		}
+		.container {
+			max-width: 900px;
+			width: 100%;
+			margin: 2rem auto;
+			background: var(--bg-card);
+			border-radius: 1rem;
+			box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+			padding: 3rem;
+			border: 1px solid var(--border);
+			position: relative;
+			z-index: 1;
+		}
+		.back-link {
+			position: absolute;
+			top: 1.5rem;
+			left: 1.5rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: var(--text-muted);
+			text-decoration: none;
+			font-size: 0.875rem;
+			font-weight: 500;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			transition: all 0.2s;
+		}
+		.back-link:hover {
+			color: var(--text-primary);
+			background: var(--bg-secondary);
+		}
+		.form-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 1rem;
+			margin-bottom: 2rem;
+			padding-bottom: 1.5rem;
+			border-bottom: 1px solid var(--border);
+		}
+		.form-header i {
+			font-size: 2.5rem;
+			color: var(--accent);
+			background: rgba(59, 130, 246, 0.1);
+			border-radius: 50%;
+			padding: 1rem;
+			box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+		}
+		.form-header span {
+			font-size: 2.25rem;
+			font-weight: 700;
+			color: var(--text-primary);
+			letter-spacing: -0.025em;
+		}
+		form {
+			margin-top: 0;
+		}
+		.form-group {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
+		.form-group label {
+			display: block;
+			margin-bottom: 0.5rem;
+			color: var(--text-secondary);
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+		.form-group .input-icon {
+			position: absolute;
+			left: 1rem;
+			top: 2.5rem;
+			color: var(--text-muted);
+			font-size: 1.125rem;
+			opacity: 0.8;
+			pointer-events: none;
+			z-index: 2;
+		}
+		.form-group input,
+		.form-group textarea,
+		.form-group select {
+			width: 100%;
+			padding: 0.875rem 0.875rem 0.875rem 3rem;
+			border: 1px solid var(--border);
+			border-radius: 0.5rem;
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+			font-size: 0.875rem;
+			outline: none;
+			box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+			transition: all 0.2s ease-in-out;
+		}
+		.form-group input:focus,
+		.form-group textarea:focus,
+		.form-group select:focus {
+			border: 1px solid var(--accent);
+			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		}
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem;
+		}
+		.seller-selection {
+			background: rgba(59, 130, 246, 0.1);
+			border: 1px solid rgba(59, 130, 246, 0.3);
+			border-radius: 0.5rem;
+			padding: 1rem;
+			margin-bottom: 1.5rem;
+		}
+		.seller-selection label {
+			color: var(--accent);
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+		}
+		.seller-selection select {
+			background: var(--bg-card);
+			border: 1px solid var(--accent);
+		}
+		.amenities-section {
+			margin-bottom: 1.5rem;
+		}
+		.amenities-section > label {
+			color: var(--text-secondary);
+			font-size: 0.875rem;
+			font-weight: 600;
+			margin-bottom: 1rem;
+			display: block;
+		}
+		.amenities {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			gap: 1rem;
+			padding: 1rem;
+			background: var(--bg-primary);
+			border-radius: 0.5rem;
+			border: 1px solid var(--border);
+		}
+		.amenity-item {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			cursor: pointer;
+			padding: 0.5rem;
+			border-radius: 0.25rem;
+			transition: background 0.2s;
+			color: var(--text-primary);
+			font-weight: 500;
+		}
+		.amenity-item:hover {
+			background: var(--bg-secondary);
+		}
+		.amenity-item input[type="checkbox"] {
+			width: auto;
+			padding: 0;
+			margin: 0;
+		}
+		.file-input-container {
+			position: relative;
+			margin-bottom: 1.5rem;
+		}
+		.file-input {
+			position: relative;
+			display: inline-block;
+			cursor: pointer;
+			width: 100%;
+		}
+		.file-input input[type="file"] {
+			position: absolute;
+			opacity: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+		.file-input-label {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 1rem;
+			background: var(--bg-secondary);
+			border: 2px dashed var(--border);
+			border-radius: 0.5rem;
+			color: var(--text-secondary);
+			font-weight: 500;
+			transition: all 0.2s;
+		}
+		.file-input:hover .file-input-label {
+			border-color: var(--accent);
+			background: rgba(59, 130, 246, 0.05);
+		}
+		.form-actions {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-top: 2rem;
+			padding-top: 2rem;
+			border-top: 1px solid var(--border);
+		}
+		.btn {
+			flex: 1;
+			padding: 0.875rem 1.5rem;
+			border: none;
+			border-radius: 0.5rem;
+			font-size: 0.875rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+			box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+		}
+		.btn-primary {
+			background: var(--accent);
+			color: #ffffff;
+		}
+		.btn-primary:hover {
+			background: var(--accent-hover);
+			transform: translateY(-1px);
+			box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+		}
+		.btn-secondary {
+			background: #6b7280;
+			color: #ffffff;
+		}
+		.btn-secondary:hover {
+			background: #4b5563;
+		}
+		.messages {
+			margin-bottom: 1.5rem;
+		}
+		.message {
+			padding: 0.75rem 1rem;
+			border-radius: 0.5rem;
+			margin-bottom: 0.5rem;
+			font-weight: 500;
+		}
+		.message.success {
+			background: rgba(16, 185, 129, 0.1);
+			color: var(--success);
+			border: 1px solid rgba(16, 185, 129, 0.3);
+		}
+		.message.error {
+			background: rgba(239, 68, 68, 0.1);
+			color: var(--error);
+			border: 1px solid rgba(239, 68, 68, 0.3);
+		}
+		footer {
+			background: var(--bg-primary);
+			color: var(--text-muted);
+			text-align: center;
+			padding: 1.5rem 0;
+			font-size: 0.875rem;
+			letter-spacing: 0.025em;
+			margin-top: 2rem;
+			border-top: 1px solid var(--border);
+		}
+		@media (max-width: 768px) {
+			.container {
+				margin: 1rem;
+				padding: 1.5rem;
+			}
+			.form-row {
+				grid-template-columns: 1fr;
+			}
+			.amenities {
+				grid-template-columns: 1fr;
+			}
+			.toggle-mode {
+				top: 1rem;
+				right: 1rem;
+			}
+		}
+	</style>
+	<script>
+		function toggleMode() {
+			const body = document.body;
+			body.classList.toggle('light-mode');
+			const btn = document.getElementById('toggleModeBtn');
+			if(body.classList.contains('light-mode')) {
+				btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+			} else {
+				btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+			}
+			localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+		}
+		window.onload = function() {
+			// Load theme preference
+			if(localStorage.getItem('theme') === 'light') {
+				document.body.classList.add('light-mode');
+				const btn = document.getElementById('toggleModeBtn');
+				if(btn) { btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode'; }
+			}
+		}
+		function showImageDescriptions(input) {
+			const container = document.getElementById('image-descriptions');
+			container.innerHTML = '';
+			for (let i = 0; i < input.files.length; i++) {
+				const file = input.files[i];
+				const div = document.createElement('div');
+				div.className = 'form-group';
+				div.innerHTML = `
+					<label>Image Description for ${file.name}</label>
+					<span class="input-icon"><i class="fas fa-comment"></i></span>
+					<input type="text" name="image_descriptions" placeholder="Description for ${file.name}">
+				`;
+				container.appendChild(div);
+			}
+		}
+	</script>
+</head>
+<body>
+	<button id="toggleModeBtn" class="toggle-mode" onclick="toggleMode()">
+		<i class="fas fa-sun"></i> Light Mode
+	</button>
+	
+	<div class="container">
+		<a href="{% if user_role == 'admin' %}/backend/dashboard/{% else %}/backend/seller/properties/{% endif %}" class="back-link">
+			<i class="fas fa-arrow-left"></i>
+			{% if user_role == 'admin' %}Back to Dashboard{% else %}Back to Properties{% endif %}
+		</a>
+		
+		{% if messages %}
+			<div class="messages">
+				{% for message in messages %}
+					<div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+						{{ message }}
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		
+		<div class="form-header">
+			<i class="fas fa-plus-circle"></i>
+			<span>{% if user_role == 'admin' %}Add Property{% else %}Add Property{% endif %}</span>
+		</div>
+		
+		<form action="{% if user_role == 'admin' %}/backend/admin/add-property/{% else %}/backend/seller/add-property/{% endif %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			
+			{% if user_role == 'admin' %}
+			<!-- Admin Only: Seller Selection -->
+			<div class="seller-selection">
+				<label for="seller_id">Assign to Seller</label>
+				<span class="input-icon"><i class="fas fa-user-tie"></i></span>
+				<select id="seller_id" name="seller_id" required>
+					<option value="" selected disabled>Select a seller</option>
+					{% for seller in sellers %}
+						<option value="{{ seller.user_id }}">{{ seller.name }} - {{ seller.email }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			{% endif %}
+			
+			<div class="form-group">
+				<label for="title">Property Title</label>
+				<span class="input-icon"><i class="fas fa-heading"></i></span>
+				<input type="text" id="title" name="title" required placeholder="Enter property title">
+			</div>
+			
+			<div class="form-group">
+				<label for="description">Description</label>
+				<span class="input-icon"><i class="fas fa-align-left"></i></span>
+				<textarea id="description" name="description" rows="3" required placeholder="Enter property description"></textarea>
+			</div>
+			
+			<div class="form-group">
+				<label for="type">Property Type</label>
+				<span class="input-icon"><i class="fas fa-building"></i></span>
+				<select id="type" name="type" required>
+					<option value="" selected disabled>Select property type</option>
+					<option value="House">House</option>
+					<option value="Apartment">Apartment</option>
+					<option value="Plot">Plot</option>
+					<option value="Commercial">Commercial</option>
+				</select>
+			</div>
+			
+			<div class="form-row">
+				<div class="form-group">
+					<label for="city">City</label>
+					<span class="input-icon"><i class="fas fa-city"></i></span>
+					<input type="text" id="city" name="city" required placeholder="Enter city">
+				</div>
+				<div class="form-group">
+					<label for="state">State/Region</label>
+					<span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+					<input type="text" id="state" name="state" required placeholder="Enter state">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="address">Address/Location</label>
+				<span class="input-icon"><i class="fas fa-location-dot"></i></span>
+				<input type="text" id="address" name="address" required placeholder="Enter full address">
+			</div>
+			
+			<div class="form-row">
+				<div class="form-group">
+					<label for="price">Price (INR)</label>
+					<span class="input-icon"><i class="fas fa-indian-rupee-sign"></i></span>
+					<input type="number" id="price" name="price" min="0" required placeholder="Enter price">
+				</div>
+				<div class="form-group">
+					<label for="area">Area (sq ft)</label>
+					<span class="input-icon"><i class="fas fa-ruler-combined"></i></span>
+					<input type="number" id="area" name="area" min="0" required placeholder="Enter area">
+				</div>
+			</div>
+			
+			<div class="form-row">
+				<div class="form-group">
+					<label for="bedrooms">Bedrooms</label>
+					<span class="input-icon"><i class="fas fa-bed"></i></span>
+					<input type="number" id="bedrooms" name="bedrooms" min="0" required placeholder="Number of bedrooms">
+				</div>
+				<div class="form-group">
+					<label for="bathrooms">Bathrooms</label>
+					<span class="input-icon"><i class="fas fa-shower"></i></span>
+					<input type="number" id="bathrooms" name="bathrooms" min="0" required placeholder="Number of bathrooms">
+				</div>
+			</div>
+			
+			<div class="amenities-section">
+				<label>Amenities</label>
+				<div class="amenities">
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Parking">
+						<i class="fas fa-car"></i>
+						Parking
+					</label>
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Garden">
+						<i class="fas fa-seedling"></i>
+						Garden
+					</label>
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Lift">
+						<i class="fas fa-arrow-up"></i>
+						Lift
+					</label>
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Swimming Pool">
+						<i class="fas fa-swimmer"></i>
+						Swimming Pool
+					</label>
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Gym">
+						<i class="fas fa-dumbbell"></i>
+						Gym
+					</label>
+					<label class="amenity-item">
+						<input type="checkbox" name="amenities" value="Security">
+						<i class="fas fa-shield-alt"></i>
+						Security
+					</label>
+				</div>
+			</div>
+			
+			<div class="file-input-container">
+				<label for="images">Upload Images</label>
+				<div class="file-input">
+					<input type="file" id="images" name="images" accept="image/*" multiple required onchange="showImageDescriptions(this)">
+					<div class="file-input-label">
+						<i class="fas fa-cloud-upload-alt"></i>
+						Choose property images or drag and drop
+					</div>
+				</div>
+			</div>
+			
+			<div id="image-descriptions"></div>
+			
+			<div class="form-group">
+				<label for="contact">Contact Number</label>
+				<span class="input-icon"><i class="fas fa-phone"></i></span>
+				<input type="text" id="contact" name="contact" required placeholder="Enter contact number">
+			</div>
+			
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary">
+					<i class="fas fa-plus"></i>
+					Add Property
+				</button>
+				<button type="reset" class="btn btn-secondary">
+					<i class="fas fa-undo"></i>
+					Reset Form
+				</button>
+			</div>
+		</form>
+	</div>
+	
+	<footer>
+		&copy; 2025 Estate Management. All rights reserved.
+	</footer>
+</body>
+</html>

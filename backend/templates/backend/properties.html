@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Management - Estate Management System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Glassmorphism Color Palette */
+            --primary-solid: #667eea;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            
+            /* Glassmorphism Effects */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --backdrop-blur: blur(20px);
+        }
+        
+
+        
+        /* Dark Theme Variables (Default) - Complete Set */
+        :root {
+            --bg-primary: #0f0f23;
+            --bg-secondary: rgba(30, 30, 60, 0.8);
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #b8bcc8;
+            --text-muted: #6c7293;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+            
+            /* Missing Color Variables */
+            --primary-blue: #3b82f6;
+            --primary-blue-dark: #2563eb;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
+            --danger-color: #ef4444;
+            --secondary-indigo: #6366f1;
+            --gray-100: rgba(255, 255, 255, 0.1);
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        /* Light Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: rgba(255, 255, 255, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: rgba(0, 0, 0, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.1);
+            
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --success-green: #059669;
+            --warning-orange: #d97706;
+            --error-red: #dc2626;
+            --danger-color: #dc2626;
+            --secondary-indigo: #4f46e5;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ensure proper stacking context for dropdowns */
+        body * {
+            isolation: auto;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 0 2rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--glass-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .nav-brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-color: var(--primary-blue);
+        }
+        
+        .back-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: var(--primary-blue-dark);
+            transform: translateY(-1px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stat-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .stat-icon.blue { background: var(--primary-blue); }
+        .stat-icon.green { background: var(--success-green); }
+        .stat-icon.orange { background: var(--warning-orange); }
+        .stat-icon.purple { background: var(--secondary-indigo); }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        /* Search and Filter Section */
+        .search-filter-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 12px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .search-box:focus-within i {
+            color: var(--primary-blue);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .search-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-btn:hover {
+            background: var(--primary-blue-dark);
+        }
+        
+        .add-property-btn {
+            background: linear-gradient(135deg, var(--success-green) 0%, #34d399 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .add-property-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, var(--success-green) 100%);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Properties Grid */
+        .properties-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            overflow: visible;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .properties-grid {
+            display: grid;
+            gap: 1px;
+            background: var(--border-color);
+            overflow: visible;
+            position: relative;
+        }
+        
+        /* Table Header */
+        .grid-header {
+            display: grid;
+            grid-template-columns: 40px 60px 80px 1fr 1fr 120px 100px 100px 100px 100px 150px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+        
+        .grid-header > div {
+            padding: 0.75rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Property Row */
+        .property-row {
+            display: grid;
+            grid-template-columns: 40px 60px 80px 1fr 1fr 120px 100px 100px 100px 100px 150px;
+            background: var(--bg-card);
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .property-row:hover {
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .property-row > div {
+            padding: 1rem 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        
+        .property-id {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .user-id {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .property-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .property-description {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .property-location {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .property-price {
+            font-weight: 600;
+            color: var(--success-green);
+            font-size: 0.875rem;
+        }
+        
+        .property-type {
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .property-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .status-Available {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-Sold {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .status-Pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .property-date {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Action Menu Styles */
+        .property-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .action-menu {
+            position: relative;
+        }
+
+        .action-menu-btn {
+            background: rgba(129, 140, 248, 0.2);
+            border: 2px solid rgba(129, 140, 248, 0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-menu-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(129, 140, 248, 0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .action-menu-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .action-menu-btn:hover {
+            background: rgba(129, 140, 248, 0.5);
+            border-color: rgba(129, 140, 248, 0.7);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 
+                0 8px 25px rgba(129, 140, 248, 0.4),
+                0 0 20px rgba(129, 140, 248, 0.3);
+        }
+
+        .action-menu.active .action-menu-btn {
+            background: rgba(129, 140, 248, 0.8);
+            border-color: rgba(129, 140, 248, 0.9);
+            color: white;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 
+                0 8px 25px rgba(129, 140, 248, 0.5),
+                0 0 20px rgba(129, 140, 248, 0.4);
+        }
+
+        .action-menu-dropdown {
+            position: fixed !important;
+            background: rgba(15, 15, 30, 0.98) !important;
+            backdrop-filter: blur(30px) !important;
+            border: 2px solid rgba(129, 140, 248, 0.9) !important;
+            border-radius: 12px;
+            width: 200px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.95),
+                0 0 40px rgba(129, 140, 248, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px) scale(0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 99999 !important;
+            padding: 12px !important;
+            pointer-events: auto !important;
+        }
+
+        .action-menu.active .action-menu-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            animation: dropdownAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 99999 !important;
+        }
+
+        @keyframes dropdownAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.8);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(5px) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .action-menu {
+            position: relative !important;
+            display: inline-block;
+            z-index: 99998 !important;
+            overflow: visible !important;
+        }
+
+        .property-actions {
+            position: relative !important;
+            z-index: 99998 !important;
+            overflow: visible !important;
+        }
+
+        /* Prevent any container from clipping dropdowns */
+        .container,
+        .row,
+        .col,
+        .col-md-12,
+        .card,
+        .card-body,
+        .table-responsive,
+        tbody,
+        tr,
+        td {
+            overflow: visible !important;
+            position: static !important;
+        }
+
+        /* Ensure table and card containers don't clip */
+        .table-container,
+        .properties-table,
+        .property-row {
+            overflow: visible !important;
+            position: relative;
+            z-index: auto;
+        }
+
+        /* Backdrop effect when menu is active */
+        .action-menu.active::after {
+            content: '';
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.3) !important;
+            backdrop-filter: blur(4px) !important;
+            z-index: 99997 !important;
+            animation: backdropFade 0.3s ease;
+            pointer-events: none !important;
+            display: block !important;
+        }
+
+        @keyframes backdropFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            color: #f8fafc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            margin: 3px 0;
+            cursor: pointer;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            width: calc(100% - 6px);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-item:hover::before {
+            left: 100%;
+        }
+
+        .action-item:hover {
+            background: rgba(129, 140, 248, 0.25);
+            color: #c7d2fe;
+            transform: translateX(6px) scale(1.02);
+            box-shadow: 
+                0 6px 20px rgba(129, 140, 248, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .action-item.delete-property:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fecaca;
+            transform: translateX(6px) scale(1.02);
+            box-shadow: 
+                0 6px 20px rgba(239, 68, 68, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .action-item.delete-property::before {
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.2), transparent);
+        }
+
+        .action-item i {
+            width: 18px;
+            height: 18px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Checkbox Styles */
+        .property-checkbox, #selectAll {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-solid);
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            box-shadow: var(--glass-shadow);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+        }
+        
+        .modal-content {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            background: var(--glass-bg);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: var(--danger-gradient);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Property Detail Grid */
+        .property-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-detail-item {
+            background: var(--glass-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .property-detail-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Enhanced Property Details Container with Image */
+        .property-details-container {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .property-image-section {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .property-image-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        .property-image:hover {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.3) 0%,
+                transparent 30%,
+                transparent 70%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+        }
+
+        .price-badge {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+            align-self: flex-start;
+        }
+
+        .status-badge-overlay {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            align-self: flex-end;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-badge-overlay.status-Available {
+            background: rgba(16, 185, 129, 0.8);
+            color: white;
+        }
+
+        .status-badge-overlay.status-Sold {
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+        }
+
+        .status-badge-overlay.status-Pending {
+            background: rgba(245, 158, 11, 0.8);
+            color: white;
+        }
+
+        .property-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .detail-section h3 {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-section h3 i {
+            color: var(--primary-blue);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-item.full-width {
+            grid-column: span 2;
+        }
+
+        .detail-item label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-item label i {
+            width: 1rem;
+            text-align: center;
+            color: var(--primary-blue);
+        }
+
+        .detail-item span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .amenity-tag {
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .property-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .property-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--primary-blue);
+        }
+
+        /* Image Management Styles for Edit Modal */
+        .image-management-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .current-image-container,
+        .new-image-preview {
+            margin: 1rem 0;
+        }
+
+        .current-image-preview,
+        .new-image-preview {
+            position: relative;
+            display: inline-block;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            background: var(--bg-secondary);
+        }
+
+        .preview-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+            border-radius: 0.5rem;
+        }
+
+        .image-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 0.5rem;
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .current-image-preview:hover .image-actions,
+        .new-image-preview:hover .image-actions {
+            opacity: 1;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .image-upload-container {
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .upload-label:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-info {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-info small {
+            font-size: 0.75rem;
+        }
+
+        /* Responsive Design for Property Details */
+        @media (max-width: 1024px) {
+            .property-details-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .property-image-container {
+                height: 250px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-item.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .property-details-container {
+                gap: 1rem;
+            }
+
+            .property-image-container {
+                height: 200px;
+            }
+
+            .detail-section {
+                padding: 1rem;
+            }
+
+            .property-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .search-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .grid-header,
+            .property-row {
+                grid-template-columns: 50px 1fr 100px 80px 100px;
+                font-size: 0.8rem;
+            }
+            
+            .grid-header > div:nth-child(3),
+            .grid-header > div:nth-child(4),
+            .grid-header > div:nth-child(6),
+            .grid-header > div:nth-child(7),
+            .property-row > div:nth-child(3),
+            .property-row > div:nth-child(4),
+            .property-row > div:nth-child(6),
+            .property-row > div:nth-child(7) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 4rem;
+            }
+            
+            .nav-actions {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+                justify-content: space-between;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-header,
+            .property-row {
+                grid-template-columns: 1fr 80px 80px;
+            }
+            
+            .grid-header > div:nth-child(2),
+            .grid-header > div:nth-child(4),
+            .grid-header > div:nth-child(5),
+            .grid-header > div:nth-child(6),
+            .grid-header > div:nth-child(7),
+            .grid-header > div:nth-child(8),
+            .property-row > div:nth-child(2),
+            .property-row > div:nth-child(4),
+            .property-row > div:nth-child(5),
+            .property-row > div:nth-child(6),
+            .property-row > div:nth-child(7),
+            .property-row > div:nth-child(8) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(129, 140, 248, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-particle:nth-child(2n) {
+            background: rgba(236, 72, 153, 0.3);
+            width: 6px;
+            height: 6px;
+        }
+
+        .floating-particle:nth-child(3n) {
+            background: rgba(34, 197, 94, 0.3);
+            width: 3px;
+            height: 3px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--text-primary);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .notification-success { border-left: 4px solid var(--success-color); }
+        .notification-error { border-left: 4px solid var(--danger-color); }
+        .notification-warning { border-left: 4px solid var(--warning-color); }
+        .notification-info { border-left: 4px solid var(--primary-color); }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .notification-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Light theme action menu adjustments */
+        [data-theme="light"] .action-menu-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .action-item {
+            color: #374151;
+        }
+
+        [data-theme="light"] .action-item:hover {
+            background: rgba(129, 140, 248, 0.1);
+            color: #4f46e5;
+        }
+
+        [data-theme="light"] .action-item.delete-property:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        [data-theme="light"] .action-menu-dropdown {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 2px solid rgba(99, 102, 241, 0.3) !important;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.15),
+                0 0 20px rgba(99, 102, 241, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            z-index: 99999 !important;
+        }
+
+        [data-theme="light"] .action-item {
+            color: #1f2937;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        [data-theme="light"] .action-item:hover {
+            background: rgba(129, 140, 248, 0.15);
+            color: #3730a3;
+            box-shadow: 
+                0 6px 20px rgba(129, 140, 248, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="light"] .action-item.delete-property:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #b91c1c;
+            box-shadow: 
+                0 6px 20px rgba(239, 68, 68, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="light"] .action-item::before {
+            background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.1), transparent);
+        }
+
+        [data-theme="light"] .action-item.delete-property::before {
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+        }
+
+        /* Bulk Actions Bar */
+        .bulk-actions-bar {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 1000;
+            transition: bottom 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .bulk-actions-bar.show {
+            bottom: 20px;
+        }
+
+        .bulk-actions-info {
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bulk-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bulk-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .bulk-action-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        /* Enhanced dropdown visibility - consolidated above */
+
+        /* Prevent table and container clipping */
+        .properties-grid {
+            overflow: visible !important;
+        }
+        .container,
+        .row,
+        .col,
+        .col-md-12,
+        .card,
+        .card-body,
+        .table-responsive,
+        .table,
+        .table-container,
+        .properties-table,
+        tbody,
+        tr,
+        td,
+        .property-row,
+        .property-actions,
+        .property-card {
+            overflow: visible !important;
+            position: static !important;
+        }
+
+        /* Specifically target table rows to ensure they don't clip */
+        tr:nth-child(even),
+        tr:nth-child(odd),
+        .table tr,
+        .properties-table tr {
+            overflow: visible !important;
+            position: relative !important;
+            z-index: auto !important;
+        }
+
+        /* Force dropdown to appear above everything */
+        .action-menu.active .action-menu-dropdown {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+            z-index: 99999 !important;
+        }
+
+        /* Prevent ALL containers from clipping dropdown */
+        body,
+        html,
+        .container,
+        .container-fluid,
+        .row,
+        .col,
+        .col-12,
+        .col-md-12,
+        .card,
+        .card-body,
+        .table-responsive,
+        .table,
+        .table-container,
+        .properties-table,
+        tbody,
+        thead,
+        tr,
+        td,
+        th,
+        .property-row,
+        .property-card,
+        .main-content {
+            overflow: visible !important;
+        }
+
+        /* Ensure table rows specifically don't interfere */
+        .table tr,
+        .properties-table tr,
+        tr.property-row {
+            position: relative !important;
+            z-index: 1 !important;
+            overflow: visible !important;
+        }
+
+        /* Make sure "Available" status rows don't block dropdown */
+        tr:hover,
+        .property-row:hover {
+            z-index: 2 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - Admin Properties</div>
+        </div>
+        
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            
+            <a href="/backend/dashboard/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Property Management</h1>
+            <p class="page-subtitle">Comprehensive overview and management of all registered properties</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Properties</div>
+                    <div class="stat-icon blue">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ properties|length }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Available</div>
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{% for property in properties %}{% if property.status == "Available" %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Sold</div>
+                    <div class="stat-icon orange">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{% for property in properties %}{% if property.status == "Sold" %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Pending</div>
+                    <div class="stat-icon purple">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{% for property in properties %}{% if property.status == "Pending" %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section">
+            <form method="GET" action="" class="search-row">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search by property ID, location, user ID, or title..." 
+                           value="{{ query|default:'' }}">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+                <a href="/backend/admin/add-property/" class="add-property-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Property
+                </a>
+            </form>
+        </div>
+
+        <!-- Properties Section -->
+        <div class="properties-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-building"></i>
+                    Registered Properties
+                </div>
+                <div style="font-size: 0.875rem;">
+                    {{ properties|length }} properties found
+                    {% if query %} for "{{ query }}"{% endif %}
+                </div>
+            </div>
+
+            <div class="properties-grid">
+                <!-- Table Header -->
+                <div class="grid-header">
+                    <div><input type="checkbox" id="selectAll"></div>
+                    <div><i class="fas fa-hashtag"></i> ID</div>
+                    <div><i class="fas fa-user"></i> User</div>
+                    <div><i class="fas fa-home"></i> Title</div>
+                    <div><i class="fas fa-info-circle"></i> Description</div>
+                    <div><i class="fas fa-map-marker-alt"></i> Location</div>
+                    <div><i class="fas fa-money-bill"></i> Price</div>
+                    <div><i class="fas fa-tag"></i> Type</div>
+                    <div><i class="fas fa-check-circle"></i> Status</div>
+                    <div><i class="fas fa-calendar"></i> Created</div>
+                    <div><i class="fas fa-cogs"></i> Actions</div>
+                </div>
+
+                <!-- Property Rows -->
+                {% for property in properties %}
+                <div class="property-row">
+                    <div><input type="checkbox" class="property-checkbox" value="{{ property.property_id }}" data-property-id="{{ property.property_id }}"></div>
+                    <div class="property-id">#{{ property.property_id }}</div>
+                    <div class="user-id">{{ property.user_id }}</div>
+                    <div class="property-title">{{ property.title }}</div>
+                    <div class="property-description">{{ property.description|truncatechars:40 }}</div>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ property.location }}
+                    </div>
+                    <div class="property-price">₹{{ property.price|floatformat:0 }}</div>
+                    <div class="property-type">{{ property.property_type }}</div>
+                    <div class="property-status">
+                        <span class="status-badge status-{{ property.status }}">
+                            {{ property.status }}
+                        </span>
+                    </div>
+                    <div class="property-date">{{ property.created_at|date:"M d, Y" }}</div>
+                    <div class="property-actions">
+                        <div class="action-menu">
+                            <button class="action-menu-btn" type="button">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="action-menu-dropdown">
+                                <a href="#" class="action-item view-property" 
+                                   data-property-id="{{ property.property_id }}"
+                                   data-title="{{ property.title }}"
+                                   data-description="{{ property.description }}"
+                                   data-price="{{ property.price }}"
+                                   data-area="{{ property.area_sqft }}"
+                                   data-bedrooms="{{ property.bedrooms }}"
+                                   data-bathrooms="{{ property.bathrooms }}"
+                                   data-address="{{ property.address }}"
+                                   data-city="{{ property.city }}"
+                                   data-state="{{ property.state }}"
+                                   data-amenities="{{ property.amenities }}"
+                                   data-contact="{{ property.contact }}"
+                                   data-property-type="{{ property.property_type }}"
+                                   data-status="{{ property.status }}"
+                                   data-created="{{ property.created_at|date:'M d, Y' }}"
+                                   data-image-url="{% if property.images.first %}{% if property.images.first.image_url|slice:':7' == '/media/' %}/media/{{ property.images.first.image_url|slice:'7:' }}{% else %}/media/{{ property.images.first.image_url }}{% endif %}{% else %}/media/estatelogo.png{% endif %}">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                                <a href="#" class="action-item edit-property" 
+                                   data-property-id="{{ property.property_id }}"
+                                   data-title="{{ property.title }}"
+                                   data-description="{{ property.description }}"
+                                   data-price="{{ property.price }}"
+                                   data-area="{{ property.area_sqft }}"
+                                   data-bedrooms="{{ property.bedrooms }}"
+                                   data-bathrooms="{{ property.bathrooms }}"
+                                   data-address="{{ property.address }}"
+                                   data-city="{{ property.city }}"
+                                   data-state="{{ property.state }}"
+                                   data-amenities="{{ property.amenities }}"
+                                   data-contact="{{ property.contact }}"
+                                   data-property-type="{{ property.property_type }}"
+                                   data-status="{{ property.status }}">
+                                    <i class="fas fa-edit"></i> Edit Property
+                                </a>
+                                <a href="#" class="action-item status-property" 
+                                   data-property-id="{{ property.property_id }}"
+                                   data-title="{{ property.title }}"
+                                   data-status="{{ property.status }}">
+                                    <i class="fas fa-exchange-alt"></i> Change Status
+                                </a>
+                                <a href="#" class="action-item analytics-property" 
+                                   data-property-id="{{ property.property_id }}"
+                                   data-title="{{ property.title }}">
+                                    <i class="fas fa-chart-bar"></i> Analytics
+                                </a>
+                                <a href="#" class="action-item delete-property" 
+                                   data-property-id="{{ property.property_id }}"
+                                   data-title="{{ property.title }}">
+                                    <i class="fas fa-trash"></i> Delete Property
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-home"></i>
+                    <h3>No Properties Found</h3>
+                    <p>{% if query %}No properties match your search criteria. Try adjusting your search terms.{% else %}No properties have been registered yet. Add the first property to get started.{% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions-bar" id="bulkActionsBar">
+        <div class="bulk-actions-info">
+            <i class="fas fa-check-square"></i>
+            <span class="selected-count">0</span> properties selected
+        </div>
+        <button class="bulk-action-btn" onclick="bulkChangeStatus()">
+            <i class="fas fa-edit"></i>
+            Change Status
+        </button>
+        <button class="bulk-action-btn" onclick="bulkExport()">
+            <i class="fas fa-download"></i>
+            Export
+        </button>
+        <button class="bulk-action-btn danger" onclick="bulkDelete()">
+            <i class="fas fa-trash"></i>
+            Delete Selected
+        </button>
+        <button class="bulk-action-btn" onclick="clearBulkSelection()">
+            <i class="fas fa-times"></i>
+            Clear
+        </button>
+    </div>
+
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="modal-overlay">
+        <div class="modal" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Property Details</h2>
+                <button class="modal-close" onclick="closeModal('propertyModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="propertyDetails">
+                <!-- Property details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('propertyModal')">Close</button>
+                <button class="btn btn-primary" id="editFromDetails">Edit Property</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Property Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Property</h2>
+                <button class="modal-close" onclick="closeModal('editModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="editForm">
+                <!-- Edit form will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="savePropertyChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Change Modal -->
+    <div id="statusModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Change Property Status</h2>
+                <button class="modal-close" onclick="closeModal('statusModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="statusContent">
+                <!-- Status change content will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('statusModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveStatusChange()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div id="analyticsModal" class="modal-overlay">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Property Analytics</h2>
+                <button class="modal-close" onclick="closeModal('analyticsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="analyticsContent">
+                <!-- Analytics content will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('analyticsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Deletion</h2>
+                <button class="modal-close" onclick="closeModal('deleteModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="deleteContent">
+                <!-- Delete confirmation content will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete Property</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPropertyId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            createFloatingParticles();
+            initializePropertyManagement();
+            initializeTheme();
+            
+            // Debug: Check if action menus exist
+            const actionMenus = document.querySelectorAll('.action-menu');
+            console.log(`Found ${actionMenus.length} action menus`);
+            
+            const actionItems = document.querySelectorAll('.action-item');
+            console.log(`Found ${actionItems.length} action items`);
+            
+            // Show initialization complete notification
+            setTimeout(() => {
+                showNotification('Property management system ready!', 'success');
+            }, 1000);
+        });
+
+        function createFloatingParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function initializePropertyManagement() {
+            console.log('Initializing property management...');
+            
+            // Initialize action menu buttons with event delegation
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.action-menu-btn')) {
+                    e.preventDefault();
+                    const button = e.target.closest('.action-menu-btn');
+                    toggleActionMenu(button);
+                    return;
+                }
+                
+                if (e.target.closest('.action-item')) {
+                    e.preventDefault();
+                    const item = e.target.closest('.action-item');
+                    const propertyId = item.dataset.propertyId;
+                    currentPropertyId = propertyId;
+                    
+                    console.log('Action item clicked:', item.className);
+                    
+                    if (item.classList.contains('view-property')) {
+                        viewPropertyDetails(item);
+                    } else if (item.classList.contains('edit-property')) {
+                        editProperty(item);
+                    } else if (item.classList.contains('status-property')) {
+                        changePropertyStatus(propertyId);
+                    } else if (item.classList.contains('analytics-property')) {
+                        viewPropertyAnalytics(propertyId);
+                    } else if (item.classList.contains('delete-property')) {
+                        deleteProperty(propertyId);
+                    }
+                    
+                    // Close action menu after action
+                    const menu = item.closest('.action-menu');
+                    if (menu) {
+                        menu.classList.remove('active');
+                    }
+                    return;
+                }
+                
+                // Close action menus when clicking outside
+                if (!e.target.closest('.action-menu')) {
+                    document.querySelectorAll('.action-menu.active').forEach(menu => {
+                        menu.classList.remove('active');
+                    });
+                }
+            });
+
+            // Initialize bulk actions
+            document.getElementById('selectAll')?.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.property-checkbox');
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                updateBulkActionsVisibility();
+            });
+
+            // Initialize individual checkboxes
+            document.querySelectorAll('.property-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateBulkActionsVisibility);
+            });
+        }
+
+        function toggleActionMenu(button) {
+            console.log('Toggle action menu clicked');
+            const menu = button.closest('.action-menu');
+            const isActive = menu.classList.contains('active');
+            
+            // Close all other open menus
+            document.querySelectorAll('.action-menu.active').forEach(m => {
+                m.classList.remove('active');
+            });
+            
+            // Toggle current menu
+            if (!isActive) {
+                menu.classList.add('active');
+                console.log('Menu activated');
+                
+                // Position dropdown using fixed positioning with enhanced visibility
+                const dropdown = menu.querySelector('.action-menu-dropdown');
+                const rect = button.getBoundingClientRect();
+                const dropdownWidth = 200;
+                const dropdownHeight = 280;
+                
+                // Calculate optimal position
+                let top = rect.bottom + 8;
+                let left = rect.right - dropdownWidth;
+                
+                // Smart positioning to stay on screen
+                if (top + dropdownHeight > window.innerHeight - 20) {
+                    top = rect.top - dropdownHeight - 8;
+                }
+                
+                if (left < 10) {
+                    left = rect.left;
+                }
+                
+                if (left + dropdownWidth > window.innerWidth - 10) {
+                    left = window.innerWidth - dropdownWidth - 10;
+                }
+                
+                // Force critical positioning and visibility
+                dropdown.style.cssText = `
+                    position: fixed !important;
+                    top: ${Math.max(10, top)}px !important;
+                    left: ${Math.max(10, left)}px !important;
+                    right: auto !important;
+                    bottom: auto !important;
+                    z-index: 99999 !important;
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    transform: translateY(0) scale(1) !important;
+                    background: rgba(15, 15, 30, 0.98) !important;
+                    border: 2px solid rgba(129, 140, 248, 0.9) !important;
+                    border-radius: 12px !important;
+                    padding: 12px !important;
+                    backdrop-filter: blur(30px) !important;
+                    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(129, 140, 248, 0.8) !important;
+                    pointer-events: auto !important;
+                    width: 200px !important;
+                `;
+                
+            } else {
+                console.log('Menu closed');
+            }
+        }
+
+        function updateBulkActionsVisibility() {
+            const selectedCheckboxes = document.querySelectorAll('.property-checkbox:checked');
+            const bulkActionsBar = document.querySelector('.bulk-actions-bar');
+            
+            if (!bulkActionsBar) return;
+            
+            if (selectedCheckboxes.length > 0) {
+                bulkActionsBar.classList.add('show');
+                const countElement = bulkActionsBar.querySelector('.selected-count');
+                if (countElement) {
+                    countElement.textContent = selectedCheckboxes.length;
+                }
+            } else {
+                bulkActionsBar.classList.remove('show');
+            }
+        }
+
+        function viewPropertyDetails(element) {
+            showNotification('Loading property details...', 'info');
+            
+            // Extract property data from data attributes with proper null/undefined handling
+            const property = {
+                id: element.dataset.propertyId || "Unknown",
+                title: element.dataset.title && element.dataset.title !== 'None' ? element.dataset.title : "Property Title Not Available",
+                type: element.dataset.propertyType && element.dataset.propertyType !== 'None' ? element.dataset.propertyType : "Not Specified",
+                price: element.dataset.price && element.dataset.price !== 'None' && element.dataset.price !== '0' ? element.dataset.price : "Price not set",
+                area: element.dataset.area && element.dataset.area !== 'None' && element.dataset.area !== '0' ? element.dataset.area : "Area not specified",
+                bedrooms: element.dataset.bedrooms && element.dataset.bedrooms !== 'None' ? element.dataset.bedrooms : "Not specified",
+                bathrooms: element.dataset.bathrooms && element.dataset.bathrooms !== 'None' ? element.dataset.bathrooms : "Not specified",
+                address: element.dataset.address && element.dataset.address !== 'None' ? element.dataset.address : "Address not provided",
+                city: element.dataset.city && element.dataset.city !== 'None' ? element.dataset.city : "City not specified",
+                state: element.dataset.state && element.dataset.state !== 'None' ? element.dataset.state : "State not specified",
+                owner_name: "Property Owner",
+                owner_phone: element.dataset.contact && element.dataset.contact !== 'None' ? element.dataset.contact : "Contact not available",
+                amenities: element.dataset.amenities && element.dataset.amenities !== 'None' && element.dataset.amenities !== '' ? element.dataset.amenities : "No amenities listed",
+                description: element.dataset.description && element.dataset.description !== 'None' && element.dataset.description !== '' ? element.dataset.description : "No description provided",
+                status: element.dataset.status && element.dataset.status !== 'None' ? element.dataset.status : "Available",
+                created: element.dataset.created && element.dataset.created !== 'None' ? element.dataset.created : "Date not available",
+                imageUrl: element.dataset.imageUrl || "/media/estatelogo.png"
+            };
+            
+            console.log('Property data extracted:', property); // Debug log
+            displayPropertyDetails(property);
+            openModal('propertyModal');
+        }
+
+        function displayPropertyDetails(property) {
+            const detailsContainer = document.getElementById('propertyDetails');
+            detailsContainer.innerHTML = `
+                <div class="property-details-container">
+                    <!-- Property Image Section -->
+                    <div class="property-image-section">
+                        <div class="property-image-container">
+                            <img src="${property.imageUrl}" alt="${property.title}" class="property-image" 
+                                 onerror="this.src='/media/estatelogo.png'; this.alt='Default Property Image'">
+                            <div class="image-overlay">
+                                <div class="price-badge">₹${property.price !== 'Price not set' && !isNaN(property.price) ? Number(property.price).toLocaleString() : property.price}</div>
+                                <div class="status-badge-overlay status-${property.status}">${property.status}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Property Details Section -->
+                    <div class="property-info-section">
+                        <div class="detail-section">
+                            <h3><i class="fas fa-home"></i> ${property.title}</h3>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <label><i class="fas fa-tag"></i> Type:</label>
+                                    <span>${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-expand-arrows-alt"></i> Area:</label>
+                                    <span>${property.area !== 'Area not specified' ? property.area + ' sq ft' : property.area}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-bed"></i> Bedrooms:</label>
+                                    <span>${property.bedrooms}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-bath"></i> Bathrooms:</label>
+                                    <span>${property.bathrooms}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3><i class="fas fa-map-marker-alt"></i> Location & Contact</h3>
+                            <div class="detail-grid">
+                                <div class="detail-item full-width">
+                                    <label><i class="fas fa-address-card"></i> Address:</label>
+                                    <span>${property.address}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-city"></i> City:</label>
+                                    <span>${property.city}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-map"></i> State:</label>
+                                    <span>${property.state}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-user"></i> Owner:</label>
+                                    <span>${property.owner_name}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label><i class="fas fa-phone"></i> Contact:</label>
+                                    <span>${property.owner_phone}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${property.amenities && property.amenities !== 'No amenities listed' ? `
+                        <div class="detail-section">
+                            <h3><i class="fas fa-star"></i> Features & Amenities</h3>
+                            <div class="amenities-list">
+                                ${property.amenities.split(',').map(amenity => 
+                                    `<span class="amenity-tag"><i class="fas fa-check"></i> ${amenity.trim()}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${property.description && property.description !== 'No description available' ? `
+                        <div class="detail-section">
+                            <h3><i class="fas fa-info-circle"></i> Description</h3>
+                            <p class="property-description">${property.description}</p>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="detail-section">
+                            <div class="property-meta">
+                                <span class="meta-item"><i class="fas fa-calendar"></i> Listed: ${property.created}</span>
+                                <span class="meta-item"><i class="fas fa-eye"></i> Status: ${property.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function editProperty(element) {
+            showNotification('Loading property for editing...', 'info');
+            
+            // Extract property data from data attributes with proper null handling
+            const property = {
+                id: element.dataset.propertyId,
+                title: element.dataset.title && element.dataset.title !== 'None' ? element.dataset.title : "",
+                type: element.dataset.propertyType && element.dataset.propertyType !== 'None' ? element.dataset.propertyType : "apartment",
+                price: element.dataset.price && element.dataset.price !== 'None' ? element.dataset.price : "",
+                area: element.dataset.area && element.dataset.area !== 'None' ? element.dataset.area : "",
+                bedrooms: element.dataset.bedrooms && element.dataset.bedrooms !== 'None' ? element.dataset.bedrooms : "",
+                bathrooms: element.dataset.bathrooms && element.dataset.bathrooms !== 'None' ? element.dataset.bathrooms : "",
+                address: element.dataset.address && element.dataset.address !== 'None' ? element.dataset.address : "",
+                city: element.dataset.city && element.dataset.city !== 'None' ? element.dataset.city : "",
+                state: element.dataset.state && element.dataset.state !== 'None' ? element.dataset.state : "",
+                amenities: element.dataset.amenities && element.dataset.amenities !== 'None' ? element.dataset.amenities : "",
+                description: element.dataset.description && element.dataset.description !== 'None' ? element.dataset.description : "",
+                contact: element.dataset.contact && element.dataset.contact !== 'None' ? element.dataset.contact : "",
+                status: element.dataset.status && element.dataset.status !== 'None' ? element.dataset.status : "Available",
+                imageUrl: element.dataset.imageUrl || "/media/estatelogo.png"
+            };
+            
+            console.log('Edit property data:', property); // Debug log
+            currentPropertyId = property.id; // Store for update
+            displayEditForm(property);
+            openModal('editModal');
+        }
+
+        function displayEditForm(property) {
+            const formContainer = document.getElementById('editForm');
+            formContainer.innerHTML = `
+                <form id="propertyEditForm" class="edit-property-form">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editTitle">Property Title *</label>
+                            <input type="text" id="editTitle" name="title" value="${property.title}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editType">Property Type *</label>
+                            <select id="editType" name="type" required>
+                                <option value="apartment" ${property.type === 'apartment' ? 'selected' : ''}>Apartment</option>
+                                <option value="house" ${property.type === 'house' ? 'selected' : ''}>House</option>
+                                <option value="villa" ${property.type === 'villa' ? 'selected' : ''}>Villa</option>
+                                <option value="commercial" ${property.type === 'commercial' ? 'selected' : ''}>Commercial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPrice">Price (₹) *</label>
+                            <input type="number" id="editPrice" name="price" value="${property.price}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editArea">Area (sq ft) *</label>
+                            <input type="number" id="editArea" name="area" value="${property.area}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBedrooms">Bedrooms *</label>
+                            <input type="number" id="editBedrooms" name="bedrooms" value="${property.bedrooms}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBathrooms">Bathrooms *</label>
+                            <input type="number" id="editBathrooms" name="bathrooms" value="${property.bathrooms}" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="editAddress">Address *</label>
+                            <input type="text" id="editAddress" name="address" value="${property.address}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCity">City *</label>
+                            <input type="text" id="editCity" name="city" value="${property.city}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editState">State *</label>
+                            <input type="text" id="editState" name="state" value="${property.state}" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="editAmenities">Amenities (comma separated)</label>
+                            <input type="text" id="editAmenities" name="amenities" value="${property.amenities || ''}" placeholder="e.g., Swimming Pool, Gym, Parking">
+                        </div>
+                        <div class="form-group">
+                            <label for="editContact">Contact Number</label>
+                            <input type="text" id="editContact" name="contact" value="${property.contact || ''}" placeholder="Contact number">
+                        </div>
+                        <div class="form-group">
+                            <label for="editStatus">Status *</label>
+                            <select id="editStatus" name="status" required>
+                                <option value="Available" ${property.status === 'Available' ? 'selected' : ''}>Available</option>
+                                <option value="Sold" ${property.status === 'Sold' ? 'selected' : ''}>Sold</option>
+                                <option value="Pending" ${property.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Rented" ${property.status === 'Rented' ? 'selected' : ''}>Rented</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="editDescription">Description</label>
+                            <textarea id="editDescription" name="description" rows="3" placeholder="Property description...">${property.description || ''}</textarea>
+                        </div>
+                        
+                        <!-- Property Image Management Section -->
+                        <div class="form-group full-width image-management-section">
+                            <label><i class="fas fa-image"></i> Property Image Management</label>
+                            
+                            <!-- Current Image Preview -->
+                            <div class="current-image-container" id="currentImageContainer">
+                                <div class="current-image-preview">
+                                    <img id="currentPropertyImage" src="${property.imageUrl || '/media/estatelogo.png'}" 
+                                         alt="Current Property Image" class="preview-image"
+                                         onerror="this.src='/media/estatelogo.png'; this.alt='No Image Available'">
+                                    <div class="image-actions">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removePropertyImage()">
+                                            <i class="fas fa-trash"></i> Remove Image
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Upload New Image -->
+                            <div class="image-upload-container">
+                                <label for="newPropertyImage" class="upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i> Upload New Image
+                                </label>
+                                <input type="file" id="newPropertyImage" name="newImage" 
+                                       accept="image/*" onchange="previewNewImage(this)" class="file-input">
+                                <div class="upload-info">
+                                    <small>Supported formats: JPG, PNG, GIF (Max size: 5MB)</small>
+                                </div>
+                            </div>
+                            
+                            <!-- New Image Preview -->
+                            <div class="new-image-preview" id="newImagePreview" style="display: none;">
+                                <img id="newImagePreviewImg" src="" alt="New Image Preview" class="preview-image">
+                                <div class="image-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelNewImage()">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            `;
+        }
+
+        function savePropertyChanges() {
+            const form = document.getElementById('propertyEditForm');
+            
+            if (!form.checkValidity()) {
+                showNotification('Please fill in all required fields', 'warning');
+                form.reportValidity();
+                return;
+            }
+            
+            showNotification('Saving property changes...', 'info');
+            
+            // Collect form data
+            const formData = new FormData(form);
+            const propertyData = {
+                property_id: currentPropertyId,
+                title: formData.get('title'),
+                type: formData.get('type'),
+                price: formData.get('price'),
+                area: formData.get('area'),
+                bedrooms: formData.get('bedrooms'),
+                bathrooms: formData.get('bathrooms'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                contact: formData.get('contact'),
+                status: formData.get('status'),
+                address: formData.get('address'),
+                amenities: formData.get('amenities'),
+                description: formData.get('description')
+            };
+            
+            // Handle image changes
+            const newImageFile = formData.get('newImage');
+            const currentContainer = document.getElementById('currentImageContainer');
+            const isImageRemoved = currentContainer.getAttribute('data-image-removed') === 'true';
+            
+            if (newImageFile && newImageFile.size > 0) {
+                // New image uploaded
+                propertyData.hasNewImage = true;
+                propertyData.newImage = newImageFile;
+                showNotification('Processing new image upload...', 'info');
+                
+                // Simulate image upload - in real implementation, you'd upload to server
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    propertyData.newImageUrl = e.target.result; // In real app, this would be server URL
+                    console.log('New image processed');
+                };
+                reader.readAsDataURL(newImageFile);
+            } else if (isImageRemoved) {
+                // Image removed
+                propertyData.imageRemoved = true;
+                propertyData.newImageUrl = '/media/estatelogo.png';
+                showNotification('Image removal processed...', 'info');
+            }
+            
+            console.log('Saving property data:', propertyData);
+            
+            // Prepare FormData for file upload
+            const submitFormData = new FormData();
+            
+            // Add all property data
+            Object.keys(propertyData).forEach(key => {
+                if (key !== 'hasNewImage' && key !== 'newImage' && key !== 'newImageUrl') {
+                    submitFormData.append(key, propertyData[key]);
+                }
+            });
+            
+            // Add CSRF token
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            submitFormData.append('csrfmiddlewaretoken', csrfToken);
+            
+            // Add image handling flags
+            if (propertyData.imageRemoved) {
+                submitFormData.append('image_removed', 'true');
+            }
+            
+            if (propertyData.hasNewImage && propertyData.newImage) {
+                submitFormData.append('newImage', propertyData.newImage);
+            }
+            
+            // Make AJAX call to backend
+            fetch('/backend/admin/property/update/', {
+                method: 'POST',
+                body: submitFormData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    
+                    // Update propertyData with response data
+                    Object.assign(propertyData, data.property);
+                    
+                    // If image was updated, use new image URL
+                    if (data.imageUpdated) {
+                        propertyData.newImageUrl = data.property.imageUrl;
+                        
+                        // Also update the current image preview for future edits
+                        const currentImg = document.getElementById('currentPropertyImage');
+                        if (currentImg) {
+                            currentImg.src = data.property.imageUrl;
+                        }
+                    }
+                    
+                    // Update the table row with new data
+                    updatePropertyRow(currentPropertyId, propertyData);
+                    
+                    closeModal('editModal');
+                } else {
+                    showNotification(data.error || 'Update failed', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating property:', error);
+                showNotification('Failed to update property. Please try again.', 'error');
+            });
+        }
+        
+        function updatePropertyRow(propertyId, propertyData) {
+            // Find the property row and update it with new data
+            const propertyRows = document.querySelectorAll('.property-row');
+            propertyRows.forEach(row => {
+                const checkbox = row.querySelector('.property-checkbox');
+                if (checkbox && checkbox.value == propertyId) {
+                    // Update row content with new data
+                    const titleElement = row.querySelector('.property-title');
+                    const priceElement = row.querySelector('.property-price');
+                    const typeElement = row.querySelector('.property-type');
+                    const statusElement = row.querySelector('.status-badge');
+                    
+                    if (titleElement) titleElement.textContent = propertyData.title;
+                    if (priceElement) priceElement.textContent = `₹${Number(propertyData.price).toLocaleString()}`;
+                    if (typeElement) typeElement.textContent = propertyData.type;
+                    if (statusElement) {
+                        statusElement.textContent = propertyData.status;
+                        statusElement.className = `status-badge status-${propertyData.status}`;
+                    }
+                    
+                    // Update data attributes for future operations
+                    const viewDetailsLink = row.querySelector('.view-property');
+                    const editLink = row.querySelector('.edit-property');
+                    
+                    if (viewDetailsLink) {
+                        viewDetailsLink.dataset.title = propertyData.title;
+                        viewDetailsLink.dataset.price = propertyData.price;
+                        viewDetailsLink.dataset.propertyType = propertyData.type;
+                        viewDetailsLink.dataset.status = propertyData.status;
+                        viewDetailsLink.dataset.city = propertyData.city;
+                        viewDetailsLink.dataset.state = propertyData.state;
+                        viewDetailsLink.dataset.address = propertyData.address;
+                        viewDetailsLink.dataset.amenities = propertyData.amenities;
+                        viewDetailsLink.dataset.contact = propertyData.contact;
+                        viewDetailsLink.dataset.description = propertyData.description;
+                        viewDetailsLink.dataset.area = propertyData.area;
+                        viewDetailsLink.dataset.bedrooms = propertyData.bedrooms;
+                        viewDetailsLink.dataset.bathrooms = propertyData.bathrooms;
+                        // Update image URL if changed
+                        if (propertyData.newImageUrl) {
+                            viewDetailsLink.dataset.imageUrl = propertyData.newImageUrl;
+                        }
+                    }
+                    
+                    if (editLink) {
+                        editLink.dataset.title = propertyData.title;
+                        editLink.dataset.price = propertyData.price;
+                        editLink.dataset.propertyType = propertyData.type;
+                        editLink.dataset.status = propertyData.status;
+                        editLink.dataset.city = propertyData.city;
+                        editLink.dataset.state = propertyData.state;
+                        editLink.dataset.address = propertyData.address;
+                        editLink.dataset.amenities = propertyData.amenities;
+                        editLink.dataset.contact = propertyData.contact;
+                        editLink.dataset.description = propertyData.description;
+                        editLink.dataset.area = propertyData.area;
+                        editLink.dataset.bedrooms = propertyData.bedrooms;
+                        editLink.dataset.bathrooms = propertyData.bathrooms;
+                        // Update image URL if changed
+                        if (propertyData.newImageUrl) {
+                            editLink.dataset.imageUrl = propertyData.newImageUrl;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Image Management Functions
+        function previewNewImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Image size should be less than 5MB', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showNotification('Please select a valid image file', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('newImagePreview');
+                    const previewImg = document.getElementById('newImagePreviewImg');
+                    const currentContainer = document.getElementById('currentImageContainer');
+                    
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                    currentContainer.style.opacity = '0.5';
+                    
+                    showNotification('New image loaded! Save changes to apply.', 'info');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function cancelNewImage() {
+            const input = document.getElementById('newPropertyImage');
+            const preview = document.getElementById('newImagePreview');
+            const currentContainer = document.getElementById('currentImageContainer');
+            
+            input.value = '';
+            preview.style.display = 'none';
+            currentContainer.style.opacity = '1';
+            
+            showNotification('New image cancelled', 'info');
+        }
+
+        function removePropertyImage() {
+            if (confirm('Are you sure you want to remove the current property image?')) {
+                const currentImg = document.getElementById('currentPropertyImage');
+                const currentContainer = document.getElementById('currentImageContainer');
+                
+                currentImg.src = '/media/estatelogo.png';
+                currentImg.alt = 'No Image Available';
+                currentContainer.setAttribute('data-image-removed', 'true');
+                currentContainer.style.opacity = '0.5';
+                
+                showNotification('Image marked for removal. Save changes to apply.', 'warning');
+            }
+        }
+
+        function resetImageManagement() {
+            const input = document.getElementById('newPropertyImage');
+            const preview = document.getElementById('newImagePreview');
+            const currentContainer = document.getElementById('currentImageContainer');
+            
+            if (input) input.value = '';
+            if (preview) preview.style.display = 'none';
+            if (currentContainer) {
+                currentContainer.style.opacity = '1';
+                currentContainer.removeAttribute('data-image-removed');
+            }
+        }
+
+        function changePropertyStatus(propertyId) {
+            const statusContainer = document.getElementById('statusContent');
+            statusContainer.innerHTML = `
+                <div class="status-change-form">
+                    <p>Select the new status for this property:</p>
+                    <div class="status-options">
+                        <label class="status-option">
+                            <input type="radio" name="newStatus" value="available">
+                            <span class="status-label available">
+                                <i class="fas fa-check-circle"></i> Available
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="newStatus" value="sold">
+                            <span class="status-label sold">
+                                <i class="fas fa-times-circle"></i> Sold
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="newStatus" value="pending">
+                            <span class="status-label pending">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="newStatus" value="inactive">
+                            <span class="status-label inactive">
+                                <i class="fas fa-pause-circle"></i> Inactive
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            `;
+            openModal('statusModal');
+        }
+
+        function saveStatusChange() {
+            const selectedStatus = document.querySelector('input[name="newStatus"]:checked');
+            
+            if (!selectedStatus) {
+                showNotification('Please select a status', 'warning');
+                return;
+            }
+            
+            showNotification('Updating property status...', 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                showNotification(`Property status updated to ${selectedStatus.value}!`, 'success');
+                closeModal('statusModal');
+                // In real implementation, refresh the property list
+            }, 1500);
+        }
+
+        function viewPropertyAnalytics(propertyId) {
+            showNotification('Loading property analytics...', 'info');
+            
+            const analyticsContainer = document.getElementById('analyticsContent');
+            analyticsContainer.innerHTML = `
+                <div class="analytics-dashboard">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <div class="analytics-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="analytics-content">
+                                <h4>Total Views</h4>
+                                <span class="analytics-number" id="totalViews">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="analytics-content">
+                                <h4>Bookings</h4>
+                                <span class="analytics-number" id="totalBookings">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="analytics-content">
+                                <h4>Inquiries</h4>
+                                <span class="analytics-number" id="totalInquiries">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="analytics-content">
+                                <h4>Interest Score</h4>
+                                <span class="analytics-number" id="interestScore">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-chart-section">
+                        <h3>Performance Overview</h3>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Analytics chart would be displayed here</p>
+                            <small>Views, bookings, and inquiry trends over time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list" id="recentActivity">
+                            <div class="activity-item">
+                                <i class="fas fa-eye text-info"></i>
+                                <span>Property viewed by anonymous user</span>
+                                <small>2 hours ago</small>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-calendar text-success"></i>
+                                <span>Booking request from John Doe</span>
+                                <small>1 day ago</small>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-phone text-warning"></i>
+                                <span>Inquiry call received</span>
+                                <small>2 days ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            openModal('analyticsModal');
+            
+            // Simulate loading analytics data
+            setTimeout(() => {
+                document.getElementById('totalViews').textContent = Math.floor(Math.random() * 500) + 50;
+                document.getElementById('totalBookings').textContent = Math.floor(Math.random() * 20) + 5;
+                document.getElementById('totalInquiries').textContent = Math.floor(Math.random() * 30) + 10;
+                document.getElementById('interestScore').textContent = (Math.random() * 5 + 3).toFixed(1) + '/5';
+            }, 1000);
+        }
+
+        function deleteProperty(propertyId) {
+            const deleteContainer = document.getElementById('deleteContent');
+            deleteContainer.innerHTML = `
+                <div class="delete-confirmation">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Are you sure you want to delete this property?</h3>
+                    <p>This action cannot be undone. The property will be permanently removed from the system along with all associated data including:</p>
+                    <ul>
+                        <li>Property details and images</li>
+                        <li>Booking history</li>
+                        <li>Analytics data</li>
+                        <li>User interactions</li>
+                    </ul>
+                    <div class="confirmation-input">
+                        <label>Type "DELETE" to confirm:</label>
+                        <input type="text" id="deleteConfirmation" placeholder="Type DELETE here">
+                    </div>
+                </div>
+            `;
+            openModal('deleteModal');
+        }
+
+        function confirmDelete() {
+            const confirmation = document.getElementById('deleteConfirmation').value;
+            
+            if (confirmation !== 'DELETE') {
+                showNotification('Please type "DELETE" to confirm', 'warning');
+                return;
+            }
+            
+            showNotification('Deleting property...', 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('Property deleted successfully!', 'success');
+                closeModal('deleteModal');
+                // In real implementation, remove the property row from the table
+            }, 1500);
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => {
+                    modal.classList.add('active');
+                }, 10);
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                
+                // Reset image management if closing edit modal
+                if (modalId === 'editModal') {
+                    resetImageManagement();
+                }
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 300);
+            }
+        }
+
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                   document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+
+        function showNotification(message, type = 'info') {
+            // Remove existing notification
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                const modalId = e.target.id;
+                closeModal(modalId);
+            }
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    closeModal(activeModal.id);
+                }
+            }
+        });
+
+        // Bulk Action Functions
+        function bulkChangeStatus() {
+            const selectedIds = getSelectedPropertyIds();
+            if (selectedIds.length === 0) {
+                showNotification('Please select properties to change status', 'warning');
+                return;
+            }
+            
+            const statusContainer = document.getElementById('statusContent');
+            statusContainer.innerHTML = `
+                <div class="status-change-form">
+                    <p>Select the new status for ${selectedIds.length} selected properties:</p>
+                    <div class="status-options">
+                        <label class="status-option">
+                            <input type="radio" name="bulkStatus" value="available">
+                            <span class="status-label available">
+                                <i class="fas fa-check-circle"></i> Available
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="bulkStatus" value="sold">
+                            <span class="status-label sold">
+                                <i class="fas fa-times-circle"></i> Sold
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="bulkStatus" value="pending">
+                            <span class="status-label pending">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                        </label>
+                        <label class="status-option">
+                            <input type="radio" name="bulkStatus" value="inactive">
+                            <span class="status-label inactive">
+                                <i class="fas fa-pause-circle"></i> Inactive
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            // Update modal footer for bulk action
+            const modal = document.getElementById('statusModal');
+            const saveBtn = modal.querySelector('.btn-primary');
+            saveBtn.textContent = `Update ${selectedIds.length} Properties`;
+            saveBtn.onclick = saveBulkStatusChange;
+            
+            openModal('statusModal');
+        }
+
+        function bulkExport() {
+            const selectedIds = getSelectedPropertyIds();
+            if (selectedIds.length === 0) {
+                showNotification('Please select properties to export', 'warning');
+                return;
+            }
+            
+            showNotification(`Exporting ${selectedIds.length} properties...`, 'info');
+            
+            // Simulate export
+            setTimeout(() => {
+                showNotification(`Successfully exported ${selectedIds.length} properties!`, 'success');
+                // In real implementation, trigger download
+                const csvContent = generateCSV(selectedIds);
+                downloadCSV(csvContent, `properties_export_${new Date().toISOString().split('T')[0]}.csv`);
+            }, 2000);
+        }
+
+        function bulkDelete() {
+            const selectedIds = getSelectedPropertyIds();
+            if (selectedIds.length === 0) {
+                showNotification('Please select properties to delete', 'warning');
+                return;
+            }
+            
+            const deleteContainer = document.getElementById('deleteContent');
+            deleteContainer.innerHTML = `
+                <div class="delete-confirmation">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Are you sure you want to delete ${selectedIds.length} properties?</h3>
+                    <p>This action cannot be undone. The following will be permanently removed:</p>
+                    <ul>
+                        <li>${selectedIds.length} property records</li>
+                        <li>All associated property images</li>
+                        <li>Booking history for these properties</li>
+                        <li>Analytics data</li>
+                        <li>User interactions and reviews</li>
+                    </ul>
+                    <div class="confirmation-input">
+                        <label>Type "DELETE ALL" to confirm:</label>
+                        <input type="text" id="bulkDeleteConfirmation" placeholder="Type DELETE ALL here">
+                    </div>
+                </div>
+            `;
+            
+            // Update modal footer for bulk delete
+            const modal = document.getElementById('deleteModal');
+            const deleteBtn = modal.querySelector('.btn-danger');
+            deleteBtn.textContent = `Delete ${selectedIds.length} Properties`;
+            deleteBtn.onclick = confirmBulkDelete;
+            
+            openModal('deleteModal');
+        }
+
+        function clearBulkSelection() {
+            document.querySelectorAll('.property-checkbox:checked').forEach(cb => {
+                cb.checked = false;
+            });
+            document.getElementById('selectAll').checked = false;
+            updateBulkActionsVisibility();
+            showNotification('Selection cleared', 'info');
+        }
+
+        function getSelectedPropertyIds() {
+            const selectedCheckboxes = document.querySelectorAll('.property-checkbox:checked');
+            return Array.from(selectedCheckboxes).map(cb => cb.value);
+        }
+
+        function saveBulkStatusChange() {
+            const selectedStatus = document.querySelector('input[name="bulkStatus"]:checked');
+            const selectedIds = getSelectedPropertyIds();
+            
+            if (!selectedStatus) {
+                showNotification('Please select a status', 'warning');
+                return;
+            }
+            
+            showNotification(`Updating status for ${selectedIds.length} properties...`, 'info');
+            
+            setTimeout(() => {
+                showNotification(`Successfully updated ${selectedIds.length} properties to ${selectedStatus.value}!`, 'success');
+                closeModal('statusModal');
+                clearBulkSelection();
+                // In real implementation, refresh the property list
+            }, 2000);
+        }
+
+        function confirmBulkDelete() {
+            const confirmation = document.getElementById('bulkDeleteConfirmation').value;
+            const selectedIds = getSelectedPropertyIds();
+            
+            if (confirmation !== 'DELETE ALL') {
+                showNotification('Please type "DELETE ALL" to confirm', 'warning');
+                return;
+            }
+            
+            showNotification(`Deleting ${selectedIds.length} properties...`, 'info');
+            
+            setTimeout(() => {
+                showNotification(`Successfully deleted ${selectedIds.length} properties!`, 'success');
+                closeModal('deleteModal');
+                clearBulkSelection();
+                // In real implementation, remove the property rows and refresh
+            }, 2000);
+        }
+
+        function generateCSV(propertyIds) {
+            const headers = ['ID', 'Title', 'Type', 'Price', 'Area', 'Bedrooms', 'Bathrooms', 'City', 'State', 'Status'];
+            const rows = [headers];
+            
+            // Add sample data for demonstration
+            propertyIds.forEach(id => {
+                rows.push([
+                    id,
+                    'Sample Property',
+                    'Apartment',
+                    '₹50,00,000',
+                    '1200 sq ft',
+                    '3',
+                    '2',
+                    'Mumbai',
+                    'Maharashtra',
+                    'Available'
+                ]);
+            });
+            
+            return rows.map(row => row.join(',')).join('\n');
+        }
+
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+
+
+        // Property row click handlers for future expansion
+        document.querySelectorAll('.property-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't trigger if clicking on action buttons or checkboxes
+                if (!e.target.closest('.property-actions') && !e.target.closest('.property-checkbox')) {
+                    console.log('Property clicked:', this.querySelector('.property-id').textContent);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

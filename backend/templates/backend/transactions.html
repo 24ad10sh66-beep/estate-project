@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transactions - Estate Management</title>
+    <link href="https://fonts.go        .container {
+            max-width: 1200px;
+            margin: 120px auto 40px auto;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+             .status-failed {
+            background: linear-gradient(135deg, var(--danger-red), #b91c1c);
+            color: white;
+        }
+
+        /* Action Menu Styles */
+        .transaction-actions {
+            position: relative;
+        }
+
+        .action-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .action-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .action-menu-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .action-menu-btn:hover::before {
+            opacity: 0.2;
+        }
+
+        .action-menu-btn:hover {
+            color: var(--primary-blue);
+            transform: scale(1.1);
+        }
+
+        .action-menu.active .action-menu-btn {
+            color: var(--primary-blue);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .action-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            min-width: 180px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .action-menu.active .action-menu-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            gap: 0.75rem;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .action-item:hover {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: white;
+        }
+
+        .action-item i {
+            width: 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Advanced Filter Styles */
+        .advanced-filters {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* FORCE HORIZONTAL LAYOUT */
+        .search-section .advanced-filters .filter-row {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            grid-auto-flow: column !important;
+            gap: 2.5rem !important;
+            margin-bottom: 2rem !important;
+            width: 100% !important;
+        }
+        
+        .filter-row {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        
+        .filter-row:last-of-type {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .filter-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .filter-label i {
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+        }
+
+        .filter-select, .filter-input {
+            padding: 1rem 1.25rem;
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            width: 100%;
+            min-height: 48px;
+        }
+        
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .filter-select:hover, .filter-input:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: flex-end;
+            padding-top: 1.5rem;
+            margin-top: 0.5rem;
+            border-top: 2px solid var(--border-color);
+        }
+        
+        .filter-reset-btn, .filter-apply-btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            min-height: 48px;
+        }
+        
+        .filter-reset-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+        }
+        
+        .filter-reset-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+        
+        .filter-apply-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filter-apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 12px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+            background: var(--bg-primary);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .bulk-checkbox {
+            width: 18px;
+            height: 18px;
+        }
+
+        .bulk-action-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-indigo));
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bulk-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Analytics Dashboard Styles */
+        .analytics-summary {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 2rem !important;
+            margin-bottom: 3rem !important;
+        }
+
+        .analytics-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .analytics-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+            border-color: var(--primary-blue);
+        }
+
+        .analytics-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--success-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        /* Analytics Cards Responsive */
+        @media (min-width: 1025px) {
+            .analytics-summary {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+        }
+        
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .analytics-summary {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .analytics-summary {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* DESKTOP - FORCE 3 COLUMNS ALWAYS ON WIDER SCREENS */
+        @media (min-width: 1025px) {
+            .filter-row {
+                grid-template-columns: repeat(3, 1fr) !important;
+                display: grid !important;
+            }
+        }
+        
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .filter-row {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 100px 1rem 40px 1rem;
+                padding: 1rem;
+            }
+
+            .nav-header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-actions {
+                flex-direction: column;
+            }
+            
+            .filter-reset-btn, .filter-apply-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .analytics-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .action-menu-dropdown {
+                right: -50px;
+            }
+        }   border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: relative;
+        }css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #667eea;
+            --secondary-indigo: #764ba2;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-accent: #ffffff;
+            --bg-primary: rgba(0, 0, 0, 0.3);
+            --bg-secondary: rgba(0, 0, 0, 0.2);
+            --border-color: rgba(255, 255, 255, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.15);
+            --table-bg: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] {
+            --primary-blue: #4f46e5;
+            --secondary-indigo: #7c3aed;
+            --success-green: #059669;
+            --warning-orange: #d97706;
+            --danger-red: #dc2626;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-accent: #ffffff;
+            --bg-primary: rgba(255, 255, 255, 0.95);
+            --bg-secondary: rgba(248, 250, 252, 0.9);
+            --border-color: rgba(229, 231, 235, 0.8);
+            --input-bg: rgba(243, 244, 246, 0.8);
+            --table-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 75%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 25%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+            animation: backgroundShift 25s ease infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+            50% { transform: translateX(-20px) translateY(-20px) rotate(180deg); }
+        }
+
+        [data-theme="light"] body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-mode:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .container-prop {
+            max-width: 1280px;
+            margin: 120px auto 40px auto;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            padding: 2.5rem;
+            position: relative;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .search-section {
+            background: var(--bg-secondary);
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--border-color);
+            border-radius: 18px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .search-bar {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+            gap: 1.25rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-bar input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3rem;
+            background: var(--input-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 52px;
+        }
+
+        .search-bar input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-bar input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.125rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            min-height: 52px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .table-container {
+            background: var(--table-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        .prop-table th {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: var(--text-accent);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .prop-table td {
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .prop-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .amount-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.875rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+            color: var(--text-accent);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, var(--warning-orange) 0%, #d97706 100%);
+            color: var(--text-accent);
+        }
+
+        .status-failed {
+            background: linear-gradient(135deg, var(--danger-red) 0%, #dc2626 100%);
+            color: var(--text-accent);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-indigo) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container-prop {
+                margin: 100px 1rem 2rem 1rem;
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .prop-table th,
+            .prop-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .nav-header {
+                padding: 1rem;
+            }
+
+            .nav-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Light theme overrides */
+        [data-theme="light"] .container-prop {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.9);
+        }
+
+        [data-theme="light"] .analytics-card {
+            background: rgba(248, 250, 252, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.8);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="light"] .analytics-value {
+            background: linear-gradient(135deg, #059669, #4f46e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        [data-theme="light"] .analytics-label {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        [data-theme="light"] .search-section,
+        [data-theme="light"] .table-container {
+            background: rgba(248, 250, 252, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.8);
+        }
+
+        [data-theme="light"] .advanced-filters {
+            background: rgba(241, 245, 249, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.8);
+        }
+
+        [data-theme="light"] .filter-select,
+        [data-theme="light"] .filter-input {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.9);
+            color: #111827;
+        }
+
+        [data-theme="light"] .filter-label {
+            color: #111827;
+        }
+
+        [data-theme="light"] .search-bar input[type="text"] {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(203, 213, 225, 0.9);
+            color: #111827;
+        }
+
+        [data-theme="light"] .prop-table tr:hover {
+            background: rgba(248, 250, 252, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+        <div class="nav-title">
+            <i class="fas fa-credit-card"></i>
+            Transaction Management
+        </div>
+        <button id="toggleModeBtn" class="toggle-mode" onclick="toggleMode()" type="button">
+            <i class="fas fa-sun"></i> Light Mode
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-prop">
+        <div class="page-header">
+            <h1 class="page-title">Transaction History</h1>
+            <p class="page-subtitle">Monitor and track all financial transactions in your system</p>
+        </div>
+        <!-- Analytics Summary -->
+        <div class="analytics-summary" style="display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 2rem !important;">
+            <div class="analytics-card">
+                <div class="analytics-value" id="totalRevenue">₹0</div>
+                <div class="analytics-label">Total Revenue</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-value" id="totalTransactions">0</div>
+                <div class="analytics-label">Total Transactions</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-value" id="successRate">0%</div>
+                <div class="analytics-label">Success Rate</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-value" id="avgAmount">₹0</div>
+                <div class="analytics-label">Average Amount</div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" action="">
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" name="q" placeholder="Search by transaction ID, user, or property..." value="{{ query|default:'' }}" class="search-input">
+                    </div>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            
+                <!-- Advanced Filters -->
+                <div class="advanced-filters">
+                    <div class="filter-row" style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 2.5rem;">
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-flag"></i> Status
+                            </label>
+                            <select class="filter-select" name="status_filter">
+                                <option value="">All Statuses</option>
+                                <option value="completed">✓ Completed</option>
+                                <option value="pending">⏱ Pending</option>
+                                <option value="failed">✗ Failed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-rupee-sign"></i> Min Amount
+                            </label>
+                            <input type="number" class="filter-input" name="min_amount" placeholder="₹ Minimum">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-rupee-sign"></i> Max Amount
+                            </label>
+                            <input type="number" class="filter-input" name="max_amount" placeholder="₹ Maximum">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row" style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 2.5rem;">
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-calendar-alt"></i> From Date
+                            </label>
+                            <input type="date" class="filter-input" name="date_from">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-calendar-alt"></i> To Date
+                            </label>
+                            <input type="date" class="filter-input" name="date_to">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-sort"></i> Sort By
+                            </label>
+                            <select class="filter-select" name="sort_by">
+                                <option value="date">📅 Date</option>
+                                <option value="amount">💰 Amount</option>
+                                <option value="status">🚦 Status</option>
+                                <option value="transaction_id">🆔 Transaction ID</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button type="button" class="filter-reset-btn" onclick="window.location.href=window.location.pathname">
+                            <i class="fas fa-undo"></i> Reset Filters
+                        </button>
+                        <button type="submit" class="filter-apply-btn">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Bulk Operations -->
+        <div class="bulk-actions" style="display: none;" id="bulkActions">
+            <input type="checkbox" class="bulk-checkbox" id="selectAll" data-action="select-all">
+            <label for="selectAll">Select All</label>
+            <button class="bulk-action-btn" data-bulk-action="complete">
+                <i class="fas fa-check"></i> Mark as Completed
+            </button>
+            <button class="bulk-action-btn" data-bulk-action="fail">
+                <i class="fas fa-times"></i> Mark as Failed
+            </button>
+            <button class="bulk-action-btn" data-bulk-action="report">
+                <i class="fas fa-file-pdf"></i> Generate Report
+            </button>
+            <button class="bulk-action-btn" data-bulk-action="export">
+                <i class="fas fa-download"></i> Export CSV
+            </button>
+        </div>
+        <!-- Transactions Table -->
+        <div class="table-container">
+            <table class="prop-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="bulk-checkbox" onchange="toggleSelectAll()"></th>
+                        <th><i class="fas fa-hashtag"></i> Transaction ID</th>
+                        <th><i class="fas fa-user"></i> User</th>
+                        <th><i class="fas fa-home"></i> Property</th>
+                        <th><i class="fas fa-rupee-sign"></i> Amount</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr>
+                        <td><input type="checkbox" class="transaction-checkbox" value="{{ txn.txn_id }}" data-action="update-bulk"></td>
+                        <td><strong>#{{ txn.txn_id }}</strong></td>
+                        <td>{{ txn.booking.user.name|default:"N/A" }}</td>
+                        <td>{{ txn.booking.property.title|default:"N/A" }}</td>
+                        <td class="amount-cell">₹{{ txn.amount|floatformat:0 }}</td>
+                        <td>
+                            {% if txn.payment_status == 'Completed' or txn.payment_status == 'Success' %}
+                                <span class="status-badge status-completed">{{ txn.payment_status }}</span>
+                            {% elif txn.payment_status == 'Pending' %}
+                                <span class="status-badge status-pending">{{ txn.payment_status }}</span>
+                            {% else %}
+                                <span class="status-badge status-failed">{{ txn.payment_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ txn.payment_date|date:"M d, Y" }}</td>
+                        <td class="transaction-actions">
+                            <div class="action-menu">
+                                <button class="action-menu-btn" data-action="toggle-menu">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="action-menu-dropdown">
+                                    <a href="#" class="action-item" data-action="view" data-txn-id="{{ txn.txn_id }}">
+                                        <i class="fas fa-eye"></i>View Details
+                                    </a>
+                                    <a href="#" class="action-item" data-action="receipt" data-txn-id="{{ txn.txn_id }}">
+                                        <i class="fas fa-receipt"></i>Download Receipt
+                                    </a>
+                                    <a href="#" class="action-item" data-action="complete" data-txn-id="{{ txn.txn_id }}">
+                                        <i class="fas fa-check"></i>Mark Completed
+                                    </a>
+                                    <a href="#" class="action-item" data-action="fail" data-txn-id="{{ txn.txn_id }}">
+                                        <i class="fas fa-times"></i>Mark Failed
+                                    </a>
+                                    <a href="#" class="action-item" data-action="refund" data-txn-id="{{ txn.txn_id }}">
+                                        <i class="fas fa-undo"></i>Process Refund
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-secondary);">
+                            <i class="fas fa-receipt" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                            No transactions found matching your search.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Back Button -->
+        <a href="{% if user_role == 'seller' %}/backend/seller-home/{% else %}/backend/dashboard/{% endif %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        // Theme Toggle Functions
+        function toggleMode() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? null : 'light';
+            
+            if (newTheme) {
+                body.setAttribute('data-theme', 'light');
+            } else {
+                body.removeAttribute('data-theme');
+            }
+            
+            // Update button
+            const btn = document.getElementById('toggleModeBtn');
+            if (newTheme === 'light') {
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme || 'dark');
+        }
+
+        // Load theme preference and calculate analytics
+        window.addEventListener('load', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.getElementById('toggleModeBtn');
+            
+            if (savedTheme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+            
+            // Calculate and display analytics
+            calculateRealTimeAnalytics();
+        });
+        
+        // Real-time analytics calculation
+        function calculateRealTimeAnalytics() {
+            const transactionRows = document.querySelectorAll('tbody tr');
+            let totalRevenue = 0;
+            let totalTransactions = 0;
+            let completedTransactions = 0;
+            
+            transactionRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) { // Skip empty state row
+                    const amountCell = cells[4]; // Amount column
+                    const statusCell = cells[5]; // Status column
+                    
+                    if (amountCell && statusCell) {
+                        const amount = parseFloat(amountCell.textContent.replace('₹', '').replace(/,/g, ''));
+                        const status = statusCell.textContent.trim().toLowerCase();
+                        
+                        if (!isNaN(amount)) {
+                            totalTransactions++;
+                            if (status.includes('completed') || status.includes('success')) {
+                                totalRevenue += amount;
+                                completedTransactions++;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            const successRate = totalTransactions > 0 ? Math.round((completedTransactions / totalTransactions) * 100) : 0;
+            const avgAmount = completedTransactions > 0 ? Math.round(totalRevenue / completedTransactions) : 0;
+            
+            // Update dashboard
+            document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('successRate').textContent = `${successRate}%`;
+            document.getElementById('avgAmount').textContent = `₹${avgAmount.toLocaleString()}`;
+        }
+
+        // Action Menu Functions
+        function toggleActionMenu(btn) {
+            // Close all other open menus
+            document.querySelectorAll('.action-menu.active').forEach(menu => {
+                if (menu !== btn.closest('.action-menu')) {
+                    menu.classList.remove('active');
+                }
+            });
+            
+            // Toggle current menu
+            btn.closest('.action-menu').classList.toggle('active');
+        }
+
+        // Centralized event handling
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.action-menu')) {
+                document.querySelectorAll('.action-menu.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            }
+            
+            // Handle action item clicks
+            const actionItem = e.target.closest('.action-item');
+            if (actionItem) {
+                e.preventDefault();
+                const action = actionItem.dataset.action;
+                const txnId = actionItem.dataset.txnId;
+                
+                switch(action) {
+                    case 'view':
+                        viewTransaction(txnId);
+                        break;
+                    case 'receipt':
+                        downloadReceipt(txnId);
+                        break;
+                    case 'complete':
+                        updateStatus(txnId, 'completed');
+                        break;
+                    case 'fail':
+                        updateStatus(txnId, 'failed');
+                        break;
+                    case 'refund':
+                        refundTransaction(txnId);
+                        break;
+                }
+            }
+            
+            // Handle bulk action buttons
+            const bulkBtn = e.target.closest('[data-bulk-action]');
+            if (bulkBtn) {
+                e.preventDefault();
+                const action = bulkBtn.dataset.bulkAction;
+                
+                switch(action) {
+                    case 'complete':
+                        bulkUpdateStatus('completed');
+                        break;
+                    case 'fail':
+                        bulkUpdateStatus('failed');
+                        break;
+                    case 'report':
+                        generateReport();
+                        break;
+                    case 'export':
+                        exportTransactions();
+                        break;
+                }
+            }
+            
+            // Handle menu toggle
+            const menuBtn = e.target.closest('[data-action="toggle-menu"]');
+            if (menuBtn) {
+                e.preventDefault();
+                toggleActionMenu(menuBtn);
+            }
+        });
+        
+        // Handle checkbox changes
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('transaction-checkbox')) {
+                updateBulkActions();
+            }
+        });
+
+        // Transaction Management Functions
+        function viewTransaction(transactionId) {
+            // Simulate transaction details view
+            alert(`Transaction Details #${transactionId}\n\n• Transaction ID: ${transactionId}\n• Payment Method: Credit Card\n• Gateway: Razorpay\n• Transaction Fee: ₹25\n• Net Amount: ₹[Amount - 25]\n• Timestamp: ${new Date().toLocaleString()}\n• Gateway Reference: TXN${transactionId}REF\n\nThis would open a detailed transaction view with all payment gateway information, fees, and transaction history.`);
+        }
+
+        function downloadReceipt(transactionId) {
+            alert(`Generating receipt for Transaction #${transactionId}...\n\nReceipt will be downloaded as PDF with:\n• Transaction details\n• Property information\n• User details\n• Payment breakdown\n• Company branding\n\nIn real implementation, this would generate and download a PDF receipt.`);
+        }
+
+        function updateStatus(transactionId, newStatus) {
+            const statusText = newStatus === 'completed' ? 'Completed' : 'Failed';
+            const confirmMessage = `Are you sure you want to change Transaction #${transactionId} status to "${statusText}"?`;
+            
+            if (confirm(confirmMessage)) {
+                alert(`Transaction #${transactionId} status updated to: ${statusText}`);
+                // In real implementation, this would send an AJAX request to update the status
+                location.reload();
+            }
+        }
+
+        function refundTransaction(transactionId) {
+            const refundAmount = prompt(`Process refund for Transaction #${transactionId}\n\nEnter refund amount (₹):`);
+            
+            if (refundAmount && !isNaN(refundAmount) && parseFloat(refundAmount) > 0) {
+                const confirmRefund = confirm(`Are you sure you want to process a refund of ₹${refundAmount} for Transaction #${transactionId}?\n\nThis will initiate the refund process through the payment gateway.`);
+                
+                if (confirmRefund) {
+                    alert(`Refund of ₹${refundAmount} initiated for Transaction #${transactionId}\n\nRefund Status: Processing\nExpected Time: 3-5 business days\nRefund ID: REF${transactionId}${Date.now()}`);
+                    location.reload();
+                }
+            }
+        }
+
+        // Bulk Operations Functions
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.querySelector('th input[type="checkbox"]');
+            const transactionCheckboxes = document.querySelectorAll('.transaction-checkbox');
+            
+            transactionCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const checkedBoxes = document.querySelectorAll('.transaction-checkbox:checked');
+            const bulkActions = document.getElementById('bulkActions');
+            
+            if (checkedBoxes.length > 0) {
+                bulkActions.style.display = 'flex';
+            } else {
+                bulkActions.style.display = 'none';
+            }
+        }
+
+        function bulkUpdateStatus(status) {
+            const checkedBoxes = document.querySelectorAll('.transaction-checkbox:checked');
+            const transactionIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (transactionIds.length === 0) {
+                alert('Please select transactions to update.');
+                return;
+            }
+            
+            const statusText = status === 'completed' ? 'Completed' : 'Failed';
+            const confirmMessage = `Are you sure you want to update ${transactionIds.length} transaction(s) to "${statusText}" status?`;
+            
+            if (confirm(confirmMessage)) {
+                alert(`Updated ${transactionIds.length} transaction(s) to ${statusText} status.`);
+                location.reload();
+            }
+        }
+
+        function generateReport() {
+            const checkedBoxes = document.querySelectorAll('.transaction-checkbox:checked');
+            const transactionIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (transactionIds.length === 0) {
+                alert('Please select transactions for report generation.');
+                return;
+            }
+            
+            alert(`Generating comprehensive financial report...\n\n📊 Report Details:\n• Selected Transactions: ${transactionIds.length}\n• Report Type: Financial Summary\n• Format: PDF\n• Includes: Transaction details, revenue analysis, payment gateway fees\n\nReport will be downloaded shortly.`);
+        }
+
+        function exportTransactions() {
+            const checkedBoxes = document.querySelectorAll('.transaction-checkbox:checked');
+            const transactionIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (transactionIds.length === 0) {
+                alert('Please select transactions to export.');
+                return;
+            }
+            
+            alert(`Exporting ${transactionIds.length} transactions to CSV...\n\n📁 Export Details:\n• Format: CSV\n• Columns: ID, User, Property, Amount, Status, Date, Gateway\n• File: transactions_${new Date().toISOString().split('T')[0]}.csv\n\nDownload will start shortly.`);
+        }
+
+        // Advanced Analytics Functions
+        function showTransactionAnalytics() {
+            const totalTransactions = document.querySelectorAll('.transaction-checkbox').length;
+            const completedTransactions = document.querySelectorAll('.status-completed').length;
+            const pendingTransactions = document.querySelectorAll('.status-pending').length;
+            const failedTransactions = document.querySelectorAll('.status-failed').length;
+            
+            const successRate = totalTransactions > 0 ? Math.round(((completedTransactions / totalTransactions) * 100)) : 0;
+            
+            // Calculate total revenue (this would normally come from backend)
+            let totalRevenue = 0;
+            document.querySelectorAll('.amount-cell').forEach(cell => {
+                const amount = parseFloat(cell.textContent.replace('₹', '').replace(/,/g, ''));
+                if (!isNaN(amount)) totalRevenue += amount;
+            });
+            
+            const analytics = `
+📊 Transaction Analytics Dashboard:
+
+💰 Financial Summary:
+• Total Revenue: ₹${totalRevenue.toLocaleString()}
+• Average Transaction: ₹${Math.round(totalRevenue/totalTransactions).toLocaleString()}
+• Total Transactions: ${totalTransactions}
+
+📈 Status Breakdown:
+• Completed: ${completedTransactions} (${Math.round((completedTransactions/totalTransactions)*100)}%)
+• Pending: ${pendingTransactions} (${Math.round((pendingTransactions/totalTransactions)*100)}%)
+• Failed: ${failedTransactions} (${Math.round((failedTransactions/totalTransactions)*100)}%)
+
+🎯 Performance Metrics:
+• Success Rate: ${successRate}%
+• Failure Rate: ${Math.round((failedTransactions/totalTransactions)*100)}%
+• Conversion Efficiency: ${successRate > 90 ? 'Excellent' : successRate > 75 ? 'Good' : 'Needs Improvement'}
+            `;
+            
+            alert(analytics);
+        }
+
+        // Auto-refresh for real-time updates (every 30 seconds)
+        setInterval(function() {
+            // In real implementation, this would check for new transactions
+            console.log('Checking for new transactions...');
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estate Management - Auth</title>
+    <style>
+        /* ---------- Root & Body ---------- */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #232526, #414345);
+            --container-bg: #2b2b3c;
+            --input-bg: #1e1e2f;
+            --input-border: #555;
+            --primary-color: #4444ff;
+            --hover-color: #6a11cb;
+            --link-color: #00d4ff;
+            --error-color: #ff6b6b;
+            --text-color: #eee;
+            --placeholder-color: #aaa;
+            --success-color: #4CAF50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* ---------- Container ---------- */
+        .auth-container {
+            background: var(--container-bg);
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            width: 360px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* ---------- Headings ---------- */
+        h2 {
+            margin-bottom: 25px;
+            color: #f5f5f5;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        /* ---------- Inputs ---------- */
+        input[type="text"],
+        input[type="password"],
+        input[type="phone"],
+        input[type="email"],
+        input[type="role"],
+        select {
+            width: 100%;
+            height: 46px;
+            padding: 0 15px;
+            margin: 12px 0;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* ---------- Buttons ---------- */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        /* Create account button (green) */
+        .create-btn {
+            background: var(--success-color);
+            margin-top: 20px;
+        }
+
+        .create-btn:hover {
+            background: #45a049;
+        }
+
+        /* ---------- Links ---------- */
+        .switch-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--link-color);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        /* ---------- Error/Success Messages ---------- */
+        .error {
+            color: #ff4d4d;
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .success {
+            color: #4CAF50;
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* ---------- Hidden Forms ---------- */
+        .hidden { display: none; }
+
+        /* ---------- Password Wrapper ---------- */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .password-wrapper input { padding-right: 40px; }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--placeholder-color);
+        }
+        .toggle-password:hover { color: var(--link-color); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 400px) {
+            .auth-container {
+                width: 90%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Form -->
+        <form id="login-form" method="POST" action="/backend/login/">
+            {% csrf_token %}
+            <h2 class="brand">Welcome to SamEstate</h2>
+             <p class="tagline">Smart way to buy, sell & manage properties with AI power</p>
+
+            <input type="text" name="identifier" placeholder="Email or Phone" required>
+
+            <!-- Password with eye -->
+            <div class="password-wrapper">
+                <input type="password" id="login-password" name="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePassword('login-password', this)">👁️</span>
+            </div>
+            <!-- Role Select -->
+            <select name="role" required>
+                <option value="admin">Admin</option>
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+
+            <!-- Blue login button -->
+            <button type="submit">Log in</button>
+
+            <!-- Forgot password link -->
+            <span class="switch-link" onclick="showForm('forgot')">Forgotten password?</span>
+
+            <!-- Register button -->
+            <a href="/backend/login/?show=signup" class="create-btn" style="display:block;text-align:center;text-decoration:none;margin-top:20px;padding:12px;background:#4CAF50;color:white;border-radius:6px;font-size:16px;font-weight:600;">Register</a>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signup-form" class="hidden" method="POST" action="/backend/signup/">
+            {% csrf_token %}
+            <h2>Register Yourself</h2>
+            <input type="text" name="username" placeholder="Full name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="phone" name="number" placeholder="Phone" required>
+            <input type="text" name="address" placeholder="Address" required>
+
+            <select name="role" required>
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+
+            <div class="password-wrapper">
+                <input type="password" id="signup-password" name="password" placeholder="Create Password" required>
+                <span class="toggle-password" onclick="togglePassword('signup-password', this)">👁️</span>
+            </div>
+
+            <button type="submit">Sign Up</button>
+            <span class="switch-link" onclick="showForm('login')">Already have an account? Login</span>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="forgot-form" class="hidden" method="POST" action="/backend/forgot-password/">
+            {% csrf_token %}
+            <h2>Forgot Password</h2>
+            <input type="email" name="email" placeholder="Enter your registered email" required>
+            <button type="submit">Send Reset Link</button>
+            <span class="switch-link" onclick="showForm('login')">Back to Login</span>
+        </form>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        function showForm(form) {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.getElementById('forgot-form').classList.add('hidden');
+            document.getElementById(form + '-form').classList.remove('hidden');
+        }
+
+        function togglePassword(inputId, element) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                element.textContent = "🙈";
+            } else {
+                input.type = "password";
+                element.textContent = "👁️";
+            }
+        }
+
+        // Show signup form if ?show=signup is present
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('show') === 'signup') {
+                showForm('signup');
+            }
+        });
+    </script>
+</body>
+</html>

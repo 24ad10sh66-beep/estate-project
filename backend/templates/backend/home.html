@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Estate Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #1b1b2f 0%, #22a6b3 100%);
+            color: #fff;
+            margin: 0;
+            position: relative;
+        }
+        
+        /* Blurred Background Image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/media/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            filter: blur(4px);
+            opacity: 0.35;
+            z-index: -2;
+            transform: scale(1.1);
+        }
+        
+        /* Overlay for better readability */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(27, 27, 47, 0.6) 0%, rgba(34, 166, 179, 0.4) 100%);
+            z-index: -1;
+        }
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 60px 20px 30px 20px;
+        }
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+        .hero-desc {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            margin-bottom: 32px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .feature-card {
+            background: rgba(39,39,64,0.7);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            padding: 28px 22px;
+            width: 260px;
+            text-align: center;
+            color: #fff;
+            backdrop-filter: blur(8px);
+        }
+        .feature-card i {
+            font-size: 2.2rem;
+            color: #22a6b3;
+            margin-bottom: 12px;
+        }
+        .feature-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .feature-card p {
+            font-size: 1rem;
+            color: #b0eaff;
+        }
+        .auth-section {
+            background: rgba(39,39,64,0.7);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            padding: 32px 22px 28px 22px;
+            max-width: 400px;
+            margin: 0 auto 40px auto;
+            color: #fff;
+        }
+        .auth-section h3 {
+            margin-bottom: 18px;
+            font-size: 1.5rem;
+            color: #22a6b3;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .auth-form input, .auth-form select {
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+        .auth-form button {
+            background: #22a6b3;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .auth-form button:hover {
+            background: #168b99;
+        }
+        .switch-link {
+            color: #22a6b3;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.98rem;
+            margin-top: 8px;
+        }
+        footer {
+            background: #181828;
+            color: #b0b0b0;
+            text-align: center;
+            padding: 18px 0 12px 0;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            margin-top: 30px;
+            border-top: 1px solid #23243a;
+        }
+        @media (max-width: 700px) {
+            .features {
+                flex-direction: column;
+                gap: 18px;
+            }
+            .feature-card {
+                width: 100%;
+            }
+            .auth-section {
+                padding: 18px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+
+    <!-- Modals for menu items -->
+    <div id="modal-overlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(34,34,34,0.45);z-index:9999;justify-content:center;align-items:center;">
+        <div id="modal-content" style="background:#fff;color:#222;border-radius:16px;max-width:540px;width:90vw;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(34,166,179,0.18);padding:32px 24px;position:relative;">
+            <span id="modal-close" style="position:absolute;top:18px;right:18px;font-size:1.5rem;cursor:pointer;color:#22a6b3;"><i class="fas fa-times"></i></span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <nav class="navbar">
+        <div class="navbar-left" style="display:flex;align-items:center;gap:18px;">
+            <img src="/media/newlogo.png" alt="Estate Logo" class="logo" style="height:38px;vertical-align:middle;"> <!-- Updated logo path for Django -->
+            <form class="enhanced-navbar-search" onsubmit="searchProperty(event)" style="display:flex;align-items:center;background:rgba(255,255,255,0.98);border-radius:12px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);backdrop-filter:blur(15px);transition:all 0.3s ease;border:2px solid rgba(34,166,179,0.2);">
+                <i class="fas fa-search" style="color:#22a6b3;margin:0 12px 0 14px;font-size:1.125rem;transition:all 0.3s ease;"></i>
+                <input type="text" id="property-search-input" placeholder="Search properties..." style="flex:1;border:none;outline:none;background:transparent;color:#2d3142;font-size:1rem;padding:10px 8px;font-weight:500;width:300px;">
+                <button type="submit" style="background:linear-gradient(135deg,#22a6b3,#1d8fa0);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:0.9375rem;cursor:pointer;box-shadow:0 4px 12px rgba(34,166,179,0.4);transition:all 0.3s ease;font-weight:600;"><i class="fas fa-search" style="margin-right:6px;"></i>Search</button>
+            </form>
+        </div>
+    
+        <div class="navbar-right">
+            {% if is_logged_in %}
+                <!-- Welcome message for logged-in users -->
+                <span style="color:#fff;margin-right:15px;font-size:0.9rem;">
+                    <i class="fas fa-user-check" style="color:#22a6b3;margin-right:5px;"></i>
+                    Hi, {{ user_name|default:user_role|title }}!
+                </span>
+                <div class="auth-dropdown">
+                    <button class="auth-btn" onclick="toggleAuthDropdown()">
+                        <i class="fas fa-cog"></i> Account <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div id="auth-dropdown-menu" class="auth-dropdown-menu">
+                        <a href="/backend/dashboard/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="/backend/profile/"><i class="fas fa-user-edit"></i> Profile</a>
+                        {% if user_role == 'seller' %}
+                            <a href="/backend/seller/properties/"><i class="fas fa-building"></i> My Properties</a>
+                            <a href="/backend/seller/add-property/"><i class="fas fa-plus"></i> Add Property</a>
+                        {% elif user_role == 'buyer' %}
+                            <a href="/backend/buyer-home/"><i class="fas fa-heart"></i> Saved Properties</a>
+                        {% elif user_role == 'admin' %}
+                            <a href="/backend/users/html/"><i class="fas fa-users"></i> Manage Users</a>
+                        {% endif %}
+                        <a href="/backend/logout/" style="color:#ff6b6b;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="auth-dropdown">
+                    <button class="auth-btn" onclick="toggleAuthDropdown()">Login / Register <i class="fas fa-caret-down"></i></button>
+                    <div id="auth-dropdown-menu" class="auth-dropdown-menu">
+                        <a href="/backend/login/?next={{ request.get_full_path|urlencode }}">Login</a>
+                        <a href="/backend/login/?show=signup&next={{ request.get_full_path|urlencode }}">Register</a>
+                    </div>
+                </div>
+            {% endif %}
+            <span class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
+            <span class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode"><i class="fas fa-adjust"></i></span>
+        </div>
+    </nav>
+    <div id="menu-drawer" class="menu-drawer">
+        <div class="menu-header">
+            <span style="font-size:1.2rem;font-weight:600;">Menu</span>
+            <span class="close-menu" onclick="toggleMenu()"><i class="fas fa-times"></i></span>
+        </div>
+        <ul class="menu-list">
+            <li><a href="/" onclick="document.getElementById('menu-drawer').classList.remove('open');"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="showModal('properties');return false;"><i class="fas fa-building"></i> Properties</a></li>
+            <li><a href="#" onclick="showModal('about');return false;"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="#" onclick="showModal('contact');return false;"><i class="fas fa-envelope"></i> Contact</a></li>
+            <li><a href="#" onclick="showModal('faq');return false;"><i class="fas fa-question-circle"></i> FAQ</a></li>
+            <li><a href="#" onclick="showModal('pricing');return false;"><i class="fas fa-tags"></i> Pricing</a></li>
+            <li><a href="#" onclick="showModal('blog');return false;"><i class="fas fa-blog"></i> Blog</a></li>
+            <li><a href="#" onclick="showModal('testimonials');return false;"><i class="fas fa-comments"></i> Testimonials</a></li>
+            <li><a href="#" onclick="showModal('privacy');return false;"><i class="fas fa-user-shield"></i> Privacy Policy</a></li>
+            <li><a href="#" onclick="showModal('terms');return false;"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+        </ul>
+        <div class="menu-footer">
+            <span>Theme: </span>
+            <button onclick="toggleTheme()" class="menu-theme-btn"><i class="fas fa-adjust"></i></button>
+        </div>
+    </div>
+    <!-- Messages Display Section -->
+    {% if messages %}
+    <div id="messages-container" style="position:fixed;top:70px;right:20px;z-index:1000;max-width:400px;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} message-{{ message.tags }}">
+            <i class="fas message-icon-{{ message.tags }}" style="margin-right:8px;"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="marquee-container">
+        <div class="marquee-text">AI Powered Estate Management System</div>
+    </div>
+    <!-- Property images carousel with details container -->
+    <div class="carousel-main-container" style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:900px;margin:38px auto 0 auto;">
+        
+        <!-- Image carousel container -->
+        <div class="property-square-container" style="display:flex;justify-content:center;align-items:stretch;width:100%;height:400px;background:rgba(39,39,64,0.18);border-radius:22px;box-shadow:0 8px 32px rgba(34,166,179,0.22);overflow:hidden;margin-bottom:20px;">
+            <div class="carousel-container" style="position:relative;flex:1;display:flex;align-items:center;justify-content:center;background:#1a1a1a;width:100%;height:100%;">
+                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(34,34,34,0.15) 0%,rgba(34,166,179,0.10) 100%);z-index:2;pointer-events:none;border-radius:18px;"></div>
+                
+                <!-- Image container with fixed aspect ratio -->
+                <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:18px;">
+                    <img id="carousel-img" src="/media/estatelogo.png" alt="Property Image" style="
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                        object-position:center;
+                        transition:opacity 0.5s ease-in-out;
+                        border-radius:12px;
+                        box-shadow:0 8px 32px rgba(34,166,179,0.25);
+                        z-index:1;
+                        opacity:0;
+                        display:block;
+                    ">
+                </div>
+                
+                <button id="prev-btn" style="position:absolute;top:50%;left:18px;transform:translateY(-50%);background:rgba(34,166,179,0.85);color:#fff;border:none;border-radius:50%;width:50px;height:50px;font-size:1.6rem;cursor:pointer;z-index:3;transition:all 0.3s;box-shadow:0 4px 16px rgba(0,0,0,0.4);">&#8592;</button>
+                <button id="next-btn" style="position:absolute;top:50%;right:18px;transform:translateY(-50%);background:rgba(34,166,179,0.85);color:#fff;border:none;border-radius:50%;width:50px;height:50px;font-size:1.6rem;cursor:pointer;z-index:3;transition:all 0.3s;box-shadow:0 4px 16px rgba(0,0,0,0.4);">&#8594;</button>
+                
+                <!-- Image loading indicator -->
+                <div id="loading-indicator" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#22a6b3;font-size:1.8rem;z-index:4;text-align:center;">
+                    <i class="fas fa-spinner fa-spin"></i><br>
+                    <span style="font-size:1rem;margin-top:8px;display:block;">Loading Images...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Property details container -->
+        <div id="property-details" class="property-details-container" style="
+            width:100%;
+            background:rgba(39,39,64,0.7);
+            border-radius:18px;
+            padding:24px;
+            box-shadow:0 8px 24px rgba(34,166,179,0.18);
+            color:#fff;
+            backdrop-filter:blur(8px);
+            margin-bottom:20px;
+            min-height:150px;
+        ">
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:30px;align-items:start;">
+                <!-- Left side - Main details -->
+                <div class="property-main-info">
+                    <h3 id="property-title" style="margin:0 0 12px 0;color:#22a6b3;font-size:1.8rem;font-weight:600;">Property Title</h3>
+                    <p id="property-description" style="margin:0 0 15px 0;color:#e0e0e0;font-size:1.05rem;line-height:1.6;">Property description will appear here...</p>
+                    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:15px;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-map-marker-alt" style="color:#22a6b3;"></i>
+                            <span id="property-location" style="color:#b0eaff;">Location</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-home" style="color:#22a6b3;"></i>
+                            <span id="property-type" style="color:#b0eaff;">Type</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-phone" style="color:#22a6b3;"></i>
+                            <span id="property-contact" style="color:#b0eaff;">Contact</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right side - Price & specs -->
+                <div class="property-specs" style="text-align:right;">
+                    <div id="property-price" style="font-size:2rem;font-weight:700;color:#22a6b3;margin-bottom:15px;">₹ 0</div>
+                    <div style="display:flex;justify-content:space-between;gap:15px;margin-bottom:10px;">
+                        <div style="text-align:center;">
+                            <i class="fas fa-bed" style="color:#22a6b3;font-size:1.2rem;"></i>
+                            <div id="property-bedrooms" style="color:#b0eaff;font-size:0.95rem;margin-top:4px;">0 Beds</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <i class="fas fa-bath" style="color:#22a6b3;font-size:1.2rem;"></i>
+                            <div id="property-bathrooms" style="color:#b0eaff;font-size:0.95rem;margin-top:4px;">0 Baths</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <i class="fas fa-ruler-combined" style="color:#22a6b3;font-size:1.2rem;"></i>
+                            <div id="property-area" style="color:#b0eaff;font-size:0.95rem;margin-top:4px;">0 Sq.Ft</div>
+                        </div>
+                    </div>
+                    <div id="property-status" style="
+                        background:#22a6b3;
+                        color:#fff;
+                        padding:6px 12px;
+                        border-radius:20px;
+                        font-size:0.9rem;
+                        font-weight:500;
+                        display:inline-block;
+                        margin-top:8px;
+                    ">Available</div>
+                </div>
+            </div>
+            
+            <!-- Action buttons and login prompt -->
+            <div style="margin-top:15px;display:flex;gap:15px;align-items:center;justify-content:space-between;">
+                {% if is_logged_in %}
+                    <button onclick="showInterest()" style="
+                        background:#22a6b3;
+                        color:#fff;
+                        border:none;
+                        padding:10px 20px;
+                        border-radius:8px;
+                        font-weight:600;
+                        cursor:pointer;
+                        transition:background 0.3s;
+                    ">
+                        <i class="fas fa-heart"></i> Show Interest
+                    </button>
+                    <button onclick="contactSeller()" style="
+                        background:transparent;
+                        color:#22a6b3;
+                        border:2px solid #22a6b3;
+                        padding:8px 18px;
+                        border-radius:8px;
+                        font-weight:600;
+                        cursor:pointer;
+                        transition:all 0.3s;
+                    ">
+                        <i class="fas fa-phone"></i> Contact Seller
+                    </button>
+                {% else %}
+                    <div style="
+                        flex:1;
+                        padding:12px 18px;
+                        background:rgba(255,107,107,0.1);
+                        border:1px solid rgba(255,107,107,0.3);
+                        border-radius:12px;
+                        text-align:center;
+                    ">
+                        <i class="fas fa-lock" style="color:#ff6b6b;margin-right:8px;"></i>
+                        <span style="color:#ff6b6b;font-size:0.95rem;">
+                            <a href="/backend/login/?next={{ request.get_full_path|urlencode }}" style="color:#22a6b3;text-decoration:none;font-weight:600;">Login</a> 
+                            or 
+                            <a href="/backend/login/?show=signup&next={{ request.get_full_path|urlencode }}" style="color:#22a6b3;text-decoration:none;font-weight:600;">Register</a>
+                            to view contact details, prices & show interest
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Set carousel data with property details
+        try {
+            window.carouselData = JSON.parse('{{ carousel_data_json|default:"[]"|escapejs }}');
+        } catch(e) {
+            window.carouselData = [];
+        }
+        window.imageUrls = window.carouselData.length > 0 
+            ? window.carouselData.map(function(item) { return item.image_url; })
+            : ['/media/apartment.jpeg', '/media/download.jpeg', '/media/download1.jpeg', '/media/shiva1.jpg', '/media/shiva2.jpg', '/media/shiva3.jpg'];
+        
+        // Function to update property details
+        function updatePropertyDetails(index) {
+            if (window.carouselData && window.carouselData[index]) {
+                var property = window.carouselData[index];
+                
+                // Update all property details
+                document.getElementById('property-title').textContent = property.title || 'Property Title';
+                document.getElementById('property-description').textContent = property.description || 'Property description will appear here...';
+                document.getElementById('property-location').textContent = property.location || 'Location not specified';
+                document.getElementById('property-type').textContent = property.property_type || 'Property Type';
+                
+                // Handle contact info based on login status
+                var contactElement = document.getElementById('property-contact');
+                if (property.is_logged_in || property.show_sensitive_info) {
+                    contactElement.textContent = property.contact || 'Contact info';
+                    contactElement.style.color = '#b0eaff';
+                } else {
+                    contactElement.textContent = 'Login to view contact';
+                    contactElement.style.color = '#ff6b6b';
+                    contactElement.style.fontStyle = 'italic';
+                }
+                
+                // Handle price based on login status
+                var priceElement = document.getElementById('property-price');
+                if (property.is_logged_in || property.show_sensitive_info) {
+                    var price = property.price || 0;
+                    var formattedPrice = price > 0 ? price.toLocaleString('en-IN') : 'Price on request';
+                    priceElement.textContent = '₹ ' + formattedPrice;
+                    priceElement.style.color = '#22a6b3';
+                } else {
+                    priceElement.textContent = 'Login to view price';
+                    priceElement.style.color = '#ff6b6b';
+                    priceElement.style.fontSize = '1.4rem';
+                    priceElement.style.fontStyle = 'italic';
+                }
+                
+                // Update specifications
+                document.getElementById('property-bedrooms').textContent = (property.bedrooms || 0) + ' Beds';
+                document.getElementById('property-bathrooms').textContent = (property.bathrooms || 0) + ' Baths';
+                document.getElementById('property-area').textContent = (property.area_sqft || 0) + ' Sq.Ft';
+                document.getElementById('property-status').textContent = property.status || 'Available';
+                
+                console.log('Updated property details for:', property.title, '| Login status:', property.is_logged_in);
+            }
+        }
+        
+        // Initialize carousel with property details
+        document.addEventListener('DOMContentLoaded', function() {
+            var imageUrls = window.imageUrls || [];
+            console.log('Carousel initialized with', imageUrls.length, 'images');
+            
+            // Show first image and details immediately if available
+            var carouselImg = document.getElementById('carousel-img');
+            if (imageUrls.length > 0 && carouselImg) {
+                carouselImg.src = imageUrls[0];
+                carouselImg.style.opacity = 1;
+                updatePropertyDetails(0);
+            }
+        });
+    </script>
+    <!-- Personalized Welcome Section for Logged-in Users -->
+    {% if is_logged_in %}
+    <div style="
+        background:rgba(34,166,179,0.15);
+        padding:20px;
+        margin:20px auto 30px auto;
+        max-width:800px;
+        border-radius:16px;
+        text-align:center;
+        border:1px solid rgba(34,166,179,0.3);
+    ">
+        <h2 style="color:#22a6b3;margin:0 0 10px 0;font-size:1.6rem;">
+            <i class="fas fa-home" style="margin-right:10px;"></i>
+            Welcome back, {{ user_name|default:user_role|title }}!
+        </h2>
+        <p style="color:#e0e0e0;margin:0;font-size:1.1rem;">
+            {% if user_role == 'seller' %}
+                Manage your properties, track bookings, and grow your real estate business.
+                <a href="/backend/seller/add-property/" style="color:#22a6b3;text-decoration:none;font-weight:600;margin-left:10px;">
+                    <i class="fas fa-plus"></i> Add New Property
+                </a>
+            {% elif user_role == 'buyer' %}
+                Discover amazing properties with full pricing and contact details available to you.
+                <span style="color:#22a6b3;font-weight:600;margin-left:10px;">
+                    <i class="fas fa-eye"></i> Full Access Enabled
+                </span>
+            {% elif user_role == 'admin' %}
+                Monitor platform activity and manage users with admin privileges.
+                <a href="/backend/dashboard/" style="color:#22a6b3;text-decoration:none;font-weight:600;margin-left:10px;">
+                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                </a>
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="hero">
+        {% if is_logged_in %}
+            <div class="hero-desc">Welcome to your personalized property experience. Explore exclusive listings with full access to pricing and contact details.</div>
+        {% else %}
+            <div class="hero-desc">Effortlessly manage, buy, and sell properties with smart AI features, secure transactions, and real-time analytics. Your one-stop solution for modern real estate management.</div>
+        {% endif %}
+        
+        <div class="features" id="features">
+    
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h4>AI Recommendations</h4>
+                <p>Get personalized property suggestions powered by advanced AI algorithms.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h4>Market Analytics</h4>
+                <p>Access real-time price trends and market insights for smarter decisions.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Secure Transactions</h4>
+                <p>Enjoy safe, encrypted payments and transparent transaction history.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h4>Role Based Access</h4>
+                <p>Separate dashboards for buyers, sellers, and admins for tailored experiences.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Login/Register section removed. Button and menu now link to login page. -->
+    <footer>
+        &copy; 2025 Estate Management. All rights reserved.
+    </footer>
+    <style>
+        /* Enhanced Navbar Search Focus States */
+        .enhanced-navbar-search:focus-within {
+            border-color: #22a6b3 !important;
+            box-shadow: 0 0 0 4px rgba(34,166,179,0.2), 0 6px 24px rgba(0,0,0,0.2) !important;
+            transform: translateY(-2px);
+        }
+        .enhanced-navbar-search:focus-within i.fa-search:first-of-type {
+            transform: scale(1.15);
+            color: #1f899a;
+        }
+        .enhanced-navbar-search button:hover {
+            background: linear-gradient(135deg,#1d8fa0,#17798a);
+            box-shadow: 0 6px 16px rgba(34,166,179,0.5);
+            transform: translateY(-2px);
+        }
+        
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+            margin-top: 60px;
+            margin-bottom: 0px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+        }
+        .marquee-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 600;
+            color: #22a6b3;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            position: absolute;
+            left: -50%;
+            animation: marqueeMove 12s linear infinite;
+            /* Transparent background with clean text */
+            padding: 16px 32px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        
+        /* Theme-specific marquee text styling */
+        body.light-mode .marquee-text {
+            background: transparent;
+            color: #2d3748;
+            box-shadow: none;
+        }
+        
+        body.dark-mode .marquee-text {
+            background: transparent;
+            color: #ffffff;
+            box-shadow: none;
+        }
+        @keyframes marqueeMove {
+            0% {
+                left: -60%;
+                opacity: 0;
+                transform: translateX(0);
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                left: 110%;
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                left: 110%;
+                opacity: 0;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Clean animation removed for professional look */
+        
+        /* Message animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Message animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Message alert styles */
+        .alert {
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .message-success {
+            background: rgba(34,166,179,0.9);
+            border-left: 4px solid #22a6b3;
+        }
+        
+        .message-error {
+            background: rgba(255,107,107,0.9);
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .message-warning,
+        .message-info {
+            background: rgba(255,193,7,0.9);
+            border-left: 4px solid #ffc107;
+        }
+        
+        .message-icon-success::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        
+        .message-icon-error::before {
+            content: "\f057";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        
+        .message-icon-warning::before,
+        .message-icon-info::before {
+            content: "\f05a";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .logo {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(34,166,179,0.25), 0 1.5px 8px rgba(0,0,0,0.12);
+            border: 3px solid #22a6b3;
+            background: linear-gradient(135deg, #eaf6fb 0%, #22a6b3 100%);
+            object-fit: cover;
+            transition: box-shadow 0.3s;
+            display: inline-block;
+        }
+
+        .auth-btn {
+            background: #fff;
+            color: #22a6b3;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            position: relative;
+        }
+        .auth-btn:hover {
+            background: #22a6b3;
+            color: #fff;
+        }
+        .auth-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .auth-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: #fff;
+            min-width: 180px;
+            box-shadow: 0 4px 16px rgba(34,166,179,0.18);
+            border-radius: 8px;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .auth-dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #22a6b3;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background 0.2s, color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .auth-dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+        .auth-dropdown-menu a:hover {
+            background: #22a6b3;
+            color: #fff;
+        }
+        .auth-dropdown-menu a i {
+            width: 16px;
+            text-align: center;
+        }
+        .menu-icon {
+            font-size: 1.7rem;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .theme-toggle {
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .menu-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background: #fff;
+            color: #222;
+            box-shadow: -2px 0 16px rgba(34,166,179,0.18);
+            z-index: 200;
+            transition: right 0.3s;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .menu-drawer.open {
+            right: 0;
+        }
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 18px 10px 18px;
+            border-bottom: 1px solid #eee;
+        }
+        .close-menu {
+            font-size: 1.5rem;
+            color: #22a6b3;
+            cursor: pointer;
+        }
+        .menu-list {
+            list-style: none;
+            padding: 0 18px;
+            margin: 0;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 65vh;
+        }
+        .menu-list li {
+            margin: 18px 0;
+        }
+        .menu-list a {
+            color: #22a6b3;
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-list a:hover {
+            color: #168b99;
+        }
+        .menu-footer {
+            padding: 18px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-theme-btn {
+            background: #22a6b3;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .menu-theme-btn:hover {
+            background: #168b99;
+        }
+        .hero {
+            margin-top: 70px;
+        }
+        
+        /* Enhanced Navbar Search Bar Styles */
+        .enhanced-navbar-search {
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 400px;
+        }
+        
+        .enhanced-navbar-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .enhanced-navbar-search:focus-within {
+            box-shadow: 0 0 0 3px rgba(34,166,179,0.2), 0 4px 15px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+        }
+        
+        .enhanced-navbar-search input::placeholder {
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .enhanced-navbar-search button:hover {
+            background: linear-gradient(135deg,#1d8fa0,#168b99);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34,166,179,0.4);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .enhanced-navbar-search {
+                max-width: 280px;
+            }
+            
+            .enhanced-navbar-search input {
+                width: 180px;
+                font-size: 0.9rem;
+            }
+            
+            .enhanced-navbar-search button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .enhanced-navbar-search button span {
+                display: none;
+            }
+        }
+        body.light-mode {
+            background: linear-gradient(135deg, #eaf6fb 0%, #d1eaf0 100%);
+            color: #222;
+        }
+        body.light-mode .navbar {
+            background: rgba(34,166,179,0.95);
+        }
+        body.light-mode .auth-section, body.light-mode .feature-card {
+            background: #fff;
+            color: #222;
+        }
+        body.light-mode .feature-card h4 {
+            color: #168b99;
+        }
+        body.light-mode .feature-card p {
+            color: #222;
+        }
+        body.light-mode .hero-title {
+            color: #168b99;
+        }
+        body.light-mode .hero-desc {
+            color: #222;
+        }
+        
+        body.light-mode .feature-card i {
+            color: #22a6b3;
+        }
+        body.light-mode .auth-section h3 {
+            color: #22a6b3;
+        }
+        body.light-mode .switch-link {
+            color: #22a6b3;
+        }
+        body.light-mode .menu-drawer {
+            background: #fff;
+            color: #222;
+        }
+        body.dark-mode {
+            background: linear-gradient(135deg, #1b1b2f 0%, #22a6b3 100%);
+            color: #fff;
+        }
+        body.dark-mode .navbar {
+            background: rgba(34,166,179,0.95);
+        }
+        body.dark-mode .auth-section, body.dark-mode .feature-card {
+            background: rgba(39,39,64,0.7);
+            color: #fff;
+        }
+        body.dark-mode .feature-card i {
+            color: #22a6b3;
+        }
+        body.dark-mode .auth-section h3 {
+            color: #22a6b3;
+        }
+        body.dark-mode .switch-link {
+            color: #22a6b3;
+        }
+        body.dark-mode .menu-drawer {
+            background: #222;
+            color: #fff;
+        }
+        
+        @media (max-width: 700px) {
+            .navbar {
+                padding: 0 8px;
+                height: 54px;
+            }
+            .navbar-right span {
+                display: none; /* Hide welcome message on mobile */
+            }
+            .logo {
+                height: 28px;
+            }
+            .menu-drawer {
+                width: 90vw;
+            }
+            /* Carousel responsive styles */
+            .carousel-main-container {
+                max-width: 95% !important;
+            }
+            .property-square-container {
+                height: 280px !important;
+            }
+            #prev-btn, #next-btn {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 1.3rem !important;
+                left: 12px !important;
+            }
+            #next-btn {
+                right: 12px !important;
+                left: auto !important;
+            }
+            /* Property details responsive */
+            .property-details-container {
+                padding: 16px !important;
+            }
+            .property-details-container > div {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            .property-specs {
+                text-align: left !important;
+            }
+            #property-title {
+                font-size: 1.4rem !important;
+            }
+            #property-price {
+                font-size: 1.6rem !important;
+                margin-bottom: 12px !important;
+            }
+        }
+        
+        /* Additional carousel image styles */
+        .property-square-container img {
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .property-square-container:hover #prev-btn,
+        .property-square-container:hover #next-btn {
+            background: rgba(34,166,179,1) !important;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        @media (max-width: 500px) {
+            .property-square-container {
+                height: 220px !important;
+                border-radius: 16px !important;
+            }
+            .property-details-container {
+                padding: 12px !important;
+                border-radius: 16px !important;
+            }
+            #property-title {
+                font-size: 1.2rem !important;
+            }
+            #property-description {
+                font-size: 0.95rem !important;
+            }
+            #property-price {
+                font-size: 1.4rem !important;
+            }
+            .property-specs > div {
+                gap: 10px !important;
+            }
+            #loading-indicator {
+                font-size: 1.4rem !important;
+            }
+            #loading-indicator span {
+                font-size: 0.9rem !important;
+            }
+            /* Messages responsive */
+            #messages-container {
+                right: 10px !important;
+                top: 60px !important;
+                max-width: calc(100% - 20px) !important;
+            }
+            .alert {
+                padding: 12px 15px !important;
+                font-size: 0.9rem !important;
+            }
+        }
+    </style>
+    <script>
+        // Property image carousel logic (auto-updating from backend)
+        document.addEventListener('DOMContentLoaded', function() {
+            var imageUrls = window.imageUrls || [];
+            var currentIdx = 0;
+            var img = document.getElementById('carousel-img');
+            var prevBtn = document.getElementById('prev-btn');
+            var nextBtn = document.getElementById('next-btn');
+            var intervalId;
+
+            console.log('Carousel initialized with', imageUrls.length, 'images');
+
+            function showImage(idx) {
+                if (imageUrls.length === 0) return;
+                
+                img.style.opacity = 0;
+                
+                // Create new image to ensure proper loading
+                var newImg = new Image();
+                newImg.onload = function() {
+                    img.src = imageUrls[idx];
+                    img.style.opacity = 1;
+                    
+                    // Update property details for current image
+                    updatePropertyDetails(idx);
+                    
+                    // Preload next and previous images for smooth transitions
+                    var nextIdx = (idx + 1) % imageUrls.length;
+                    var prevIdx = (idx - 1 + imageUrls.length) % imageUrls.length;
+                    
+                    if (imageUrls[nextIdx]) {
+                        var preloadNext = new Image();
+                        preloadNext.src = imageUrls[nextIdx];
+                    }
+                    if (imageUrls[prevIdx] && prevIdx !== nextIdx) {
+                        var preloadPrev = new Image();
+                        preloadPrev.src = imageUrls[prevIdx];
+                    }
+                };
+                
+                newImg.onerror = function() {
+                    console.log('Failed to load image:', imageUrls[idx]);
+                    // Try next image if current fails
+                    if (imageUrls.length > 1) {
+                        imageUrls.splice(idx, 1); // Remove broken image
+                        if (window.carouselData) window.carouselData.splice(idx, 1); // Remove corresponding data
+                        if (idx >= imageUrls.length) currentIdx = 0;
+                        else currentIdx = idx;
+                        if (imageUrls.length > 0) showImage(currentIdx);
+                    }
+                };
+                
+                newImg.src = imageUrls[idx];
+            }
+
+            function showNext() {
+                if (imageUrls.length === 0) return;
+                currentIdx = (currentIdx + 1) % imageUrls.length;
+                showImage(currentIdx);
+            }
+
+            function showPrev() {
+                if (imageUrls.length === 0) return;
+                currentIdx = (currentIdx - 1 + imageUrls.length) % imageUrls.length;
+                showImage(currentIdx);
+            }
+
+            function resetInterval() {
+                clearInterval(intervalId);
+                if (imageUrls.length > 1) {
+                    intervalId = setInterval(showNext, 3000);
+                }
+            }
+
+            if (prevBtn) prevBtn.onclick = function() {
+                showPrev();
+                resetInterval();
+            };
+            
+            if (nextBtn) nextBtn.onclick = function() {
+                showNext();
+                resetInterval();
+            };
+
+            // Initialize carousel
+            var loadingIndicator = document.getElementById('loading-indicator');
+            
+            if (imageUrls.length > 0) {
+                // Hide loading indicator
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                
+                showImage(currentIdx);
+                if (imageUrls.length > 1) {
+                    intervalId = setInterval(showNext, 3000);
+                }
+                
+                // Pause on hover
+                if (img) {
+                    img.addEventListener('mouseenter', function() {
+                        clearInterval(intervalId);
+                    });
+                    img.addEventListener('mouseleave', function() {
+                        resetInterval();
+                    });
+                }
+                
+                // Add hover effect to buttons
+                if (prevBtn) {
+                    prevBtn.addEventListener('mouseenter', function() {
+                        this.style.background = '#22a6b3';
+                    });
+                    prevBtn.addEventListener('mouseleave', function() {
+                        this.style.background = 'rgba(34,166,179,0.9)';
+                    });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('mouseenter', function() {
+                        this.style.background = '#22a6b3';
+                    });
+                    nextBtn.addEventListener('mouseleave', function() {
+                        this.style.background = 'rgba(34,166,179,0.9)';
+                    });
+                }
+            } else {
+                console.log('No images available, showing default logo');
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+                if (img) {
+                    img.src = '/media/newlogo.png';
+                    img.style.opacity = 1;
+                }
+            }
+        });
+        // Enhanced Property search bar logic
+        function searchProperty(event) {
+            event.preventDefault();
+            
+            // Get search query from navbar search input
+            var query = document.getElementById('property-search-input') ? document.getElementById('property-search-input').value.trim() : '';
+            
+            if (query) {
+                // Enhanced search results with better styling
+                document.getElementById('modal-body').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h2 style="color: #22a6b3; margin-bottom: 20px;">
+                            <i class="fas fa-search" style="margin-right: 10px;"></i>Search Results
+                        </h2>
+                        <p style="font-size: 1.1rem; margin-bottom: 30px;">
+                            Showing results for: <strong style="color: #22a6b3;">"${query}"</strong>
+                        </p>
+                        <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                            <div style="display: grid; gap: 15px;">
+                                <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #22a6b3;">
+                                    <h4 style="color: #2d3142; margin: 0 0 5px 0;">Luxury Apartment - Mumbai</h4>
+                                    <p style="color: #666; margin: 0; font-size: 0.9rem;">3 BHK • ₹2.5 Cr • Sea View • Premium Location</p>
+                                </div>
+                                <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #22a6b3;">
+                                    <h4 style="color: #2d3142; margin: 0 0 5px 0;">Modern Villa - Pune</h4>
+                                    <p style="color: #666; margin: 0; font-size: 0.9rem;">4 BHK • ₹1.8 Cr • Garden • Swimming Pool</p>
+                                </div>
+                                <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #22a6b3;">
+                                    <h4 style="color: #2d3142; margin: 0 0 5px 0;">Commercial Office - Delhi</h4>
+                                    <p style="color: #666; margin: 0; font-size: 0.9rem;">2000 sq ft • ₹80 Lakh • IT Park • Modern Amenities</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #666; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                            This is a demo. In production, results would be fetched from the database.
+                        </p>
+                    </div>
+                `;
+                document.getElementById('modal-overlay').style.display = 'flex';
+            } else {
+                // Show message if no search query
+                document.getElementById('modal-body').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #22a6b3; margin-bottom: 20px;"></i>
+                        <h3 style="color: #22a6b3; margin-bottom: 15px;">Enter Search Query</h3>
+                        <p style="color: #666;">Please enter a location, property type, or price range to search for properties.</p>
+                    </div>
+                `;
+                document.getElementById('modal-overlay').style.display = 'flex';
+            }
+        }
+        
+        // Enhanced navbar search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            var navbarInput = document.getElementById('property-search-input');
+            
+            // Add enter key support for navbar search
+            if (navbarInput) {
+                navbarInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchProperty(e);
+                    }
+                });
+            }
+        });
+        // Modal content for each menu item
+        const modalContents = {
+            properties: `<h2>Properties</h2><p>Browse our latest properties with images, prices, locations, and details. Find your dream home or investment opportunity here.</p><ul><li>Property 1: 3BHK Apartment, Mumbai</li><li>Property 2: Villa, Pune</li><li>Property 3: Office Space, Delhi</li></ul>`,
+            about: `<h2>About Us</h2><p>We are an AI-powered estate management platform dedicated to making property transactions seamless, secure, and smart. Our mission is to empower buyers, sellers, and agents with cutting-edge technology.</p>`,
+            contact: `<h2>Contact Us</h2><p>Reach out for any queries or support.</p><ul><li>Email: support@estate.com</li><li>Phone: +91-9876543210</li><li>Address: 123 Estate Street, Mumbai</li></ul>`,
+            faq: `<h2>FAQ</h2><ul><li><b>How do I register?</b> Click Login/Register and fill the signup form.</li><li><b>How do I list a property?</b> Go to Dashboard &gt; Add Property.</li><li><b>Is my data secure?</b> Yes, we use advanced encryption and privacy measures.</li></ul>`,
+            pricing: `<h2>Pricing</h2><p>Our platform is free for buyers. Sellers pay a small listing fee. Premium analytics and AI recommendations are available for a subscription.</p>`,
+            blog: `<h2>Blog</h2><p>Read our latest articles, news, and tips about real estate, market trends, and smart property management.</p>`,
+            testimonials: `<h2>Testimonials</h2><ul><li>"Best property platform!" - Priya S.</li><li>"Easy and secure transactions." - Rahul M.</li><li>"AI recommendations helped me find my home." - Sunil K.</li></ul>`,
+            privacy: `<h2>Privacy Policy</h2><p>We value your privacy. All user data is encrypted and never shared with third parties. Read our full policy for details on data collection and protection.</p>`,
+            terms: `<h2>Terms of Service</h2><p>By using our platform, you agree to our terms: fair use, no fraudulent activity, and respect for other users. See the full terms for more information.</p>`
+        };
+
+        function showModal(type) {
+            document.getElementById('modal-body').innerHTML = modalContents[type] || '';
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('menu-drawer').classList.remove('open');
+        }
+        document.getElementById('modal-close').onclick = function() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        };
+        document.getElementById('modal-overlay').onclick = function(e) {
+            if (e.target === this) this.style.display = 'none';
+        };
+        // Prevent page scroll when mouse is over menu drawer
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuDrawer = document.getElementById('menu-drawer');
+            if (menuDrawer) {
+                menuDrawer.addEventListener('wheel', function(e) {
+                    if (menuDrawer.classList.contains('open')) {
+                        var menuList = menuDrawer.querySelector('.menu-list');
+                        if (menuList && e.target.closest('.menu-list')) {
+                            var atTop = menuList.scrollTop === 0;
+                            var atBottom = menuList.scrollHeight - menuList.scrollTop === menuList.clientHeight;
+                            if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+                                e.preventDefault();
+                            } else {
+                                // Allow scroll inside menu-list only
+                                e.stopPropagation();
+                            }
+                        }
+                    }
+                }, { passive: false });
+            }
+        });
+        function toggleAuthDropdown() {
+            var menu = document.getElementById('auth-dropdown-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+        // Close dropdown if clicked outside
+        document.addEventListener('click', function(event) {
+            var dropdown = document.querySelector('.auth-dropdown');
+            var menu = document.getElementById('auth-dropdown-menu');
+            if (!dropdown.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+        // Open menu drawer on menu icon hover, close when not hovered
+        function openMenuDrawer() {
+            var drawer = document.getElementById('menu-drawer');
+            drawer.classList.add('open');
+        }
+        function closeMenuDrawer() {
+            var drawer = document.getElementById('menu-drawer');
+            drawer.classList.remove('open');
+        }
+        function scrollToAuth() {
+            document.getElementById('auth-section').scrollIntoView({behavior: 'smooth'});
+            if(document.getElementById('menu-drawer').classList.contains('open')) {
+                toggleMenu();
+            }
+        }
+        function showSignup() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'flex';
+            document.getElementById('auth-title').innerText = 'Sign Up';
+        }
+        function showLogin() {
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'flex';
+            document.getElementById('auth-title').innerText = 'Login';
+        }
+        function toggleTheme() {
+            var body = document.body;
+            if(body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+            }
+        }
+        // Property action functions
+        function showInterest() {
+            alert('Thank you for your interest! We will contact you soon.');
+            // You can add actual functionality here like sending to backend
+        }
+        
+        function contactSeller() {
+            // Get current property contact from carousel data
+            if (window.carouselData && window.carouselData[currentIdx]) {
+                var contact = window.carouselData[currentIdx].contact;
+                if (contact && contact !== 'Login to view contact') {
+                    alert('Seller Contact: ' + contact);
+                    // You can also open dialer or WhatsApp here
+                    // window.open('tel:' + contact);
+                } else {
+                    alert('Contact information not available');
+                }
+            }
+        }
+        
+        // Auto-hide messages
+        function hideMessages() {
+            var messagesContainer = document.getElementById('messages-container');
+            if (messagesContainer) {
+                var alerts = messagesContainer.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.animation = 'slideOut 0.5s ease-in';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                });
+                
+                // Hide container if no alerts left
+                setTimeout(function() {
+                    if (messagesContainer.children.length === 0) {
+                        messagesContainer.style.display = 'none';
+                    }
+                }, 600);
+            }
+        }
+        
+        // Default to dark mode
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+            
+            // Auto-hide messages after 5 seconds
+            setTimeout(hideMessages, 5000);
+            
+            // Add click to hide messages
+            var messagesContainer = document.getElementById('messages-container');
+            if (messagesContainer) {
+                messagesContainer.addEventListener('click', function(e) {
+                    if (e.target.closest('.alert')) {
+                        var alert = e.target.closest('.alert');
+                        alert.style.animation = 'slideOut 0.5s ease-in';
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 500);
+                    }
+                });
+            }
+            
+            // Add hover events for menu icon and drawer
+            var menuIcon = document.querySelector('.menu-icon');
+            var menuDrawer = document.getElementById('menu-drawer');
+            if (menuIcon && menuDrawer) {
+                menuIcon.addEventListener('mouseenter', openMenuDrawer);
+                menuDrawer.addEventListener('mouseenter', openMenuDrawer);
+                menuIcon.addEventListener('mouseleave', function() {
+                    setTimeout(function() {
+                        if (!menuDrawer.matches(':hover')) closeMenuDrawer();
+                    }, 120);
+                });
+                menuDrawer.addEventListener('mouseleave', closeMenuDrawer);
+            }
+        });
+    </script>
+    
+    <!-- AI Chatbot Widget -->
+    {% include 'backend/chatbot_widget.html' %}
+    
+</body>
+</html>

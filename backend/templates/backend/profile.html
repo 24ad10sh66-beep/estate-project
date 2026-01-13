@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if role %}{{ role|title }}{% endif %} Profile - Estate Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+    body.light-mode {
+        background: #f3f6fa;
+        color: #2d3142;
+    }
+    body.light-mode .container-prop {
+        background: #f9fbfd;
+        color: #2d3142;
+        box-shadow: 0 8px 32px rgba(44,44,58,0.08), 0 2px 8px rgba(0,0,0,0.05);
+        border: 1.5px solid #e0e0ff;
+    }
+    body.dark-mode {
+        background: #23243a;
+        color: #e0e0e0;
+    }
+    body.dark-mode .container-prop {
+        background: #2c2c3a;
+        color: #e0e0e0;
+        box-shadow: 0 8px 32px rgba(44,44,58,0.18), 0 2px 8px rgba(0,0,0,0.10);
+        border: 1.5px solid #4444ff;
+    }
+    .toggle-mode {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* Dark mode toggle (default) */
+    body.dark-mode .toggle-mode, body:not(.light-mode) .toggle-mode {
+        background: rgba(100,181,246,0.15);
+        color: #64b5f6;
+        border: 1.5px solid rgba(100,181,246,0.3);
+    }
+    
+    body.dark-mode .toggle-mode:hover, body:not(.light-mode) .toggle-mode:hover {
+        background: rgba(100,181,246,0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(100,181,246,0.2);
+    }
+    
+    /* Light mode toggle */
+    body.light-mode .toggle-mode {
+        background: rgba(255,255,255,0.9);
+        color: #4f5d75;
+        border: 1.5px solid rgba(79,93,117,0.2);
+    }
+    
+    body.light-mode .toggle-mode:hover {
+        background: rgba(255,255,255,1);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(79,93,117,0.15);
+    }
+    body {
+        font-family: 'Poppins', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+    
+    /* Dark mode as default */
+    body.dark-mode, body:not(.light-mode) {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #23243a 100%);
+        color: #e8e8e8;
+    }
+    
+    /* Light mode when explicitly set */
+    body.light-mode {
+        background: linear-gradient(135deg, #eaf0fa 0%, #c9d6e3 100%);
+        color: #2d3142;
+    }
+    /* Default container for dark mode */
+    .container-prop {
+        max-width: 520px;
+        margin: 40px auto 30px auto;
+        border-radius: 20px;
+        padding: 40px 36px 32px 36px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        position: relative;
+    }
+    
+    /* Dark mode container (default) */
+    body.dark-mode .container-prop, body:not(.light-mode) .container-prop {
+        background: rgba(30,30,45,0.95);
+        color: #e8e8e8;
+        box-shadow: 
+            0 12px 40px rgba(0,0,0,0.4),
+            0 4px 12px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+        border: 1.5px solid rgba(100,100,255,0.3);
+    }
+    
+    /* Light mode container */
+    body.light-mode .container-prop {
+        background: rgba(249,251,253,0.98);
+        color: #2d3142;
+        box-shadow: 0 8px 32px rgba(79,93,117,0.12), 0 2px 8px rgba(0,0,0,0.06);
+        border: 1.5px solid rgba(224,224,255,0.6);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 28px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        font-size: 1.8rem;
+        position: relative;
+        padding-bottom: 12px;
+    }
+    
+    /* Dark mode header (default) */
+    body.dark-mode h2, body:not(.light-mode) h2 {
+        color: #ffffff;
+        background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Light mode header */
+    body.light-mode h2 {
+        color: #4f5d75;
+    }
+    
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        border-radius: 2px;
+    }
+    
+    body.dark-mode h2::after, body:not(.light-mode) h2::after {
+        background: linear-gradient(90deg, #64b5f6, #42a5f5);
+    }
+    
+    body.light-mode h2::after {
+        background: linear-gradient(90deg, #4f5d75, #6c7b95);
+    }
+    .profile-info {
+        margin-bottom: 20px;
+        padding: 16px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    /* Dark mode profile info (default) */
+    body.dark-mode .profile-info, body:not(.light-mode) .profile-info {
+        background: rgba(255,255,255,0.03);
+        border-left: 4px solid rgba(100,181,246,0.6);
+    }
+    
+    body.dark-mode .profile-info:hover, body:not(.light-mode) .profile-info:hover {
+        background: rgba(255,255,255,0.06);
+        transform: translateX(4px);
+    }
+    
+    /* Light mode profile info */
+    body.light-mode .profile-info {
+        background: rgba(79,93,117,0.04);
+        border-left: 4px solid rgba(79,93,117,0.3);
+    }
+    
+    body.light-mode .profile-info:hover {
+        background: rgba(79,93,117,0.08);
+        transform: translateX(4px);
+    }
+    
+    .profile-info label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Dark mode labels (default) */
+    body.dark-mode .profile-info label, body:not(.light-mode) .profile-info label {
+        color: #64b5f6;
+    }
+    
+    /* Light mode labels */
+    body.light-mode .profile-info label {
+        color: #4f5d75;
+    }
+    
+    .profile-info span {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+    
+    /* Dark mode spans (default) */
+    body.dark-mode .profile-info span, body:not(.light-mode) .profile-info span {
+        color: #e8e8e8;
+    }
+    
+    /* Light mode spans */
+    body.light-mode .profile-info span {
+        color: #2d3142;
+    }
+    .edit-btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Dark mode buttons (default) */
+    body.dark-mode .edit-btn, body:not(.light-mode) .edit-btn {
+        background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+        color: #ffffff;
+        border: 1px solid rgba(100,181,246,0.3);
+    }
+    
+    body.dark-mode .edit-btn:hover, body:not(.light-mode) .edit-btn:hover {
+        background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(100,181,246,0.4);
+    }
+    
+    /* Light mode buttons */
+    body.light-mode .edit-btn {
+        background: linear-gradient(135deg, #4f5d75 0%, #6c7b95 100%);
+        color: #ffffff;
+    }
+    
+    body.light-mode .edit-btn:hover {
+        background: linear-gradient(135deg, #3a455c 0%, #4f5d75 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79,93,117,0.3);
+    }
+</style>
+
+<button id="toggleModeBtn" class="toggle-mode" onclick="toggleMode()" type="button"><i class="fas fa-sun"></i> Light Mode</button>
+    <div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div class="container-prop" style="box-shadow:0 8px 32px rgba(44,44,58,0.18),0 2px 8px rgba(0,0,0,0.10);padding-top:0;">
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background:#d4edda;color:#155724;padding:12px 18px;border-radius:7px;margin-bottom:18px;border:1.5px solid #c3e6cb;font-size:1.1rem;">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    <div style="text-align:center;">
+    <div style="margin-top:-40px;">
+            <form id="dpForm" action="{% if role == 'admin' %}/backend/admin/profile/upload-photo/{% elif role == 'buyer' %}/backend/buyer/profile/upload-photo/{% else %}/backend/seller/profile/upload-photo/{% endif %}" method="post" enctype="multipart/form-data" style="display:inline-block;">
+                {% csrf_token %}
+                <label for="profilePhotoInput" id="profilePhotoLabel" style="cursor:pointer;display:inline-block;padding:0;margin-bottom:10px;position:relative;">
+                    {% if user.profile_photo %}
+                        <img src="{{ user.profile_photo.url }}" alt="Profile Photo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #fff;">
+                    {% else %}
+                        <i class="fas fa-user-tie" style="font-size:48px;color:#fff;"></i>
+                        <br>
+                        <button type="button" id="addPhotoBtn" style="margin-top:10px;padding:8px 18px;border-radius:7px;background:#4444ff;color:#fff;font-weight:600;font-size:1rem;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(44,44,58,0.10);">Add Profile Photo</button>
+                    {% endif %}
+                </label>
+            </form>
+            <!-- Move file input outside modal, keep hidden -->
+            <input id="profilePhotoInput" type="file" name="profile_photo" accept="image/*" style="display:none;" form="dpForm">
+            {% if user.profile_photo %}
+            <div id="photoOptionsModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(44,44,58,0.18);z-index:1000;align-items:center;justify-content:center;">
+                <div id="photoOptionsBox" style="background:rgba(255,255,255,0.0);color:#23243a;padding:32px 28px;border-radius:16px;box-shadow:0 8px 32px rgba(44,44,58,0.18);min-width:280px;text-align:center;position:absolute;top:0;left:100px;">
+                    <button onclick="seeProfilePhoto()" style="padding:10px 22px;margin-bottom:12px;border-radius:7px;background:#4444ff;color:#fff;font-weight:600;font-size:1rem;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(79,93,117,0.10);">See Profile Photo</button><br>
+                    <button onclick="changeProfilePhoto()" style="padding:10px 22px;border-radius:7px;background:#23243a;color:#fff;font-weight:600;font-size:1rem;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(44,44,58,0.10);">Change Profile Photo</button>
+                    <span onclick="closePhotoOptions()" style="position:absolute;top:10px;right:18px;font-size:1.3rem;cursor:pointer;color:#4444ff;">&times;</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    <h2 style="margin-bottom:10px;">{{ user.name }}</h2>
+    <span style="font-size:1.1rem;color:#b0b0b0;">{{ user.role|title }}</span>
+    </div>
+    <div class="profile-info" style="margin-top:28px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0px 80px;align-items:start;justify-items:left;"> 
+        <!-- First column -->
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-hashtag"></i> {{ role|title }} ID</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ user.user_id|default:'N/A' }}</span>
+        </div>
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-id-card"></i> Role</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ user.role|title }}</span>
+        </div>
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-user-tag"></i> Role</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ user.role }}</span>
+        </div>
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-envelope"></i> Email</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ user.email }}</span>
+        </div>
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-phone"></i> Phone</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ user.phone }}</span>
+        </div>
+        <!-- Second column -->
+    <div style="width:100%;text-align:left;">
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-home"></i> Total Properties</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ total_properties }}</span>
+        </div>
+    <div style="width:100%;text-align:left;">
+<script>
+    document.getElementById('profilePhotoInput')?.addEventListener('change', function(){
+        document.getElementById('dpForm').submit();
+    });
+    // Add Profile Photo button for first time
+    document.getElementById('addPhotoBtn')?.addEventListener('click', function(e){
+        e.preventDefault();
+        var input = document.getElementById('profilePhotoInput');
+        input.value = null;
+        input.click();
+    });
+    // Show modal only if profile photo exists (JS logic)
+    var hasProfilePhoto = "{{ user.profile_photo|yesno:'true,false' }}";
+    if (hasProfilePhoto) {
+        document.getElementById('profilePhotoLabel')?.addEventListener('click', function(e){
+            e.preventDefault();
+            var modal = document.getElementById('photoOptionsModal');
+            var box = document.getElementById('photoOptionsBox');
+            var rect = document.getElementById('profilePhotoLabel').getBoundingClientRect();
+            modal.style.display = 'block';
+            setTimeout(function() {
+                var boxWidth = box.offsetWidth || 280;
+                var boxHeight = box.offsetHeight || 80;
+                // Center above DP
+                var left = rect.left + window.scrollX + (rect.width/2) - (boxWidth/2);
+                var top = rect.top + window.scrollY - boxHeight - 8;
+                // If not enough space above, show just below
+                if(top < 0) top = rect.bottom + window.scrollY + 8;
+                box.style.left = left + 'px';
+                box.style.top = top + 'px';
+            }, 0);
+        });
+    }
+    function closePhotoOptions() {
+        document.getElementById('photoOptionsModal').style.display = 'none';
+    }
+    function seeProfilePhoto() {
+        closePhotoOptions();
+        var img = document.querySelector('#profilePhotoLabel img');
+        if(img) {
+            var win = window.open(img.src, '_blank');
+            win.focus();
+        } else {
+            alert('No profile photo uploaded.');
+        }
+    }
+    function changeProfilePhoto() {
+        closePhotoOptions();
+        var input = document.getElementById('profilePhotoInput');
+        input.value = null;
+        input.click();
+    }
+</script>
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-check-circle"></i> Status</label>
+            <span style="font-size:1.08rem;font-weight:500;">{% if user.status %}{{ user.status|title }}{% else %}Active{% endif %}</span>
+        </div>
+        <div>
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-map-marker-alt"></i> Address</label>
+            <span style="font-size:1.08rem;font-weight:500;">{{ address|default:'N/A' }}</span>
+        </div>
+        <div>
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-calendar-plus"></i> Account Created</label>
+            <span style="font-size:1.08rem;font-weight:500;">{% if account_created %}{{ account_created }}{% else %}N/A{% endif %}</span>
+        </div>
+        <div>
+            <label style="font-size:1.05rem;font-weight:600;color:#4444ff;"><i class="fas fa-sign-in-alt"></i> Last Login</label>
+            <span style="font-size:1.08rem;font-weight:500;">{% if last_login %}{{ last_login }}{% else %}N/A{% endif %}</span>
+        </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:28px;">
+    <a href="{% if role == 'admin' %}/backend/admin/profile/edit/{% elif role == 'buyer' %}/backend/buyer/profile/edit/{% else %}/backend/seller/profile/edit/{% endif %}" class="edit-btn" style="text-decoration:none;cursor:pointer;"><i class="fas fa-edit"></i> Edit Profile</a>
+    <a href="{% if role == 'admin' %}/backend/admin/profile/change-password/{% elif role == 'buyer' %}/backend/buyer/profile/change-password/{% else %}/backend/seller/profile/change-password/{% endif %}" class="edit-btn" style="margin-left:10px;background:linear-gradient(90deg,#ff4d4f 60%,#3a3a6a 100%);text-decoration:none;cursor:pointer;"><i class="fas fa-key"></i> Change Password</a>
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+    function setThemeClass() {
+        const body = document.body;
+        if(localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            body.classList.remove('light-mode');
+        } else {
+            body.classList.add('light-mode');
+            body.classList.remove('dark-mode');
+        }
+        const btn = document.getElementById('toggleModeBtn');
+        if(body.classList.contains('dark-mode')) {
+            btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        }
+    }
+    document.getElementById('toggleModeBtn').onclick = function() {
+        const body = document.body;
+        if(body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
+        setThemeClass();
+    };
+    window.onload = setThemeClass;
+</script>
+<script>
+    function toggleMode() {
+        const body = document.body;
+        const btn = document.getElementById('toggleModeBtn');
+        
+        if(body.classList.contains('dark-mode')) {
+            // Switch to light mode
+            body.classList.remove('dark-mode');
+            body.classList.add('light-mode');
+            btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            btn.classList.add('light');
+            localStorage.setItem('theme', 'light');
+        } else {
+            // Switch to dark mode
+            body.classList.remove('light-mode');
+            body.classList.add('dark-mode');
+            btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            btn.classList.remove('light');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+    window.onload = function() {
+        // Default to dark mode unless user specifically set light mode
+        if(localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+            const btn = document.getElementById('toggleModeBtn');
+            if(btn) { btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode'; btn.classList.add('light'); }
+        } else {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+            const btn = document.getElementById('toggleModeBtn');
+            if(btn) { btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode'; btn.classList.remove('light'); }
+            // Set default to dark if no preference is stored
+            if(!localStorage.getItem('theme')) {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    }
+</script>
+</body>
+</html>

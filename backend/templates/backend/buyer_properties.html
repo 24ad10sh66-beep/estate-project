@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Properties - Estate Management System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent: #06b6d4;
+            --accent-hover: #0891b2;
+            --border: #334155;
+            --border-light: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        /* Light Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #06b6d4;
+            --accent-hover: #0891b2;
+            --border: #e2e8f0;
+            --border-light: #cbd5e1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        /* Top Navigation */
+        .top-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .nav-brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+        
+        .back-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header-icon {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+        }
+        .header-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .header-text p {
+            color: var(--text-muted);
+            margin: 0.25rem 0 0 0;
+        }
+        .filters-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .filter-input {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .filter-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        .search-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 4px 12px rgba(6, 182, 212, 0.2);
+            transform: translateY(-2px);
+        }
+        .search-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+        .search-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .search-btn:hover {
+            background: var(--accent-hover);
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .results-count {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        .sort-dropdown {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .property-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        .property-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.25);
+            border-color: var(--accent);
+        }
+        .property-image {
+            height: 200px;
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .save-property-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            z-index: 10;
+        }
+        
+        .save-property-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+        
+        .save-property-btn i {
+            font-size: 1.25rem;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        
+        .save-property-btn.saved i {
+            color: #ef4444;
+        }
+        
+        .save-property-btn:hover i {
+            color: #ef4444;
+        }
+        
+        .save-property-btn.saved {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-card:hover .property-image img {
+            transform: scale(1.05);
+        }
+        
+        .property-image-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .property-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .property-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .property-type {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .property-location {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .property-details {
+            padding: 1.5rem;
+        }
+        .property-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .meta-icon {
+            color: var(--text-muted);
+            width: 1rem;
+            text-align: center;
+        }
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+        .property-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .property-actions {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        .action-btn.primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .action-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+        .action-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--accent);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            border-radius: 1rem 1rem 0 0;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .modal-content {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            background: var(--bg-secondary);
+            border-radius: 0 0 1rem 1rem;
+        }
+        
+        /* Property Details Grid */
+        .property-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-detail-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .property-detail-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .property-detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Property Image Gallery in Modal */
+        .property-image-gallery {
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-image-gallery h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .property-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .property-modal-image {
+            width: 100%;
+            height: 120px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .property-modal-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .property-modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .property-description-modal {
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-description-modal h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .property-description-modal p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .property-amenities {
+            margin-bottom: 1.5rem;
+        }
+        
+        .property-amenities h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .amenity-tag {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        
+        /* Dropdown specific styling */
+        .form-input select,
+        select.form-input {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 12px;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        
+        .form-input option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem;
+        }
+        
+        /* Light theme dropdown arrow */
+        [data-theme="light"] .form-input select,
+        [data-theme="light"] select.form-input {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231e293b' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .property-meta {
+                grid-template-columns: 1fr;
+            }
+            .top-nav {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 4rem;
+            }
+            
+            .nav-actions {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+                justify-content: space-between;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .modal-overlay {
+                padding: 1rem;
+            }
+            
+            .property-detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Notification Animations */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+    </style>
+    <script>
+        // Theme Toggle Functionality (same as admin properties)
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                // Default dark theme
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
+        
+        // Smooth transitions for theme switching
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    </script>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - Browse Properties</div>
+        </div>
+        
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            
+            <a href="/backend/buyer-home/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Browse Properties</h1>
+                    <p>Find your perfect home from our extensive property listings</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <form method="GET">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Property Type</label>
+                        <select name="type" class="filter-input">
+                            <option value="">All Types</option>
+                            <option value="House">House</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Plot">Plot</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">City</label>
+                        <select name="city" class="filter-input">
+                            <option value="">All Cities</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Pune">Pune</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Min Price</label>
+                        <input type="number" name="min_price" placeholder="₹ Min Price" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Max Price</label>
+                        <input type="number" name="max_price" placeholder="₹ Max Price" class="filter-input">
+                    </div>
+                </div>
+                
+                <div class="search-section">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search by title, location, or description..." class="search-input">
+                    </div>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="results-count">
+                {% if properties %}
+                    {{ properties|length }} properties found
+                {% else %}
+                    No properties found
+                {% endif %}
+            </div>
+            <select class="sort-dropdown">
+                <option>Sort by: Price (Low to High)</option>
+                <option>Sort by: Price (High to Low)</option>
+                <option>Sort by: Newest First</option>
+                <option>Sort by: Area (Largest)</option>
+            </select>
+        </div>
+
+        <!-- Properties Grid -->
+        {% if properties %}
+        <div class="properties-grid">
+            {% for property in properties %}
+            <div class="property-card">
+                <div class="property-image">
+                    <button class="save-property-btn" 
+                            data-property-id="{{ property.property_id }}"
+                            data-property-title="{{ property.title }}"
+                            onclick="toggleSaveProperty(this, '{{ property.property_id }}', '{{ property.title|escapejs }}')"
+                            title="Save this property">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    {% if property.images.first %}
+                        {% with property.images.first as first_image %}
+                            {% if first_image.image_url %}
+                                {% if first_image.image_url|slice:":4" == "http" %}
+                                    <img src="{{ first_image.image_url }}" alt="{{ property.title }}">
+                                {% else %}
+                                    <img src="/media/{{ first_image.image_url }}" alt="{{ property.title }}">
+                                {% endif %}
+                            {% else %}
+                                <div class="property-image-fallback">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        <div class="property-image-fallback">
+                            <i class="fas fa-home"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="property-header">
+                    <div class="property-title">
+                        {{ property.title }}
+                        <span class="property-type">{{ property.property_type }}</span>
+                    </div>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ property.city }}, {{ property.state }}
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="property-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-ruler-combined meta-icon"></i>
+                            {{ property.area_sqft }} sq ft
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-bed meta-icon"></i>
+                            {{ property.bedrooms }} Bedrooms
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-bath meta-icon"></i>
+                            {{ property.bathrooms }} Bathrooms
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-phone meta-icon"></i>
+                            {{ property.contact }}
+                        </div>
+                    </div>
+                    
+                    <div class="property-price">
+                        ₹{{ property.price|floatformat:0 }}
+                    </div>
+                    
+                    <div class="property-description">
+                        {{ property.description|truncatewords:20 }}
+                    </div>
+                </div>
+                
+                <div class="property-actions">
+                    <a href="#" class="action-btn view-details" 
+                       data-property-id="{{ property.property_id }}"
+                       data-title="{{ property.title }}"
+                       data-description="{{ property.description }}"
+                       data-price="{{ property.price }}"
+                       data-area="{{ property.area_sqft }}"
+                       data-bedrooms="{{ property.bedrooms }}"
+                       data-bathrooms="{{ property.bathrooms }}"
+                       data-address="{{ property.address }}"
+                       data-city="{{ property.city }}"
+                       data-state="{{ property.state }}"
+                       data-type="{{ property.property_type }}"
+                       data-amenities="{{ property.amenities }}"
+                       data-contact="{{ property.contact }}"
+                       data-location="{{ property.location }}"
+                       data-images="{% for img in property.images.all %}{% if img.image_url|slice:':4' == 'http' %}{{ img.image_url }}{% else %}/media/{{ img.image_url }}{% endif %}{% if not forloop.last %}|{% endif %}{% endfor %}">
+                        <i class="fas fa-eye"></i>
+                        View Details
+                    </a>
+                    <a href="#" class="action-btn primary book-now" 
+                       data-property-id="{{ property.property_id }}"
+                       data-title="{{ property.title }}"
+                       data-price="{{ property.price }}"
+                       data-contact="{{ property.contact }}"
+                       data-seller-name="{{ property.user.name }}"
+                       data-city="{{ property.city }}"
+                       data-state="{{ property.state }}"
+                       data-property-type="{{ property.property_type }}">
+                        <i class="fas fa-heart"></i>
+                        Book Now
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3>No Properties Found</h3>
+            <p>{% if query %}No properties match your search criteria.{% else %}No properties are currently available.{% endif %} Try adjusting your filters or search terms.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Property Details</h2>
+                <button class="modal-close" onclick="closeModal('propertyModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="propertyDetails">
+                <!-- Property details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('propertyModal')">Close</button>
+                <button class="btn-primary" id="bookFromDetails">Book This Property</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Book Property</h2>
+                <button class="modal-close" onclick="closeModal('bookingModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="bookingForm">
+                <!-- Booking form will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('bookingModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitBooking()">Submit Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Close Modal Function
+        function closeModal(modalId) {
+            if (modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            } else {
+                // Close all modals if no specific ID provided
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            document.body.style.overflow = 'auto';
+        }
+
+        // View Property Details Function
+        function viewPropertyDetails(propertyData) {
+            const modalContent = document.getElementById('propertyDetails');
+            const modalTitle = document.querySelector('#propertyModal .modal-title');
+            
+            modalTitle.textContent = propertyData.title;
+            
+            // Format price
+            const formattedPrice = new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(propertyData.price);
+            
+            // Parse amenities (assume comma-separated)
+            const amenitiesList = propertyData.amenities ? propertyData.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
+            
+            // Build images gallery HTML
+            let imagesHTML = '';
+            if (propertyData.images && propertyData.images.length > 0) {
+                imagesHTML = `
+                    <div class="property-image-gallery">
+                        <h4><i class="fas fa-images"></i> Property Images</h4>
+                        <div class="property-images-grid">
+                            ${propertyData.images.map(imgUrl => `
+                                <div class="property-modal-image">
+                                    <img src="${imgUrl}" alt="${propertyData.title}" onclick="window.open('${imgUrl}', '_blank')">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            modalContent.innerHTML = `
+                ${imagesHTML}
+                <div class="property-detail-grid">
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-rupee-sign"></i>
+                            Price
+                        </div>
+                        <div class="property-detail-value">${formattedPrice}</div>
+                    </div>
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-ruler-combined"></i>
+                            Area
+                        </div>
+                        <div class="property-detail-value">${propertyData.area} sq ft</div>
+                    </div>
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-bed"></i>
+                            Bedrooms
+                        </div>
+                        <div class="property-detail-value">${propertyData.bedrooms}</div>
+                    </div>
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-bath"></i>
+                            Bathrooms
+                        </div>
+                        <div class="property-detail-value">${propertyData.bathrooms}</div>
+                    </div>
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location
+                        </div>
+                        <div class="property-detail-value">${propertyData.city}, ${propertyData.state}</div>
+                    </div>
+                    <div class="property-detail-item">
+                        <div class="property-detail-label">
+                            <i class="fas fa-phone"></i>
+                            Contact
+                        </div>
+                        <div class="property-detail-value">${propertyData.contact}</div>
+                    </div>
+                </div>
+                
+                <div class="property-description-modal">
+                    <h4><i class="fas fa-info-circle"></i> Description</h4>
+                    <p>${propertyData.description || 'No description available.'}</p>
+                </div>
+                
+                <div class="property-description-modal">
+                    <h4><i class="fas fa-map"></i> Full Address</h4>
+                    <p>${propertyData.address || 'Address not provided'}</p>
+                </div>
+                
+                ${amenitiesList.length > 0 ? `
+                    <div class="property-amenities">
+                        <h4><i class="fas fa-star"></i> Amenities</h4>
+                        <div class="amenities-list">
+                            ${amenitiesList.map(amenity => `<span class="amenity-tag">${amenity}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+            
+            // Set up book button in modal
+            const bookBtn = document.getElementById('bookFromDetails');
+            bookBtn.onclick = () => {
+                closeModal('propertyModal');
+                showBookingModal(propertyData);
+            };
+            
+            // Show modal
+            document.getElementById('propertyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show Booking Modal Function
+        function showBookingModal(propertyData) {
+            const modalContent = document.getElementById('bookingForm');
+            const modalTitle = document.querySelector('#bookingModal .modal-title');
+            
+            modalTitle.textContent = `Book: ${propertyData.title}`;
+            
+            // Format price
+            const formattedPrice = new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(propertyData.price);
+            
+            modalContent.innerHTML = `
+                <div class="property-booking-summary">
+                    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">${propertyData.title}</h4>
+                        <p style="color: var(--text-muted); margin-bottom: 0.5rem;">${propertyData.propertyType} • ${propertyData.city}, ${propertyData.state}</p>
+                        <p style="color: var(--success); font-weight: 600; font-size: 1.25rem;">${formattedPrice}</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Your Name
+                        </label>
+                        <input type="text" class="form-input" id="booking-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-phone"></i>
+                            Phone Number
+                        </label>
+                        <input type="tel" class="form-input" id="booking-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <input type="email" class="form-input" id="booking-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calendar"></i>
+                            Preferred Visit Date
+                        </label>
+                        <input type="date" class="form-input" id="booking-date" required>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); padding: 1.5rem; border-radius: 0.75rem; margin-top: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+                    <h4 style="color: white; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Details
+                    </h4>
+                    <div class="form-grid" style="margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="color: rgba(255, 255, 255, 0.95); font-weight: 600; margin-bottom: 0.5rem;">
+                                <i class="fas fa-wallet"></i>
+                                Payment Method *
+                            </label>
+                            <select class="form-input" id="booking-payment-method" required style="background: white; color: #1e293b; border: 2px solid rgba(255, 255, 255, 0.3); font-weight: 500; font-size: 0.9rem;">
+                                <option value="" style="color: #64748b;">-- Select Payment Method --</option>
+                                <option value="upi" style="color: #1e293b;">💳 UPI (Google Pay, PhonePe, Paytm)</option>
+                                <option value="credit_card" style="color: #1e293b;">💳 Credit Card</option>
+                                <option value="debit_card" style="color: #1e293b;">💳 Debit Card</option>
+                                <option value="net_banking" style="color: #1e293b;">🏦 Net Banking</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="color: rgba(255, 255, 255, 0.95); font-weight: 600; margin-bottom: 0.5rem;">
+                                <i class="fas fa-rupee-sign"></i>
+                                Booking Amount
+                            </label>
+                            <input type="text" class="form-input" id="booking-amount" value="${formattedPrice}" readonly style="background: white; font-weight: 700; color: #059669; border: 2px solid rgba(255, 255, 255, 0.3); font-size: 1.1rem; letter-spacing: 0.5px;">
+                        </div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.2); padding: 0.875rem; border-radius: 0.5rem; color: white; font-size: 0.875rem; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                        <strong>Note:</strong> Payment is required to confirm your booking. Please select your preferred payment method above.
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-comment"></i>
+                        Additional Message (Optional)
+                    </label>
+                    <textarea class="form-input form-textarea" id="booking-message" placeholder="Any specific requirements or questions..."></textarea>
+                </div>
+                
+                <input type="hidden" id="booking-property-id" value="${propertyData.propertyId}">
+                <input type="hidden" id="booking-property-title" value="${propertyData.title}">
+                <input type="hidden" id="booking-property-price" value="${propertyData.price}">
+            `;
+            
+            // Fetch and auto-fill buyer profile data
+            fetch('/backend/api/buyer/profile/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.profile) {
+                        document.getElementById('booking-name').value = data.profile.name || '';
+                        document.getElementById('booking-email').value = data.profile.email || '';
+                        document.getElementById('booking-phone').value = data.profile.phone || '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading profile:', error);
+                });
+            
+            // Show modal
+            document.getElementById('bookingModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Submit Booking Function
+        function submitBooking() {
+            const propertyId = document.getElementById('booking-property-id').value;
+            const propertyTitle = document.getElementById('booking-property-title').value;
+            const propertyPrice = document.getElementById('booking-property-price').value;
+            const name = document.getElementById('booking-name').value;
+            const phone = document.getElementById('booking-phone').value;
+            const email = document.getElementById('booking-email').value;
+            const date = document.getElementById('booking-date').value;
+            const message = document.getElementById('booking-message').value;
+            const paymentMethod = document.getElementById('booking-payment-method').value;
+            
+            // Validation
+            if (!name || !phone || !email || !date) {
+                showNotification('⚠️ Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Validate payment method
+            if (!paymentMethod) {
+                showNotification('⚠️ Please select a payment method to confirm booking.', 'error');
+                return;
+            }
+            
+            // Validate phone number (10 digits)
+            if (!/^\d{10}$/.test(phone)) {
+                showNotification('⚠️ Please enter a valid 10-digit phone number.', 'error');
+                return;
+            }
+            
+            // Validate email
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('⚠️ Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#bookingModal .btn-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '💳 Processing Payment...';
+            submitBtn.disabled = true;
+            
+            // Submit booking with payment via API
+            fetch('/backend/api/buyer/bookings/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    property_id: propertyId,
+                    buyer_name: name,
+                    buyer_phone: phone,
+                    buyer_email: email,
+                    visit_date: date,
+                    message: message,
+                    payment_method: paymentMethod,
+                    amount: propertyPrice
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                if (data.success) {
+                    showNotification(`✅ Payment successful! Booking confirmed for ${propertyTitle}. Seller has been notified.`, 'success');
+                    closeModal('bookingModal');
+                    
+                    // Clear form
+                    document.getElementById('booking-name').value = '';
+                    document.getElementById('booking-phone').value = '';
+                    document.getElementById('booking-email').value = '';
+                    document.getElementById('booking-date').value = '';
+                    document.getElementById('booking-message').value = '';
+                    document.getElementById('booking-payment-method').value = '';
+                } else {
+                    showNotification('❌ ' + (data.error || 'Failed to process booking. Please try again.'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                showNotification('❌ An error occurred. Please try again.', 'error');
+            });
+        }
+
+        // Notification Function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const backgroundColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'info' ? '#06b6d4' : '#f59e0b';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 5rem;
+                right: 2rem;
+                background: ${backgroundColor};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                animation: slideInRight 0.3s ease;
+                max-width: 400px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Event Listeners for Property Actions
+        document.addEventListener('DOMContentLoaded', function() {
+            // View Details buttons
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const data = this.dataset;
+                    viewPropertyDetails({
+                        propertyId: data.propertyId,
+                        title: data.title,
+                        description: data.description,
+                        price: data.price,
+                        area: data.area,
+                        bedrooms: data.bedrooms,
+                        bathrooms: data.bathrooms,
+                        address: data.address,
+                        city: data.city,
+                        state: data.state,
+                        amenities: data.amenities,
+                        contact: data.contact,
+                        propertyType: data.type,
+                        images: data.images ? data.images.split('|').filter(img => img) : []
+                    });
+                });
+            });
+
+            // Book Now buttons
+            document.querySelectorAll('.book-now').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const data = this.dataset;
+                    showBookingModal({
+                        propertyId: data.propertyId,
+                        title: data.title,
+                        price: data.price,
+                        contact: data.contact,
+                        sellerName: data.sellerName,
+                        city: data.city || 'Not specified',
+                        state: data.state || 'Not specified',
+                        propertyType: data.propertyType || 'Property'
+                    });
+                });
+            });
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(event.target.id);
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Save/Unsave Property Functions
+        function toggleSaveProperty(button, propertyId, propertyTitle) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const icon = button.querySelector('i');
+            const isSaved = button.classList.contains('saved');
+            
+            if (isSaved) {
+                // Unsave property
+                unsaveProperty(button, propertyId, propertyTitle);
+            } else {
+                // Save property
+                saveProperty(button, propertyId, propertyTitle);
+            }
+        }
+
+        function saveProperty(button, propertyId, propertyTitle) {
+            // Show loading state
+            const icon = button.querySelector('i');
+            icon.className = 'fas fa-spinner fa-spin';
+            button.disabled = true;
+            
+            fetch('/backend/api/buyer/saved-properties/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    property_id: propertyId,
+                    notes: ''
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.disabled = false;
+                if (data.success) {
+                    // Update UI to saved state
+                    icon.className = 'fas fa-heart';
+                    button.classList.add('saved');
+                    button.title = 'Remove from saved';
+                    button.setAttribute('data-saved-id', data.saved_id);
+                    
+                    // Show success notification
+                    showNotification('Property saved successfully!', 'success');
+                } else {
+                    // Revert icon
+                    icon.className = 'far fa-heart';
+                    if (data.error && data.error.includes('already saved')) {
+                        showNotification('Property already in your saved list', 'info');
+                        // Mark as saved anyway
+                        icon.className = 'fas fa-heart';
+                        button.classList.add('saved');
+                        button.title = 'Remove from saved';
+                    } else {
+                        showNotification(data.error || 'Failed to save property', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.disabled = false;
+                icon.className = 'far fa-heart';
+                showNotification('An error occurred. Please try again.', 'error');
+            });
+        }
+
+        function unsaveProperty(button, propertyId, propertyTitle) {
+            const savedId = button.getAttribute('data-saved-id');
+            
+            if (!savedId) {
+                // Try to find saved ID from server
+                findAndUnsaveProperty(button, propertyId, propertyTitle);
+                return;
+            }
+            
+            // Show loading state
+            const icon = button.querySelector('i');
+            icon.className = 'fas fa-spinner fa-spin';
+            button.disabled = true;
+            
+            fetch(`/backend/api/buyer/saved-properties/${savedId}/remove/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.disabled = false;
+                if (data.success) {
+                    // Update UI to unsaved state
+                    icon.className = 'far fa-heart';
+                    button.classList.remove('saved');
+                    button.title = 'Save this property';
+                    button.removeAttribute('data-saved-id');
+                    
+                    // Show success notification
+                    showNotification('Property removed from saved list', 'success');
+                } else {
+                    // Revert icon
+                    icon.className = 'fas fa-heart';
+                    showNotification(data.error || 'Failed to remove property', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.disabled = false;
+                icon.className = 'fas fa-heart';
+                showNotification('An error occurred. Please try again.', 'error');
+            });
+        }
+
+        function findAndUnsaveProperty(button, propertyId, propertyTitle) {
+            // Fetch all saved properties to find the saved_id
+            fetch('/backend/api/buyer/saved-properties/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const savedProperty = data.properties.find(p => p.property_id == propertyId);
+                        if (savedProperty) {
+                            button.setAttribute('data-saved-id', savedProperty.saved_id);
+                            unsaveProperty(button, propertyId, propertyTitle);
+                        } else {
+                            // Property not found in saved list
+                            const icon = button.querySelector('i');
+                            icon.className = 'far fa-heart';
+                            button.classList.remove('saved');
+                            showNotification('Property not found in saved list', 'info');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to remove property', 'error');
+                });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Load saved properties status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedPropertiesStatus();
+            
+            // Check if property_id is in URL parameters (from saved properties view details)
+            const urlParams = new URLSearchParams(window.location.search);
+            const propertyId = urlParams.get('property_id');
+            
+            if (propertyId) {
+                // Find the property card and trigger view details
+                setTimeout(() => {
+                    const viewDetailsBtn = document.querySelector(`[data-property-id="${propertyId}"].view-details`);
+                    if (viewDetailsBtn) {
+                        viewDetailsBtn.click();
+                    }
+                }, 500); // Small delay to ensure page is fully loaded
+            }
+        });
+
+        function loadSavedPropertiesStatus() {
+            fetch('/backend/api/buyer/saved-properties/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mark already saved properties
+                        data.properties.forEach(savedProp => {
+                            const saveButton = document.querySelector(`[data-property-id="${savedProp.property_id}"]`);
+                            if (saveButton && saveButton.classList.contains('save-property-btn')) {
+                                const icon = saveButton.querySelector('i');
+                                icon.className = 'fas fa-heart';
+                                saveButton.classList.add('saved');
+                                saveButton.title = 'Remove from saved';
+                                saveButton.setAttribute('data-saved-id', savedProp.saved_id);
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading saved properties:', error);
+                });
+        }
+    </script>
+</body>
+</html>

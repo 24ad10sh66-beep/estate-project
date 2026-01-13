@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Estate Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Modern Color Palette */
+            --primary-blue: #3b82f6;
+            --primary-blue-dark: #2563eb;
+            --primary-blue-light: #60a5fa;
+            --secondary-indigo: #6366f1;
+            --accent-purple: #8b5cf6;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
+            
+            /* Neutrals for both themes */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+        
+        /* Dark Theme Variables (Default) */
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4);
+            --input-bg: #1e293b;
+            --input-text: #f1f5f9;
+        }
+        
+        /* Light Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --input-bg: #ffffff;
+            --input-text: #1e293b;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        * {
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        
+        *:focus {
+            transition: none;
+        }
+        /* Top Navigation */
+        .top-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+        
+        .nav-brand img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .search-box input {
+            background: var(--input-bg);
+            color: var(--input-text);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            width: 100%;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        [data-theme="light"] .search-box input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 12px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+            background: var(--bg-secondary);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .search-box:focus-within i {
+            color: var(--primary-blue);
+            transform: scale(1.1);
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-btn:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0.125rem;
+            right: 0.125rem;
+            background: var(--error-red);
+            color: white;
+            border-radius: 0.625rem;
+            min-width: 1rem;
+            height: 1rem;
+            font-size: 0.625rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            padding: 0 0.25rem;
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        
+        .user-avatar:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-avatar i {
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, var(--error-red) 0%, var(--warning-orange) 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, var(--warning-orange) 0%, var(--error-red) 100%);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--text-secondary);
+        }
+        
+        [data-theme="light"] .theme-toggle {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        [data-theme="light"] .theme-toggle:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .theme-toggle i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle:hover i {
+            transform: rotate(180deg);
+        }
+        /* Dashboard Layout */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-theme="light"] .page-title {
+            color: #0f172a;
+            font-weight: 800;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        [data-theme="light"] .page-subtitle {
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        
+        [data-theme="light"] .stat-card {
+            background: #ffffff;
+            border-color: #e2e8f0;
+        }
+        
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--primary-blue);
+        }
+        
+        [data-theme="light"] .stat-card:hover {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.15);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        [data-theme="light"] .stat-title {
+            color: #64748b;
+            font-weight: 600;
+        }
+        
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+        
+        .stat-icon.blue { background: var(--primary-blue); }
+        .stat-icon.green { background: var(--success-green); }
+        .stat-icon.orange { background: var(--warning-orange); }
+        .stat-icon.purple { background: var(--secondary-indigo); }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-theme="light"] .stat-value {
+            color: #0f172a;
+            font-weight: 800;
+        }
+        
+        .stat-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .stat-change.positive {
+            color: var(--success-green);
+        }
+        
+        .stat-change.negative {
+            color: var(--error-red);
+        }
+        
+        /* Action Cards Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .action-card {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+        
+        [data-theme="light"] .action-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .action-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            text-decoration: none;
+            color: inherit;
+            border-color: var(--primary-blue);
+        }
+        
+        [data-theme="light"] .action-card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15);
+            border-color: var(--primary-blue);
+        }
+        
+        .action-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--primary-blue);
+            flex-shrink: 0;
+        }
+        
+        [data-theme="light"] .action-icon {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            box-shadow: 0 4px 6px -1px rgb(37 99 235 / 0.3);
+        }
+        
+        .action-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+        
+        [data-theme="light"] .action-content h3 {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        
+        .action-content p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        [data-theme="light"] .action-content p {
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        .action-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .action-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-blue-dark);
+        }
+        
+        .action-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        [data-theme="light"] .action-meta {
+            color: #64748b;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1rem;
+            }
+            
+            .actions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 4rem;
+            }
+            
+            .search-box {
+                order: 3;
+                width: 100%;
+                max-width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .search-box input {
+                width: 100%;
+                padding: 0.875rem 1rem 0.875rem 2.75rem;
+                font-size: 0.9375rem;
+            }
+            
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card,
+            .action-card {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-brand {
+                gap: 0.5rem;
+            }
+            
+            .nav-title {
+                font-size: 1rem;
+            }
+            
+            .nav-actions {
+                gap: 0.5rem;
+            }
+            
+            .user-avatar {
+                width: 1.75rem;
+                height: 1.75rem;
+            }
+            
+            .logout-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Panel -->
+    {% include 'backend/notification_component.html' %}
+    
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - Admin</div>
+        </div>
+        
+        <div class="nav-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search users, properties, logs..." id="admin-search-input">
+            </div>
+            
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            
+            <button class="notification-btn" id="notificationBtn" onclick="toggleNotificationPanel()">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge" id="notificationBadge"></div>
+            </button>
+            
+            <div class="user-menu">
+                <a href="/backend/admin/profile/" class="user-avatar" title="View Profile">
+                    {% if user.profile_photo %}
+                        <img src="{{ user.profile_photo.url }}" alt="Profile Photo">
+                    {% else %}
+                        <i class="fas fa-user-shield"></i>
+                    {% endif %}
+                </a>
+            </div>
+            
+            <a href="/backend/logout/" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Manage your estate management system</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Users</div>
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.total_users.count }}</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    {{ stats.total_users.growth }}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Properties</div>
+                    <div class="stat-icon green">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.total_properties.count }}</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-check-circle"></i>
+                    {% if stats.properties_by_status %}{{ stats.properties_by_status.available|default:0 }} available, {{ stats.properties_by_status.sold|default:0 }} sold{% else %}All statuses{% endif %}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Bookings & Purchases</div>
+                    <div class="stat-icon orange">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.active_bookings.total }}</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if stats.transactions %}{{ stats.transactions.successful_purchases|default:0 }} confirmed purchases{% else %}0 purchases{% endif %}
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Revenue</div>
+                    <div class="stat-icon purple">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value">₹{% if stats.system_revenue.total %}{{ stats.system_revenue.total|floatformat:0 }}{% else %}0{% endif %}</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    ₹{% if stats.system_revenue.monthly %}{{ stats.system_revenue.monthly|floatformat:0 }}{% else %}0{% endif %} this month
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="actions-grid">
+            <a href="/backend/admin/add-property/" class="action-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.3);">
+                <div class="action-header">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%);">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Add New Property</h3>
+                        <p>Create and assign new property listings to sellers</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">Quick Action</span>
+                    <div class="action-btn" style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%);">
+                        Add Property <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/users/html/?q={{ query|default:'' }}" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>User Management</h3>
+                        <p>View and manage all registered users, roles, and permissions</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.total_users.count }} users</span>
+                    <div class="action-btn">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/properties/html/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Property Management</h3>
+                        <p>View all properties with status, bookings, and buyer information</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.total_properties.count }} properties | {% if stats.properties_by_status %}{{ stats.properties_by_status.sold|default:0 }} sold{% else %}0 sold{% endif %}</span>
+                    <div class="action-btn">
+                        View Details <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/property_images/html/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Media Gallery</h3>
+                        <p>Manage property images and media content</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.total_images }} images</span>
+                    <div class="action-btn">
+                        Browse <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/bookings/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Bookings & Purchases</h3>
+                        <p>Manage bookings, view buyer purchases and transaction details</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">{{ stats.active_bookings.count }} pending | {% if stats.active_bookings.confirmed %}{{ stats.active_bookings.confirmed }}{% else %}0{% endif %} confirmed</span>
+                    <div class="action-btn">
+                        Review <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/transactions/html/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Transactions & Payments</h3>
+                        <p>Monitor all buyer transactions, payments and purchase history</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">₹{% if stats.system_revenue.total %}{{ stats.system_revenue.total|floatformat:0 }}{% else %}0{% endif %} total | {% if stats.transactions %}{{ stats.transactions.completed|default:0 }} completed{% else %}0 completed{% endif %}</span>
+                    <div class="action-btn">
+                        View Reports <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/logs/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Activity Logs</h3>
+                        <p>Track user activities and system events</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">Last updated now</span>
+                    <div class="action-btn">
+                        View Logs <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/price_data_model/html/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>AI Price Model</h3>
+                        <p>Manage training data for AI price prediction</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">ML Ready</span>
+                    <div class="action-btn">
+                        Configure <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/backend/admin/support-tickets/" class="action-card">
+                <div class="action-header">
+                    <div class="action-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Customer Support Tickets</h3>
+                        <p>Manage buyer queries, resolve tickets, and send responses</p>
+                    </div>
+                </div>
+                <div class="action-footer">
+                    <span class="action-meta">Real-time Support</span>
+                    <div class="action-btn">
+                        View Tickets <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Estate Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                // Default dark theme
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
+        
+        // ===========================
+        // LIVE SEARCH FUNCTIONALITY
+        // ===========================
+        
+        const searchInput = document.getElementById('admin-search-input');
+        let searchTimeout;
+        let searchResultsPanel;
+        
+        function createSearchResultsPanel() {
+            if (searchResultsPanel) return;
+            searchResultsPanel = document.createElement('div');
+            searchResultsPanel.id = 'searchResultsPanel';
+            searchResultsPanel.className = 'search-results-panel';
+            document.body.appendChild(searchResultsPanel);
+        }
+        
+        function positionSearchPanel() {
+            const searchBox = document.querySelector('.search-box');
+            const rect = searchBox.getBoundingClientRect();
+            searchResultsPanel.style.top = (rect.bottom + 5) + 'px';
+            searchResultsPanel.style.left = rect.left + 'px';
+            searchResultsPanel.style.width = rect.width + 'px';
+        }
+        
+        function performSearch(query) {
+            if (!query.trim()) {
+                hideSearchResults();
+                return;
+            }
+            
+            fetch('/backend/api/dashboard/search/?q=' + encodeURIComponent(query))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displaySearchResults(data.results);
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    hideSearchResults();
+                });
+        }
+        
+        function displaySearchResults(results) {
+            createSearchResultsPanel();
+            positionSearchPanel();
+            
+            const users = results.users || [];
+            const properties = results.properties || [];
+            const logs = results.logs || [];
+            const totalResults = users.length + properties.length + logs.length;
+            
+            if (totalResults === 0) {
+                searchResultsPanel.innerHTML = `
+                    <div class="search-empty">
+                        <i class="fas fa-search"></i>
+                        <p>No results found</p>
+                        <small>Try different keywords</small>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                
+                if (users.length > 0) {
+                    html += '<div class="search-results-header"><strong>Users</strong> <span>(' + users.length + ' results)</span></div>';
+                    users.forEach(user => {
+                        const roleClass = user.role.toLowerCase();
+                        html += `
+                            <a href="${user.url}" class="search-result-item">
+                                <div class="search-result-icon-box role-${roleClass}">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="search-result-content">
+                                    <div class="search-result-title">${user.name}</div>
+                                    <div class="search-result-meta">
+                                        <span><i class="fas fa-envelope"></i> ${user.email}</span>
+                                        <span><i class="fas fa-phone"></i> ${user.phone}</span>
+                                    </div>
+                                </div>
+                                <div class="search-result-badge role-${roleClass}">${user.role}</div>
+                            </a>
+                        `;
+                    });
+                }
+                
+                if (properties.length > 0) {
+                    html += '<div class="search-results-header"><strong>Properties</strong> <span>(' + properties.length + ' results)</span></div>';
+                    properties.forEach(prop => {
+                        html += `
+                            <a href="${prop.url}" class="search-result-item">
+                                <div class="search-result-image">
+                                    <img src="${prop.image_url}" alt="${prop.title}" onerror="this.src='/media/default_property.jpg'">
+                                </div>
+                                <div class="search-result-content">
+                                    <div class="search-result-title">${prop.title}</div>
+                                    <div class="search-result-meta">
+                                        <span><i class="fas fa-map-marker-alt"></i> ${prop.location}</span>
+                                        <span><i class="fas fa-user"></i> ${prop.owner_name}</span>
+                                    </div>
+                                    <div class="search-result-price">₹${prop.price.toLocaleString()}</div>
+                                </div>
+                                <div class="search-result-badge status-${prop.status.toLowerCase()}">${prop.status}</div>
+                            </a>
+                        `;
+                    });
+                }
+                
+                if (logs.length > 0) {
+                    html += '<div class="search-results-header"><strong>Activity Logs</strong> <span>(' + logs.length + ' results)</span></div>';
+                    logs.forEach(log => {
+                        html += `
+                            <a href="${log.url}" class="search-result-item">
+                                <div class="search-result-icon-box log-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <div class="search-result-content">
+                                    <div class="search-result-title">${log.action}</div>
+                                    <div class="search-result-meta">
+                                        <span><i class="fas fa-user"></i> ${log.user_name}</span>
+                                        <span><i class="fas fa-clock"></i> ${log.timestamp}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                    });
+                }
+                
+                html += `<div class="search-results-footer"><small>Showing top results - Press Enter for more</small></div>`;
+                searchResultsPanel.innerHTML = html;
+            }
+            
+            searchResultsPanel.style.display = 'block';
+        }
+        
+        function hideSearchResults() {
+            if (searchResultsPanel) {
+                searchResultsPanel.style.display = 'none';
+            }
+        }
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => performSearch(query), 300);
+                } else {
+                    hideSearchResults();
+                }
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `/backend/users/html/?q=${encodeURIComponent(searchTerm)}`;
+                    }
+                }
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                if (this.value.trim().length >= 2) {
+                    performSearch(this.value.trim());
+                }
+            });
+        }
+        
+        document.addEventListener('click', function(event) {
+            if (searchResultsPanel && !searchInput.contains(event.target) && !searchResultsPanel.contains(event.target)) {
+                hideSearchResults();
+            }
+        });
+        
+        window.addEventListener('resize', function() {
+            if (searchResultsPanel && searchResultsPanel.style.display === 'block') {
+                positionSearchPanel();
+            }
+        });
+        
+        // ===========================
+        // NOTIFICATION SYSTEM
+        // ===========================
+        
+        // Load notifications on page load
+        loadNotifications();
+        // Refresh notifications every 30 seconds
+        setInterval(loadNotifications, 30000);
+        
+        function loadNotifications() {
+            fetch('/backend/api/notifications/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateNotificationBadge(data.unread_count);
+                        window.userNotifications = data.notifications;
+                    }
+                })
+                .catch(error => console.error('Error loading notifications:', error));
+        }
+        
+        function updateNotificationBadge(count) {
+            const badge = document.getElementById('notificationBadge');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function toggleNotificationPanel() {
+            const panel = document.getElementById('notificationPanel');
+            if (!panel) {
+                createNotificationPanel();
+            } else {
+                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+                if (panel.style.display === 'block') displayNotifications();
+            }
+        }
+        
+        function createNotificationPanel() {
+            const panel = document.createElement('div');
+            panel.id = 'notificationPanel';
+            panel.className = 'notification-panel';
+            panel.innerHTML = `
+                <div class="notification-panel-header">
+                    <h3><i class="fas fa-bell"></i> Notifications</h3>
+                    <div class="notification-panel-actions">
+                        <button onclick="markAllAsRead()" class="mark-all-read-btn" title="Mark all as read">
+                            <i class="fas fa-check-double"></i>
+                        </button>
+                        <button onclick="toggleNotificationPanel()" class="close-panel-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="notification-panel-body" id="notificationPanelBody">
+                    <div class="notification-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+            displayNotifications();
+        }
+        
+        function displayNotifications() {
+            const body = document.getElementById('notificationPanelBody');
+            const notifications = window.userNotifications || [];
+            
+            if (notifications.length === 0) {
+                body.innerHTML = `<div class="notification-empty"><i class="fas fa-bell-slash"></i><p>No notifications yet</p></div>`;
+                return;
+            }
+            
+            let html = '';
+            notifications.forEach(notif => {
+                const readClass = notif.is_read ? 'notification-read' : 'notification-unread';
+                const icon = getNotificationIcon(notif.type);
+                html += `
+                    <div class="notification-item ${readClass}" onclick="markNotificationAsRead(${notif.notification_id})">
+                        <div class="notification-icon ${notif.type}"><i class="${icon}"></i></div>
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time"><i class="fas fa-clock"></i> ${notif.time_ago}</div>
+                        </div>
+                        ${!notif.is_read ? '<div class="notification-unread-dot"></div>' : ''}
+                    </div>
+                `;
+            });
+            body.innerHTML = html;
+        }
+        
+        function getNotificationIcon(type) {
+            const icons = {
+                'booking_confirmed': 'fas fa-check-circle',
+                'booking_cancelled': 'fas fa-times-circle',
+                'booking_pending': 'fas fa-clock',
+                'booking_completed': 'fas fa-flag-checkered',
+                'payment_received': 'fas fa-money-check-alt',
+                'property_updated': 'fas fa-home',
+                'default': 'fas fa-info-circle'
+            };
+            return icons[type] || icons['default'];
+        }
+        
+        function markNotificationAsRead(notificationId) {
+            fetch(`/backend/api/notifications/${notificationId}/mark-read/`, {method: 'POST'})
+            .then(response => response.json())
+            .then(data => { if (data.success) { loadNotifications(); displayNotifications(); } })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function markAllAsRead() {
+            fetch('/backend/api/notifications/mark-all-read/', {method: 'POST'})
+            .then(response => response.json())
+            .then(data => { if (data.success) { loadNotifications(); displayNotifications(); alert(`✅ ${data.updated_count} notification(s) marked as read`); } })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('notificationPanel');
+            const btn = document.getElementById('notificationBtn');
+            if (panel && panel.style.display === 'block' && !panel.contains(event.target) && event.target !== btn && !btn.contains(event.target)) {
+                panel.style.display = 'none';
+            }
+        });
+    </script>
+    
+    <style>
+        /* Search Results Panel */
+        .search-results-panel{position:fixed;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:9999;display:none;max-height:500px;overflow-y:auto;animation:slideDown 0.2s ease-out}@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}.search-results-panel::-webkit-scrollbar{width:6px}.search-results-panel::-webkit-scrollbar-track{background:var(--bg-primary)}.search-results-panel::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}.search-results-header{padding:0.75rem 1rem;background:var(--bg-primary);border-bottom:1px solid var(--border-color);font-size:0.875rem;color:var(--text-secondary)}.search-results-header strong{color:var(--text-primary);margin-right:0.5rem}.search-results-footer{padding:0.75rem 1rem;background:var(--bg-primary);border-top:1px solid var(--border-color);text-align:center}.search-results-footer small{color:var(--text-muted);font-size:0.75rem}.search-result-item{display:flex;align-items:center;gap:1rem;padding:0.875rem 1rem;border-bottom:1px solid var(--border-color);text-decoration:none;color:var(--text-primary);transition:all 0.2s;position:relative}.search-result-item:hover{background:var(--bg-primary)}.search-result-item:last-child{border-bottom:none}.search-result-image{width:80px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0}.search-result-image img{width:100%;height:100%;object-fit:cover}.search-result-icon-box{width:60px;height:60px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5rem}.search-result-icon-box.role-admin{background:rgba(139,92,246,0.15);color:var(--accent-purple)}.search-result-icon-box.role-seller{background:rgba(16,185,129,0.15);color:var(--success-green)}.search-result-icon-box.role-buyer{background:rgba(59,130,246,0.15);color:var(--primary-blue)}.search-result-icon-box.log-icon{background:rgba(251,146,60,0.15);color:var(--warning-orange)}.search-result-content{flex:1;min-width:0}.search-result-title{font-weight:600;font-size:0.9375rem;margin-bottom:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search-result-meta{display:flex;gap:1rem;font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.25rem}.search-result-meta span{display:flex;align-items:center;gap:0.25rem}.search-result-meta i{font-size:0.6875rem}.search-result-price{font-weight:700;color:var(--primary-blue);font-size:0.875rem}.search-result-badge{position:absolute;right:1rem;top:1rem;padding:0.25rem 0.5rem;border-radius:6px;font-size:0.6875rem;font-weight:600;text-transform:uppercase}.search-result-badge.role-admin{background:rgba(139,92,246,0.1);color:var(--accent-purple)}.search-result-badge.role-seller{background:rgba(16,185,129,0.1);color:var(--success-green)}.search-result-badge.role-buyer{background:rgba(59,130,246,0.1);color:var(--primary-blue)}.search-result-badge.status-available{background:rgba(16,185,129,0.1);color:var(--success-green)}.search-result-badge.status-sold{background:rgba(239,68,68,0.1);color:var(--error-red)}.search-result-badge.status-pending{background:rgba(251,146,60,0.1);color:var(--warning-orange)}.search-empty{padding:3rem 2rem;text-align:center;color:var(--text-secondary)}.search-empty i{font-size:3rem;margin-bottom:1rem;opacity:0.3}.search-empty p{margin:0.5rem 0;font-size:0.9375rem;font-weight:600}.search-empty small{font-size:0.75rem;color:var(--text-muted)}
+        
+        /* Notification Panel */
+        .notification-panel{position:fixed;top:5rem;right:2rem;width:400px;max-width:calc(100vw - 4rem);max-height:600px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.4);z-index:10000;display:none;overflow:hidden;animation:slideInRight 0.3s ease-out;backdrop-filter:blur(20px)}@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}.notification-panel-header{background:linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-indigo) 100%);color:white;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1)}.notification-panel-header h3{margin:0;font-size:1.125rem;font-weight:600;display:flex;align-items:center;gap:0.5rem}.notification-panel-actions{display:flex;gap:0.5rem}.mark-all-read-btn,.close-panel-btn{background:rgba(255,255,255,0.2);border:none;color:white;width:2rem;height:2rem;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}.mark-all-read-btn:hover,.close-panel-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}.notification-panel-body{max-height:550px;overflow-y:auto;background:var(--bg-primary)}.notification-panel-body::-webkit-scrollbar{width:6px}.notification-panel-body::-webkit-scrollbar-track{background:var(--bg-secondary)}.notification-panel-body::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}.notification-item{padding:1rem 1.5rem;border-bottom:1px solid var(--border-color);cursor:pointer;transition:all 0.2s;display:flex;gap:1rem;position:relative}.notification-item:hover{background:var(--bg-secondary)}.notification-unread{background:rgba(59,130,246,0.05)}.notification-read{opacity:0.7}.notification-icon{width:2.5rem;height:2.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.125rem;color:white}.notification-icon.booking_confirmed{background:linear-gradient(135deg,var(--success-green),#059669)}.notification-icon.booking_cancelled{background:linear-gradient(135deg,var(--error-red),#dc2626)}.notification-icon.booking_pending{background:linear-gradient(135deg,var(--warning-orange),#d97706)}.notification-icon.booking_completed{background:linear-gradient(135deg,var(--accent-purple),#7c3aed)}.notification-icon.payment_received{background:linear-gradient(135deg,var(--success-green),#34d399)}.notification-icon.property_updated{background:linear-gradient(135deg,var(--primary-blue),var(--secondary-indigo))}.notification-content{flex:1}.notification-title{font-weight:600;font-size:0.9375rem;color:var(--text-primary);margin-bottom:0.25rem}.notification-message{font-size:0.875rem;color:var(--text-secondary);line-height:1.4;margin-bottom:0.5rem}.notification-time{font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:0.25rem}.notification-unread-dot{width:8px;height:8px;background:var(--primary-blue);border-radius:50%;position:absolute;top:1rem;right:1rem}.notification-empty,.notification-loading{padding:3rem 2rem;text-align:center;color:var(--text-secondary)}.notification-empty i,.notification-loading i{font-size:3rem;margin-bottom:1rem;opacity:0.3}.notification-empty p{margin:0;font-size:0.9375rem}@media (max-width:768px){.notification-panel{width:calc(100vw - 2rem);right:1rem;top:4.5rem}}
+    </style>
+    
+    <!-- AI Chatbot Widget -->
+    {% include 'backend/chatbot_widget.html' %}
+    
+</body>
+</html>

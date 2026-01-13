@@ -1,0 +1,743 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Images - Estate Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --bg-primary: #0a0e27;
+            --bg-secondary: rgba(15, 23, 42, 0.8);
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --backdrop-blur: blur(20px);
+        }
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: rgba(255, 255, 255, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.15), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.1), transparent), radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.1), transparent), radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.1), transparent);
+            background-repeat: repeat;
+            background-size: 150px 100px;
+            animation: sparkle 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes sparkle {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        .top-nav { background: var(--glass-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); border-bottom: 1px solid var(--glass-border); padding: 0 2rem; height: 4.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--glass-shadow); position: sticky; top: 0; z-index: 1000; animation: slideInDown 0.6s ease-out; }
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: translateY(0); } }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 10; }
+        .nav-brand img { width: 3rem; height: 3rem; border-radius: 1rem; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; border: 2px solid var(--glass-border); }
+        .nav-brand img:hover { transform: scale(1.05) rotate(5deg); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+        .nav-title { font-size: 1.25rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: relative; }
+        .nav-title::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: var(--gradient-1); transition: width 0.3s ease; }
+        .nav-brand:hover .nav-title::after { width: 100%; }
+        .nav-actions { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 10; }
+        .theme-toggle { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0.75rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; color: var(--text-secondary); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); position: relative; overflow: hidden; }
+        .theme-toggle:hover { color: var(--text-primary); border-color: var(--primary-solid); transform: scale(1.05); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); }
+        .back-btn { background: var(--gradient-1); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+        .back-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; position: relative; z-index: 10; animation: fadeInUp 0.8s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .page-header { margin-bottom: 3rem; text-align: center; position: relative; }
+        .page-title { font-size: 3rem; font-weight: 900; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; position: relative; display: inline-block; }
+        .page-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--gradient-1); border-radius: 2px; }
+        .page-subtitle { color: var(--text-secondary); font-size: 1.125rem; font-weight: 400; max-width: 600px; margin: 0 auto; opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .stat-card { background: var(--glass-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.5rem; box-shadow: var(--glass-shadow); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; animation: fadeInUp 0.8s ease-out; text-align: center; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-1); transform: scaleX(0); transition: transform 0.3s ease; }
+        .stat-card:hover::before { transform: scaleX(1); }
+        .stat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); border-color: var(--primary-solid); }
+        .stat-card:nth-child(1)::before { background: var(--gradient-1); }
+        .stat-card:nth-child(2)::before { background: var(--gradient-2); }
+        .stat-card:nth-child(3)::before { background: var(--gradient-3); }
+        .stat-card:nth-child(4)::before { background: var(--gradient-4); }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
+        .search-filter-section { background: var(--glass-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 3rem; box-shadow: var(--glass-shadow); animation: fadeInUp 0.8s ease-out 0.3s both; }
+        .search-row { display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center; }
+        .search-box { position: relative; flex: 1; min-width: 300px; }
+        .search-box input { width: 100%; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 16px; padding: 1rem 1.25rem 1rem 3.5rem; font-size: 1rem; font-weight: 500; color: var(--text-primary); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .search-box input:focus { outline: none; border-color: var(--primary-solid); box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25), 0 8px 25px rgba(102, 126, 234, 0.2); transform: translateY(-3px); background: rgba(255, 255, 255, 0.08); }
+        .search-box input::placeholder { color: var(--text-muted); opacity: 0.8; font-weight: 400; }
+        .search-box i { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.125rem; transition: all 0.3s ease; pointer-events: none; z-index: 1; }
+        .search-box:focus-within i { color: var(--primary-solid); transform: translateY(-50%) scale(1.15); }
+        .search-btn { background: var(--gradient-3); color: white; border: none; padding: 1rem 2rem; border-radius: 16px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 0.75rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
+        .search-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6); }
+        .images-section { background: var(--glass-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); border: 1px solid var(--glass-border); border-radius: 24px; overflow: hidden; box-shadow: var(--glass-shadow); animation: fadeInUp 0.8s ease-out 0.5s both; position: relative; }
+        .section-header { background: var(--gradient-1); color: white; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
+        .section-title { font-size: 1.375rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; position: relative; z-index: 2; }
+        .section-title i { font-size: 1.5rem; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; padding: 1.5rem; background: transparent; }
+        .image-card { background: var(--glass-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.25rem; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; cursor: pointer; box-shadow: var(--glass-shadow); animation: fadeInUp 0.6s ease-out; display: flex; flex-direction: column; gap: 1rem; }
+        .image-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-1); transform: scaleX(0); transition: transform 0.3s ease; }
+        .image-card:hover::before { transform: scaleX(1); }
+        .image-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3); border-color: var(--primary-solid); }
+        .image-card:nth-child(4n+1)::before { background: var(--gradient-1); }
+        .image-card:nth-child(4n+2)::before { background: var(--gradient-2); }
+        .image-card:nth-child(4n+3)::before { background: var(--gradient-3); }
+        .image-card:nth-child(4n+4)::before { background: var(--gradient-4); }
+        .image-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .image-id-badge { background: var(--gradient-1); color: white; padding: 0.375rem 0.875rem; border-radius: 12px; font-size: 0.875rem; font-weight: 700; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+        .property-id-badge { padding: 0.375rem 0.875rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: var(--gradient-3); color: white; }
+        .image-preview-container { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        .image-preview { width: 100%; height: 100%; object-fit: cover; transition: all 0.3s ease; }
+        .image-preview:hover { transform: scale(1.05); }
+        .image-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7)); display: flex; align-items: flex-end; padding: 1rem; opacity: 0; transition: opacity 0.3s ease; }
+        .image-card:hover .image-overlay { opacity: 1; }
+        .view-full-btn { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .view-full-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+        .image-description { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .no-image-placeholder { width: 100%; height: 200px; border-radius: 12px; background: var(--glass-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.875rem; }
+        .no-image-placeholder i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state { padding: 6rem 2rem; text-align: center; color: var(--text-secondary); animation: fadeInUp 0.8s ease-out; }
+        .empty-state i { font-size: 4rem; margin-bottom: 2rem; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: pulse 2s infinite; }
+        .empty-state h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary); background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .empty-state p { font-size: 1rem; line-height: 1.6; max-width: 400px; margin: 0 auto; opacity: 0.8; }
+        .image-card:nth-child(4n+1) .image-id-badge { background: var(--gradient-1); }
+        .image-card:nth-child(4n+2) .image-id-badge { background: var(--gradient-2); }
+        .image-card:nth-child(4n+3) .image-id-badge { background: var(--gradient-3); }
+        .image-card:nth-child(4n+4) .image-id-badge { background: var(--gradient-4); }
+        
+        /* View Details Button */
+        .view-details-btn {
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .view-details-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            transition: left 0.3s ease;
+        }
+        
+        .view-details-btn:hover::before {
+            left: 0;
+        }
+        
+        .view-details-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .view-details-btn i {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .view-details-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.6);
+        }
+        
+        /* Property Details Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background: var(--gradient-2);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .property-detail-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .property-detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .property-image-preview {
+            width: 100%;
+            height: 300px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+        }
+        
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .amenity-tag {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.375rem 0.875rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .property-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.9375rem;
+        }
+        
+        .price-badge {
+            background: var(--gradient-4);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+        }
+        
+        @media (max-width: 1200px) { .container { padding: 1.5rem; } .stats-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem; } }
+        @media (max-width: 1024px) { .search-row { grid-template-columns: 1fr; gap: 1.5rem; } .images-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; } }
+        @media (max-width: 768px) { .top-nav { padding: 0 1rem; height: auto; min-height: 4.5rem; flex-direction: column; gap: 1rem; } .nav-actions { width: 100%; justify-content: center; } .container { padding: 1rem; } .page-title { font-size: 2rem; } .page-subtitle { font-size: 1rem; } .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; } .images-grid { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; } .image-card { padding: 1.25rem; } .search-filter-section { padding: 1.5rem; } }
+        @media (max-width: 480px) { .page-title { font-size: 1.75rem; } .stats-grid { grid-template-columns: 1fr; } .nav-title { font-size: 1rem; } .nav-brand img { width: 2.5rem; height: 2.5rem; } .images-grid { padding: 0.5rem; } .image-card { padding: 1rem; } .search-box input { padding: 0.875rem 1rem 0.875rem 3rem; font-size: 0.9375rem; } .search-btn { padding: 0.875rem 1.5rem; font-size: 0.9375rem; } }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="/media/newlogo.png" alt="Estate Logo">
+            <div class="nav-title">Estate Management - Property Images</div>
+        </div>
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-sun" id="theme-icon"></i>
+            </button>
+            <a href="{% if user_role == 'seller' %}/backend/seller-home/{% else %}/backend/dashboard/{% endif %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Property Images Gallery</h1>
+            <p class="page-subtitle">Browse and manage all property images in your portfolio</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ property_images|length }}</div>
+                <div class="stat-label">Total Images</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{% for image in property_images %}{% if image.final_url %}{{ forloop.counter }}{% endif %}{% empty %}0{% endfor %}</div>
+                <div class="stat-label">With Images</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ property_images|length }}</div>
+                <div class="stat-label">Properties</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ property_images|length }}</div>
+                <div class="stat-label">Unique Images</div>
+            </div>
+        </div>
+        <div class="search-filter-section">
+            <form method="GET" action="" class="search-row">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="q" placeholder="Search by image ID, property ID, or description..." value="{{ query|default:'' }}">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+        <div class="images-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-images"></i> Property Images
+                </div>
+                <div style="font-size: 0.875rem;">
+                    {{ property_images|length }} images found{% if query %} for "{{ query }}"{% endif %}
+                </div>
+            </div>
+            <div class="images-grid">
+                {% for image in property_images %}
+                <div class="image-card">
+                    <div class="image-header">
+                        <div class="image-id-badge">#{{ image.image_id }}</div>
+                        <div class="property-id-badge">Property #{{ image.property.property_id }}</div>
+                    </div>
+                    <div class="image-preview-container">
+                        {% if image.final_url %}
+                            <a href="{{ image.final_url }}" target="_blank" title="Click to view full size">
+                                <img src="{{ image.final_url }}" alt="Property Image" class="image-preview">
+                            </a>
+                            <div class="image-overlay">
+                                <a href="{{ image.final_url }}" target="_blank" class="view-full-btn">
+                                    <i class="fas fa-expand-alt"></i> View Full Size
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="no-image-placeholder">
+                                <i class="fas fa-image-slash"></i>
+                                <span>No image available</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="image-description">
+                        <i class="fas fa-align-left" style="color: var(--primary-solid); margin-right: 0.5rem;"></i>
+                        {{ image.description|default:"No description available" }}
+                    </div>
+                    
+                    <button class="view-details-btn" 
+                            data-property-id="{{ image.property.property_id }}"
+                            data-title="{{ image.property.title }}"
+                            data-location="{{ image.property.location }}"
+                            data-price="{{ image.property.price }}"
+                            data-type="{{ image.property.property_type }}"
+                            data-bedrooms="{{ image.property.bedrooms }}"
+                            data-bathrooms="{{ image.property.bathrooms }}"
+                            data-area="{{ image.property.area_sqft }}"
+                            data-status="{{ image.property.status }}"
+                            data-address="{{ image.property.address }}"
+                            data-amenities="{{ image.property.amenities }}"
+                            data-description="{{ image.property.description }}"
+                            data-image="{{ image.final_url }}"
+                            onclick="showPropertyDetailsFromButton(this)">
+                        <span>View Property Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                {% empty %}
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-images"></i>
+                    <h3>No Images Found</h3>
+                    <p>{% if query %}No images match your search criteria. Try adjusting your search terms.{% else %}No property images have been uploaded yet.{% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Property Details Modal -->
+    <div class="modal-overlay" id="propertyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-home"></i>
+                    <span id="modalPropertyTitle">Property Details</span>
+                </div>
+                <button class="modal-close" onclick="closePropertyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Property Image -->
+                <img id="modalPropertyImage" src="" alt="Property" class="property-image-preview">
+                
+                <!-- Price Section -->
+                <div class="property-detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-tag"></i>
+                        Price
+                    </div>
+                    <div class="price-badge" id="modalPropertyPrice">₹0</div>
+                </div>
+                
+                <!-- Basic Information -->
+                <div class="property-detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Basic Information
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Property ID</div>
+                            <div class="detail-value" id="modalPropertyId">#0</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Property Type</div>
+                            <div class="detail-value" id="modalPropertyType">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value" id="modalPropertyStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value" id="modalPropertyLocation">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property Features -->
+                <div class="property-detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-bed"></i>
+                        Property Features
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Bedrooms</div>
+                            <div class="detail-value" id="modalPropertyBedrooms">0</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Bathrooms</div>
+                            <div class="detail-value" id="modalPropertyBathrooms">0</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Area</div>
+                            <div class="detail-value" id="modalPropertyArea">0 sq ft</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Address -->
+                <div class="property-detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Address
+                    </div>
+                    <div class="detail-value" id="modalPropertyAddress">-</div>
+                </div>
+                
+                <!-- Amenities -->
+                <div class="property-detail-section" id="amenitiesSection">
+                    <div class="detail-section-title">
+                        <i class="fas fa-star"></i>
+                        Amenities
+                    </div>
+                    <div class="amenities-list" id="modalPropertyAmenities"></div>
+                </div>
+                
+                <!-- Description -->
+                <div class="property-detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </div>
+                    <div class="property-description" id="modalPropertyDescription">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showPropertyDetailsFromButton(button) {
+            // Get data from button's data attributes
+            const id = button.getAttribute('data-property-id') || '0';
+            const title = button.getAttribute('data-title') || 'Property Details';
+            const location = button.getAttribute('data-location') || 'N/A';
+            const price = button.getAttribute('data-price') || '0';
+            const type = button.getAttribute('data-type') || 'N/A';
+            const bedrooms = button.getAttribute('data-bedrooms') || '0';
+            const bathrooms = button.getAttribute('data-bathrooms') || '0';
+            const area = button.getAttribute('data-area') || '0';
+            const status = button.getAttribute('data-status') || 'N/A';
+            const address = button.getAttribute('data-address') || 'Address not available';
+            const amenities = button.getAttribute('data-amenities') || '';
+            const description = button.getAttribute('data-description') || 'No description available';
+            const imageUrl = button.getAttribute('data-image') || '';
+            
+            // Call the original function with the extracted data
+            showPropertyDetails(id, title, location, price, type, bedrooms, bathrooms, area, status, address, amenities, description, imageUrl);
+        }
+        
+        function showPropertyDetails(id, title, location, price, type, bedrooms, bathrooms, area, status, address, amenities, description, imageUrl) {
+            // Set modal content
+            document.getElementById('modalPropertyTitle').textContent = title || 'Property Details';
+            document.getElementById('modalPropertyId').textContent = '#' + id;
+            document.getElementById('modalPropertyType').textContent = type || 'N/A';
+            document.getElementById('modalPropertyStatus').textContent = status || 'N/A';
+            document.getElementById('modalPropertyLocation').textContent = location || 'N/A';
+            document.getElementById('modalPropertyPrice').textContent = '₹' + (price ? parseFloat(price).toLocaleString('en-IN') : '0');
+            document.getElementById('modalPropertyBedrooms').textContent = bedrooms || '0';
+            document.getElementById('modalPropertyBathrooms').textContent = bathrooms || '0';
+            document.getElementById('modalPropertyArea').textContent = (area || '0') + ' sq ft';
+            document.getElementById('modalPropertyAddress').textContent = address || 'Address not available';
+            document.getElementById('modalPropertyDescription').textContent = description || 'No description available';
+            
+            // Set property image
+            if (imageUrl && imageUrl !== 'None') {
+                document.getElementById('modalPropertyImage').src = imageUrl;
+                document.getElementById('modalPropertyImage').style.display = 'block';
+            } else {
+                document.getElementById('modalPropertyImage').style.display = 'none';
+            }
+            
+            // Set amenities
+            const amenitiesContainer = document.getElementById('modalPropertyAmenities');
+            amenitiesContainer.innerHTML = '';
+            
+            if (amenities && amenities !== 'None' && amenities.trim() !== '') {
+                const amenitiesList = amenities.split(',').map(a => a.trim()).filter(a => a);
+                if (amenitiesList.length > 0) {
+                    amenitiesList.forEach(amenity => {
+                        const tag = document.createElement('div');
+                        tag.className = 'amenity-tag';
+                        tag.innerHTML = '<i class="fas fa-check-circle"></i> ' + amenity;
+                        amenitiesContainer.appendChild(tag);
+                    });
+                    document.getElementById('amenitiesSection').style.display = 'block';
+                } else {
+                    document.getElementById('amenitiesSection').style.display = 'none';
+                }
+            } else {
+                document.getElementById('amenitiesSection').style.display = 'none';
+            }
+            
+            // Show modal
+            document.getElementById('propertyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePropertyModal() {
+            document.getElementById('propertyModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('propertyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePropertyModal();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePropertyModal();
+            }
+        });
+        
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            if (currentTheme === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                document.body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
+    </script>
+</body>
+</html>
